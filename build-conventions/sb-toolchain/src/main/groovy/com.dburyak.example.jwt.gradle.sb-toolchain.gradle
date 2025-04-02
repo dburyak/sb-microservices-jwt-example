@@ -1,0 +1,93 @@
+plugins {
+    id 'org.springframework.boot' apply false
+    id 'com.dburyak.example.jwt.gradle.dependency-management'
+    id 'jvm-test-suite'
+    id 'jacoco'
+}
+
+java {
+    group = 'com.dburyak.example.jwt'
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    testAnnotationProcessor { extendsFrom annotationProcessor }
+    integrationTestAnnotationProcessor { extendsFrom testAnnotationProcessor }
+    compileOnly { extendsFrom annotationProcessor }
+    testCompileOnly { extendsFrom compileOnly, testAnnotationProcessor }
+    integrationTestCompileOnly { extendsFrom testCompileOnly, integrationTestAnnotationProcessor }
+
+    integrationTestCompileClasspath { extendsFrom jwtExampleInternal, testCompileClasspath }
+    integrationTestRuntimeClasspath { extendsFrom jwtExampleInternal, testRuntimeClasspath }
+}
+
+testing {
+    suites {
+        test {
+            useSpock(spockVersion)
+        }
+
+        integrationTest(JvmTestSuite) {
+            useSpock(spockVersion)
+            dependencies {
+                implementation project()
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    jwtExampleInternal platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    annotationProcessor platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    implementation 'org.springframework.boot:spring-boot-starter'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.apache.groovy:groovy-all'
+    testImplementation 'org.spockframework:spock-core'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'net.bytebuddy:byte-buddy'
+    testRuntimeOnly 'cglib:cglib-nodep'
+    testRuntimeOnly 'org.objenesis:objenesis'
+    integrationTestImplementation 'org.testcontainers:spock'
+    integrationTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    integrationTestRuntimeOnly 'net.bytebuddy:byte-buddy'
+    integrationTestRuntimeOnly 'cglib:cglib-nodep'
+    integrationTestRuntimeOnly 'org.objenesis:objenesis'
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+tasks.named('check') {
+    dependsOn(testing.suites.integrationTest)
+}
+
+jacocoTestReport {
+    dependsOn test, integrationTest
+    executionData(fileTree(layout.buildDirectory).include("jacoco/*.exec"))
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}

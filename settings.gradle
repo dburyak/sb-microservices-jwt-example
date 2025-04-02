@@ -1,0 +1,18 @@
+rootProject.name = 'sb-microservices-jwt-example'
+
+// common build logic
+include ':build-conventions:versions'
+includeBuild 'build-conventions/dependency-management'
+includeBuild 'build-conventions/sb-toolchain'
+includeBuild 'build-conventions/sb-library'
+includeBuild 'build-conventions/sb-microservice'
+
+// libs
+include ':libs:auth'
+
+// services
+include ':services:auth-service'
+include ':services:user-service'
+include ':services:catalogue-service'
+include ':services:watch-history-service'
+include ':services:watch-state-service'

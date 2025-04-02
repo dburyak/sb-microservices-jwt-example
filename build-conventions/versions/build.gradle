@@ -1,0 +1,25 @@
+plugins {
+    id 'java-platform'
+}
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+    def groovyVersion = '4.0.26'
+    api platform("org.apache.groovy:groovy-bom:$groovyVersion")
+    api platform("org.spockframework:spock-bom:$spockVersion")
+    api platform('org.testcontainers:testcontainers-bom:1.20.4')
+    api platform('io.mongock:mongock-bom:5.5.0')
+
+    constraints {
+        api 'org.mongodb:mongodb-driver-sync:4.11.5'
+
+        // spock and testing
+        api "org.apache.groovy:groovy-all:$groovyVersion"
+        api 'net.bytebuddy:byte-buddy:1.16.1'
+        api 'org.objenesis:objenesis:3.4'
+        api 'cglib:cglib-nodep:3.3.0'
+    }
+}

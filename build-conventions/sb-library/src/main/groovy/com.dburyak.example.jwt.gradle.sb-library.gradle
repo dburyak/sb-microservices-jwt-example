@@ -1,0 +1,5 @@
+plugins {
+    id 'com.dburyak.example.jwt.gradle.sb-toolchain'
+    id 'org.springframework.boot' apply true
+    id 'java-library'
+}

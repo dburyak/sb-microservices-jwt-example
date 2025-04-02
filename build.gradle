@@ -1,0 +1,8 @@
+wrapper {
+  gradleVersion = project.property('org.gradle.version')
+  distributionType = Wrapper.DistributionType.ALL
+}
+
+tasks.named('prepareKotlinBuildScriptModel') {
+    enabled = false
+}
