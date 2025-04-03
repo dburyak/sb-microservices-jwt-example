@@ -15,6 +15,12 @@ dependencies {
 
     constraints {
         api 'org.mongodb:mongodb-driver-sync:4.11.5'
+        def jjwtVersion = '0.12.6'
+        api "io.jsonwebtoken:jjwt-api:$jjwtVersion"
+        api "io.jsonwebtoken:jjwt-impl:$jjwtVersion"
+        api "io.jsonwebtoken:jjwt-jackson:$jjwtVersion"
+        api 'org.apache.commons:commons-collections4:4.4'
+        api 'org.apache.commons:commons-lang3:3.17.0'
 
         // spock and testing
         api "org.apache.groovy:groovy-all:$groovyVersion"

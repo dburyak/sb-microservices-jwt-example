@@ -42,3 +42,15 @@ tasks.register('updateLockedVersions') {
                 .each { it.resolve() }
     }
 }
+
+tasks.register('printCompileClasspath') {
+    doLast {
+        configurations.compileClasspath.files.each { println it }
+    }
+}
+
+tasks.register('printRuntimeClasspath') {
+    doLast {
+        configurations.runtimeClasspath.files.each { println it }
+    }
+}

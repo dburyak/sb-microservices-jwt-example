@@ -1,0 +1,3 @@
+com.dburyak.example.jwt.lib.auth.cfg.JwtPropsAutoConfiguration
+com.dburyak.example.jwt.lib.auth.cfg.JwtGeneratorAutoConfiguration
+com.dburyak.example.jwt.lib.auth.cfg.JwtAuthAutoConfiguration

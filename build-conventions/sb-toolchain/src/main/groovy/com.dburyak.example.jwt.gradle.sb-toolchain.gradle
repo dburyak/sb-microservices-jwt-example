@@ -1,5 +1,6 @@
 plugins {
     id 'org.springframework.boot' apply false
+    id 'io.spring.dependency-management'
     id 'com.dburyak.example.jwt.gradle.dependency-management'
     id 'jvm-test-suite'
     id 'jacoco'
@@ -49,12 +50,19 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
+}
+
 dependencies {
     jwtExampleInternal platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
     annotationProcessor platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
     implementation 'org.springframework.boot:spring-boot-starter'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     // testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
