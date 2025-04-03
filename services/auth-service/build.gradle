@@ -1,3 +1,7 @@
 plugins {
-  id 'com.dburyak.example.jwt.gradle.sb-microservice'
+    id 'com.dburyak.example.jwt.gradle.sb-microservice'
+}
+
+dependencies {
+    implementation project(':libs:mongo')
 }
