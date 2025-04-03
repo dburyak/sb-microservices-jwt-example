@@ -15,11 +15,11 @@ import static java.util.stream.Collectors.toSet;
 public class JwtAuth implements Authentication {
     private final String tenantId;
     private final String userId;
-    private final Set<String> roles;
+    private final Set<Role> roles;
     private final Set<GrantedAuthority> authorities;
     private final boolean authenticated;
 
-    public JwtAuth(String tenantId, String userId, Set<String> roles) {
+    public JwtAuth(String tenantId, String userId, Set<Role> roles) {
         this.tenantId = tenantId;
         this.userId = userId;
         this.roles = roles;
@@ -27,7 +27,7 @@ public class JwtAuth implements Authentication {
         authenticated = false;
     }
 
-    private JwtAuth(String tenantId, String username, Set<String> roles, Set<String> authorities) {
+    private JwtAuth(String tenantId, String username, Set<Role> roles, Set<String> authorities) {
         this.tenantId = tenantId;
         this.userId = username;
         this.roles = roles;

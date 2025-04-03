@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toMap;
@@ -49,7 +50,11 @@ public class JwtParser {
         if (isBlank(userId) || isBlank(tenantId)) {
             return null;
         }
-        var roles = claims.get(rolesKey, Set.class);
-        return new JwtAuth(tenantId, userId, roles);
+        var rolesRaw = claims.get(rolesKey, Set.class);
+        var roles = new HashSet<Role>();
+        for (var roleRaw : rolesRaw) {
+            roles.add(Role.valueOf(roleRaw.toString()));
+        }
+        return new JwtAuth(tenantId, userId, Set.copyOf(roles));
     }
 }
