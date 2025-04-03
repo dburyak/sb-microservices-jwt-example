@@ -26,6 +26,7 @@ public class JwtAuthAutoConfiguration {
 
     @Bean
     public AuthenticationProvider jwtAuthProvider(JwtAuthoritiesMapper rolesMapper) {
+        // if jwt-auth is enabled for a service, it must define roles mapper
         return new JwtAuthProvider(rolesMapper);
     }
 }

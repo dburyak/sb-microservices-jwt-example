@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: auth-service
+auth:
+  jwt:
+    # there are no protected endpoints in auth-service (yet)
+    enabled: false
+    # though auth-service is not protected, we still need to generate JWT tokens
+    generator:
+      enabled: true
+      issuer: ${JWT_ISSUER:local.jwt.example.dburyak.com}
+      key: ${JWT_SIGN_KEY:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
+      ttl: ${JWT_TTL:1h}
