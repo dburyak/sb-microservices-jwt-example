@@ -18,6 +18,9 @@ import static com.dburyak.example.jwt.auth.domain.User.COLLECTION;
 public class User extends MongoEntity {
     public static final String COLLECTION = "users";
 
+    /**
+     * Human friendly name that user can use to log in. Should be unique within tenant.
+     */
     private String username;
     private String password;
     private Set<String> roles;

@@ -5,8 +5,6 @@ import lombok.Data;
 
 @Data
 public class JwtLoginWithUsernameAndPasswordRequest {
-    @NotBlank
-    private String tenantId;
 
     @NotBlank
     private String username;

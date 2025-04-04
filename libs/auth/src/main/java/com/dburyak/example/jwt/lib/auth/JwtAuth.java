@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toSet;
@@ -14,22 +15,25 @@ import static java.util.stream.Collectors.toSet;
 @Getter
 public class JwtAuth implements Authentication {
     private final String tenantId;
-    private final String userId;
+    private final UUID userUuid;
+    private final String deviceId;
     private final Set<Role> roles;
     private final Set<GrantedAuthority> authorities;
     private final boolean authenticated;
 
-    public JwtAuth(String tenantId, String userId, Set<Role> roles) {
+    public JwtAuth(String tenantId, UUID userUuid, String deviceId, Set<Role> roles) {
         this.tenantId = tenantId;
-        this.userId = userId;
+        this.userUuid = userUuid;
+        this.deviceId = deviceId;
         this.roles = roles;
         authorities = null;
         authenticated = false;
     }
 
-    private JwtAuth(String tenantId, String username, Set<Role> roles, Set<String> authorities) {
+    private JwtAuth(String tenantId, UUID userUuid, String deviceId, Set<Role> roles, Set<String> authorities) {
         this.tenantId = tenantId;
-        this.userId = username;
+        this.userUuid = userUuid;
+        this.deviceId = deviceId;
         this.roles = roles;
         this.authorities = (authorities != null)
                 ? Set.copyOf(authorities.stream().map(SimpleGrantedAuthority::new).collect(toSet()))
@@ -38,7 +42,7 @@ public class JwtAuth implements Authentication {
     }
 
     public JwtAuth withMappedAuthorities(Set<String> authorities) {
-        return new JwtAuth(tenantId, userId, roles, authorities);
+        return new JwtAuth(tenantId, userUuid, deviceId, roles, authorities);
     }
 
     @Override
@@ -58,7 +62,7 @@ public class JwtAuth implements Authentication {
 
     @Override
     public Object getPrincipal() {
-        return userId;
+        return userUuid;
     }
 
     @Override
@@ -73,6 +77,6 @@ public class JwtAuth implements Authentication {
 
     @Override
     public String getName() {
-        return userId;
+        return userUuid.toString();
     }
 }

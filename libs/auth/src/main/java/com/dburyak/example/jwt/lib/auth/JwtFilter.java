@@ -15,6 +15,7 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtParser jwtParser;
     private final AuthenticationManager authManager;
+    private final RequestUtil requestUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -26,6 +27,10 @@ public class JwtFilter extends OncePerRequestFilter {
             if (parsedToken != null) {
                 var tokenWithAuthorities = authManager.authenticate(parsedToken);
                 SecurityContextHolder.getContext().setAuthentication(tokenWithAuthorities);
+                // if tenantId is set in header, tenantId from JWT token always takes precedence
+                requestUtil.setTenantId(request, parsedToken.getTenantId());
+                requestUtil.setUserUuid(request, parsedToken.getUserUuid());
+                requestUtil.setDeviceId(request, parsedToken.getDeviceId());
             }
         }
         filterChain.doFilter(request, response);

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import static com.dburyak.example.jwt.auth.domain.RefreshToken.COLLECTION;
 import static org.springframework.data.mongodb.core.ReplaceOptions.replaceOptions;
@@ -36,16 +37,17 @@ public class RefreshTokenRepositoryCustomImpl implements RefreshTokenRepositoryC
                 .and(DEVICE_ID).is(refreshToken.getDeviceId())
                 .and(TOKEN).is(refreshToken.getToken())
                 .and(EXPIRES_AT).gt(Instant.now()));
-        var replacedToken = mongo.replace(q, refreshToken, COLLECTION);
-        return replacedToken != null;
+        var updRes = mongo.replace(q, refreshToken, COLLECTION);
+        return updRes.getMatchedCount() > 0;
     }
 
     @Override
-    public boolean deleteByTenantIdAndUserUuidAndDeviceIdAndTokenAndNotExpired(RefreshToken refreshToken) {
-        var q = query(where(TENANT_ID).is(refreshToken.getTenantId())
-                .and(USER_UUID).is(refreshToken.getUserUuid())
-                .and(DEVICE_ID).is(refreshToken.getDeviceId())
-                .and(TOKEN).is(refreshToken.getToken())
+    public boolean deleteByTenantIdAndUserUuidAndDeviceIdAndTokenAndNotExpired(String tenantId, UUID userUuid,
+            String deviceId, UUID token) {
+        var q = query(where(TENANT_ID).is(tenantId)
+                .and(USER_UUID).is(userUuid)
+                .and(DEVICE_ID).is(deviceId)
+                .and(TOKEN).is(token)
                 .and(EXPIRES_AT).gt(Instant.now()));
         var delResult = mongo.remove(q, COLLECTION);
         return delResult.getDeletedCount() > 0;
