@@ -129,13 +129,19 @@ public class JwtAuthProperties {
          */
         Duration ttl;
 
+        /**
+         * Refresh token expiration time.
+         */
+        Duration refreshTokenTtl;
+
         @ConstructorBinding
         public Generator(
                 @DefaultValue("false") boolean enabled,
                 @Nullable String key,
                 @DefaultValue("local.jwt.example.dburyak.com") @NotBlank String issuer,
                 @Nullable String subject,
-                @DefaultValue("1h") @NotNull @DurationMin(seconds = 1) Duration ttl) {
+                @DefaultValue("1h") @NotNull @DurationMin(seconds = 1) Duration ttl,
+                @DefaultValue("30d") @NotNull @DurationMin(seconds = 1) Duration refreshTokenTtl) {
             this.enabled = enabled;
             if (enabled) {
                 if (StringUtils.isBlank(key)) {
@@ -148,6 +154,10 @@ public class JwtAuthProperties {
             this.issuer = issuer;
             this.subject = subject;
             this.ttl = ttl;
+            if (refreshTokenTtl.compareTo(ttl) < 0) {
+                throw new IllegalArgumentException("Refresh token TTL must be greater than token TTL");
+            }
+            this.refreshTokenTtl = refreshTokenTtl;
         }
     }
 

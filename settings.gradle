@@ -10,6 +10,7 @@ includeBuild 'build-conventions/sb-microservice'
 // libs
 include ':libs:auth'
 include ':libs:mongo'
+include ':libs:err'
 
 // services
 include ':services:auth-service'
