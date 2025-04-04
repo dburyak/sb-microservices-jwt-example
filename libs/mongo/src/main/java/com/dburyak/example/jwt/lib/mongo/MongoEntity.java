@@ -1,6 +1,8 @@
 package com.dburyak.example.jwt.lib.mongo;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -20,6 +22,8 @@ import java.util.UUID;
  * - optimistic locking
  */
 @Data
+@SuperBuilder
+@NoArgsConstructor
 @CompoundIndex(name = "uuid_1_tenantId_1", unique = true, def = "{'uuid': 1, 'tenantId': 1}")
 public abstract class MongoEntity {
 

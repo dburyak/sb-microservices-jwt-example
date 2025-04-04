@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.dburyak.example.jwt.lib.auth.AuthConstants.SERVICE_DEVICE_ID;
+import static com.dburyak.example.jwt.lib.auth.AuthConstants.SERVICE_TENANT_ID;
+
 public class JwtGenerator {
     private final String issuer;
     private final Duration ttl;
@@ -63,24 +66,12 @@ public class JwtGenerator {
     /**
      * Generate JWT token for service.
      *
-     * @param service service name
+     * @param serviceUuid special service uuid, one of {@link AuthConstants} SOME_SERVICE_UUID
      * @param roles roles of the service
      *
      * @return JWT token
      */
-    public String generateServiceToken(String service, Set<String> roles) {
-        var now = Instant.now();
-        return Jwts.builder()
-                .header()
-                .add("typ", "JWT")
-                .keyId(keyId)
-                .and()
-                .issuer(issuer)
-                .subject(service)
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plus(ttl)))
-                .claim(rolesKey, roles)
-                .signWith(key)
-                .compact();
+    public String generateServiceToken(UUID serviceUuid, Set<String> roles) {
+        return generateUserToken(SERVICE_TENANT_ID, serviceUuid, SERVICE_DEVICE_ID, roles);
     }
 }

@@ -4,6 +4,7 @@ import com.dburyak.example.jwt.lib.auth.JwtAuthProvider;
 import com.dburyak.example.jwt.lib.auth.JwtAuthoritiesMapper;
 import com.dburyak.example.jwt.lib.auth.JwtFilter;
 import com.dburyak.example.jwt.lib.auth.JwtParser;
+import com.dburyak.example.jwt.lib.auth.RequestUtil;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +16,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 public class JwtAuthAutoConfiguration {
 
     @Bean
-    public JwtFilter jwtFilter(JwtParser jwtParser, AuthenticationManager authManager) {
-        return new JwtFilter(jwtParser, authManager);
+    public JwtFilter jwtFilter(JwtParser jwtParser, AuthenticationManager authManager, RequestUtil requestUtil) {
+        return new JwtFilter(jwtParser, authManager, requestUtil);
     }
 
     @Bean
