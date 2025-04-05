@@ -3,3 +3,11 @@ plugins {
 }
 
 group = 'com.dburyak.example.jwt.gradle'
+
+repositories {
+    gradlePluginPortal()
+}
+
+dependencies {
+    api 'org.springframework.boot:spring-boot-gradle-plugin:3.4.4'
+}

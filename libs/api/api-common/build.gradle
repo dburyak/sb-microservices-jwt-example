@@ -1,0 +1,8 @@
+plugins {
+    id 'com.dburyak.example.jwt.gradle.dependency-management'
+    id 'java-library'
+}
+
+dependencies {
+    annotationProcessor 'org.projectlombok:lombok'
+}

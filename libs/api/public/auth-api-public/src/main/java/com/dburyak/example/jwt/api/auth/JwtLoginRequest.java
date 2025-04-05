@@ -1,10 +1,10 @@
-package com.dburyak.example.jwt.auth.apimodel;
+package com.dburyak.example.jwt.api.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class JwtLoginWithUsernameAndPasswordRequest {
+public class JwtLoginRequest {
 
     @NotBlank
     private String username;

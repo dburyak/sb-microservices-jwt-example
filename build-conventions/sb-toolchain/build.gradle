@@ -9,7 +9,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-gradle-plugin:3.4.4'
     implementation 'io.spring.dependency-management:io.spring.dependency-management.gradle.plugin:1.1.7'
     implementation 'com.dburyak.example.jwt.gradle:dependency-management'
 }

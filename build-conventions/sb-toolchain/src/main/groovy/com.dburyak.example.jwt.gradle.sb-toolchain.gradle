@@ -16,7 +16,6 @@ java {
 configurations {
     testAnnotationProcessor { extendsFrom annotationProcessor }
     integrationTestAnnotationProcessor { extendsFrom testAnnotationProcessor }
-    compileOnly { extendsFrom annotationProcessor }
     testCompileOnly { extendsFrom compileOnly, testAnnotationProcessor }
     integrationTestCompileOnly { extendsFrom testCompileOnly, integrationTestAnnotationProcessor }
 
@@ -46,10 +45,6 @@ testing {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencyManagement {
     imports {
         mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
@@ -57,10 +52,7 @@ dependencyManagement {
 }
 
 dependencies {
-    jwtExampleInternal platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-    annotationProcessor platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
     implementation 'org.springframework.boot:spring-boot-starter'
-    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 

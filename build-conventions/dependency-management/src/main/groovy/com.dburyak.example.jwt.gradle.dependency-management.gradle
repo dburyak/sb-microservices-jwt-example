@@ -1,4 +1,5 @@
 plugins {
+    id 'org.springframework.boot' apply false
     id 'java'
 }
 
@@ -13,9 +14,16 @@ configurations {
     testCompileClasspath { extendsFrom jwtExampleInternal }
     testRuntimeClasspath { extendsFrom jwtExampleInternal }
     productionRuntimeClasspath { extendsFrom jwtExampleInternal }
+    compileOnly { extendsFrom annotationProcessor }
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
+    jwtExampleInternal platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    annotationProcessor platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
     jwtExampleInternal platform(project(':build-conventions:versions'))
     annotationProcessor platform(project(':build-conventions:versions'))
 }

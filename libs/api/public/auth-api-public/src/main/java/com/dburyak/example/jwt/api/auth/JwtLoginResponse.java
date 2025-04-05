@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.auth.apimodel;
+package com.dburyak.example.jwt.api.auth;
 
 import lombok.Builder;
 import lombok.Data;

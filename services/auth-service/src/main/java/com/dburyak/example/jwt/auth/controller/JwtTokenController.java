@@ -1,8 +1,8 @@
 package com.dburyak.example.jwt.auth.controller;
 
-import com.dburyak.example.jwt.auth.apimodel.JwtLoginResponse;
-import com.dburyak.example.jwt.auth.apimodel.JwtLoginWithUsernameAndPasswordRequest;
-import com.dburyak.example.jwt.auth.apimodel.JwtRefreshTokenRequest;
+import com.dburyak.example.jwt.api.auth.JwtLoginRequest;
+import com.dburyak.example.jwt.api.auth.JwtLoginResponse;
+import com.dburyak.example.jwt.api.auth.JwtRefreshTokenRequest;
 import com.dburyak.example.jwt.auth.service.AuthService;
 import com.dburyak.example.jwt.lib.auth.Attributes;
 import com.dburyak.example.jwt.lib.err.NotFoundException;
@@ -32,7 +32,7 @@ public class JwtTokenController {
     @PostMapping("/token")
     public ResponseEntity<JwtLoginResponse> createToken(
             @NotBlank @RequestAttribute(Attributes.TENANT_ID) String tenantId,
-            @Valid @RequestBody JwtLoginWithUsernameAndPasswordRequest req) {
+            @Valid @RequestBody JwtLoginRequest req) {
         var resp = authService.createJwtToken(tenantId, req);
         return ResponseEntity.ok(resp);
     }

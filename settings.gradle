@@ -11,6 +11,9 @@ includeBuild 'build-conventions/sb-microservice'
 include ':libs:auth'
 include ':libs:mongo'
 include ':libs:err'
+include ':libs:api:api-common'
+include ':libs:api:public:auth-api-public'
+include ':libs:api:internal:auth-api-internal'
 
 // services
 include ':services:auth-service'

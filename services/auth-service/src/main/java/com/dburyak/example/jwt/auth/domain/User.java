@@ -14,8 +14,7 @@ import static com.dburyak.example.jwt.auth.domain.User.COLLECTION;
 
 @Document(collection = COLLECTION)
 @CompoundIndex(name = "uuid_1_tenantId_1", unique = true, def = "{'uuid': 1, 'tenantId': 1}")
-@CompoundIndex(name = "username_1_tenantId_1", unique = true,
-        def = "{'username': 1, 'tenantId': 1}")
+@CompoundIndex(name = "username_1_tenantId_1", unique = true, def = "{'username': 1, 'tenantId': 1}")
 @Data
 @SuperBuilder
 @NoArgsConstructor

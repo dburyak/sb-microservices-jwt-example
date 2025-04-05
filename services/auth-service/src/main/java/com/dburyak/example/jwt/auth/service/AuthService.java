@@ -1,8 +1,8 @@
 package com.dburyak.example.jwt.auth.service;
 
-import com.dburyak.example.jwt.auth.apimodel.JwtLoginResponse;
-import com.dburyak.example.jwt.auth.apimodel.JwtLoginWithUsernameAndPasswordRequest;
-import com.dburyak.example.jwt.auth.apimodel.JwtRefreshTokenRequest;
+import com.dburyak.example.jwt.api.auth.JwtLoginRequest;
+import com.dburyak.example.jwt.api.auth.JwtLoginResponse;
+import com.dburyak.example.jwt.api.auth.JwtRefreshTokenRequest;
 import com.dburyak.example.jwt.auth.domain.RefreshToken;
 import com.dburyak.example.jwt.auth.repository.RefreshTokenRepository;
 import com.dburyak.example.jwt.auth.repository.UserRepository;
@@ -28,7 +28,7 @@ public class AuthService {
     private final JwtGenerator jwtGenerator;
     private final JwtAuthProperties jwtAuthProps;
 
-    public JwtLoginResponse createJwtToken(String tenantId, JwtLoginWithUsernameAndPasswordRequest req) {
+    public JwtLoginResponse createJwtToken(String tenantId, JwtLoginRequest req) {
         var user = userRepository.findByTenantIdAndUsername(tenantId, req.getUsername());
         if (user == null) {
             throw new NotFoundException(String.format("User(username=%s)", req.getUsername()));

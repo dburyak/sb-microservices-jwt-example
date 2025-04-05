@@ -9,7 +9,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -24,7 +23,8 @@ import java.util.UUID;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-@CompoundIndex(name = "uuid_1_tenantId_1", unique = true, def = "{'uuid': 1, 'tenantId': 1}")
+// sub-classes have to put this annotation for uuid+tenantId unique index, it's not inherited properly
+// @CompoundIndex(name = "uuid_1_tenantId_1", unique = true, def = "{'uuid': 1, 'tenantId': 1}")
 public abstract class MongoEntity {
 
     @Id

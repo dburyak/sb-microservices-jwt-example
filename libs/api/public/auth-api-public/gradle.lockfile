@@ -1,0 +1,16 @@
+# This is a Gradle generated file for dependency locking.
+# Manual edits can break the build and are not advised.
+# This file is expected to be part of source control.
+com.fasterxml.jackson.core:jackson-annotations:2.18.3=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.fasterxml.jackson:jackson-bom:2.18.3=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.fasterxml:classmate:1.7.0=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+io.mongock:mongock-bom:5.5.0=annotationProcessor,compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+jakarta.validation:jakarta.validation-api:3.0.2=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.apache.groovy:groovy-bom:4.0.26=annotationProcessor,compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.hibernate.validator:hibernate-validator:8.0.2.Final=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.jboss.logging:jboss-logging:3.6.1.Final=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.projectlombok:lombok:1.18.36=annotationProcessor,compileClasspath
+org.spockframework:spock-bom:2.4-M5-groovy-4.0=annotationProcessor,compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.springframework.boot:spring-boot-dependencies:3.4.4=annotationProcessor,compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.testcontainers:testcontainers-bom:1.20.4=annotationProcessor,compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+empty=developmentOnly,testAndDevelopmentOnly,testAnnotationProcessor
