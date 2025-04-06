@@ -1,3 +1,5 @@
+server:
+  port: 8081
 spring:
   application:
     name: user-service
@@ -12,6 +14,13 @@ auth:
     keys: ${JWT_KNOWN_KEYS:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
     generator:
       enabled: true
-      issuer: ${JWT_ISSUER:auth.local.jwt.example.dburyak.com}
+      issuer: ${JWT_ISSUER:user.local.jwt.example.dburyak.com}
       key: ${JWT_SIGN_KEY:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
       ttl: ${JWT_TTL:1h}
+    service-token:
+      enabled: true
+      issuer: ${JWT_ISSUER:user.local.jwt.example.dburyak.com}
+service-client:
+  auth:
+    enabled: true
+    url: ${AUTH_SERVICE_URL:http://localhost:8080}

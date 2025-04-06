@@ -1,5 +1,4 @@
 plugins {
-    // id 'org.springframework.boot' apply false
     id 'io.spring.dependency-management'
     id 'com.dburyak.example.jwt.gradle.dependency-management'
     id 'jvm-test-suite'
@@ -70,6 +69,10 @@ dependencies {
     integrationTestRuntimeOnly 'net.bytebuddy:byte-buddy'
     integrationTestRuntimeOnly 'cglib:cglib-nodep'
     integrationTestRuntimeOnly 'org.objenesis:objenesis'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add("-parameters")
 }
 
 tasks.withType(Test).configureEach {

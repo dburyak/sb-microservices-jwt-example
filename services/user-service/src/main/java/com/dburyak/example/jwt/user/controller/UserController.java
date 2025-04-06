@@ -1,11 +1,12 @@
 package com.dburyak.example.jwt.user.controller;
 
+import com.dburyak.example.jwt.api.common.ApiView.CREATE;
 import com.dburyak.example.jwt.api.user.User;
 import com.dburyak.example.jwt.user.service.UserService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> create(
             @NotBlank @RequestAttribute(TENANT_ID) String tenantId,
-            @Valid @RequestBody User req) {
+            @Validated(CREATE.class) @RequestBody User req) {
         var user = userService.create(tenantId, req);
         return ResponseEntity.ok(user);
     }

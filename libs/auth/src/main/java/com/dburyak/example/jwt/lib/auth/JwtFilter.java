@@ -27,6 +27,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if (parsedToken != null) {
                 var tokenWithAuthorities = authManager.authenticate(parsedToken);
                 SecurityContextHolder.getContext().setAuthentication(tokenWithAuthorities);
+                requestUtil.setAuthToken(request, jwtTokenStr);
                 // if tenantId is set in header, tenantId from JWT token always takes precedence
                 requestUtil.setTenantId(request, parsedToken.getTenantId());
                 requestUtil.setUserUuid(request, parsedToken.getUserUuid());

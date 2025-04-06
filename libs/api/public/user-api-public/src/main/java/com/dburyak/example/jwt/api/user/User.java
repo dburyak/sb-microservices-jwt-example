@@ -8,12 +8,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Value
 @Builder(toBuilder = true)
+@Jacksonized
 public class User {
 
     @JsonView({READ.class})

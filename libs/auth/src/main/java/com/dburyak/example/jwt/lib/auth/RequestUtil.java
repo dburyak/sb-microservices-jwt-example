@@ -6,10 +6,27 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.UUID;
 
+import static com.dburyak.example.jwt.lib.auth.Attributes.AUTH_TOKEN;
 import static com.dburyak.example.jwt.lib.auth.Attributes.TENANT_ID;
 import static com.dburyak.example.jwt.lib.auth.Attributes.USER_UUID;
 
 public class RequestUtil {
+
+    public String getAuthToken() {
+        return getRequestAttr(AUTH_TOKEN);
+    }
+
+    public String getAuthToken(HttpServletRequest req) {
+        return getRequestAttr(req, AUTH_TOKEN);
+    }
+
+    public void setAuthToken(String authToken) {
+        putRequestAttr(AUTH_TOKEN, authToken);
+    }
+
+    public void setAuthToken(HttpServletRequest req, String authToken) {
+        putRequestAttr(req, AUTH_TOKEN, authToken);
+    }
 
     public String getTenantId() {
         return getRequestAttr(TENANT_ID);

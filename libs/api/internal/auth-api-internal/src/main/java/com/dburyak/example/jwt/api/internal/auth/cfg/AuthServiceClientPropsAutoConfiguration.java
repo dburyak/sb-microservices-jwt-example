@@ -4,6 +4,6 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @AutoConfiguration
-@EnableConfigurationProperties(RestClientProperties.class)
-public class RestClientAutoConfiguration {
+@EnableConfigurationProperties(AuthServiceClientProperties.class)
+public class AuthServiceClientPropsAutoConfiguration {
 }

@@ -1,1 +1,2 @@
-com.dburyak.example.jwt.api.internal.auth.cfg.RestClientAutoConfiguration
+com.dburyak.example.jwt.api.internal.auth.cfg.AuthServiceClientPropsAutoConfiguration
+com.dburyak.example.jwt.api.internal.auth.cfg.AuthServiceClientAutoConfiguration

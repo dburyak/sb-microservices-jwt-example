@@ -20,16 +20,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.dburyak.example.jwt.api.internal.auth.Paths.AUTH_JWT;
+import static com.dburyak.example.jwt.api.internal.auth.Paths.AUTH_JWT_REFRESH;
+import static com.dburyak.example.jwt.api.internal.auth.Paths.AUTH_JWT_TOKEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestController
-@RequestMapping("/auth/jwt")
+@RequestMapping(AUTH_JWT)
 @RequiredArgsConstructor
 public class JwtTokenController {
     private static final String ERR_INVALID_CREDENTIALS = "Invalid credentials";
     private final AuthService authService;
 
-    @PostMapping("/token")
+    @PostMapping(AUTH_JWT_TOKEN)
     public ResponseEntity<JwtLoginResponse> createToken(
             @NotBlank @RequestAttribute(Attributes.TENANT_ID) String tenantId,
             @Valid @RequestBody JwtLoginRequest req) {
@@ -37,7 +40,7 @@ public class JwtTokenController {
         return ResponseEntity.ok(resp);
     }
 
-    @PostMapping("/refresh")
+    @PostMapping(AUTH_JWT_REFRESH)
     public ResponseEntity<JwtLoginResponse> refreshToken(
             @NotBlank @RequestAttribute(Attributes.TENANT_ID) String tenantId,
             @Valid @RequestBody JwtRefreshTokenRequest req) {
