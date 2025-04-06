@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' apply false
+    // id 'org.springframework.boot' apply false
     id 'io.spring.dependency-management'
     id 'com.dburyak.example.jwt.gradle.dependency-management'
     id 'jvm-test-suite'
@@ -52,9 +52,9 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
     annotationProcessor 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     // testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -1,7 +1,7 @@
-package com.dburyak.example.jwt.auth.controller;
+package com.dburyak.example.jwt.user.controller;
 
-import com.dburyak.example.jwt.api.internal.auth.User;
-import com.dburyak.example.jwt.auth.service.UserService;
+import com.dburyak.example.jwt.api.user.User;
+import com.dburyak.example.jwt.user.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;

@@ -14,8 +14,8 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    public User create(User req) {
-        var user = converter.toDomain(req);
+    public User create(String tenantId, User req) {
+        var user = converter.toDomain(req, tenantId);
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         var savedUser = repository.save(user);
         return converter.toApiModel(savedUser);

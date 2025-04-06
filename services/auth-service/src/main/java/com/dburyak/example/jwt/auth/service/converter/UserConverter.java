@@ -8,7 +8,6 @@ public class UserConverter {
 
     public User toApiModel(com.dburyak.example.jwt.auth.domain.User user) {
         return User.builder()
-                .tenantId(user.getTenantId())
                 .uuid(user.getUuid())
                 .username(user.getUsername())
                 .roles(user.getRoles())
@@ -19,9 +18,9 @@ public class UserConverter {
                 .build();
     }
 
-    public com.dburyak.example.jwt.auth.domain.User toDomain(User user) {
+    public com.dburyak.example.jwt.auth.domain.User toDomain(User user, String tenantId) {
         return com.dburyak.example.jwt.auth.domain.User.builder()
-                .tenantId(user.getTenantId())
+                .tenantId(tenantId)
                 .uuid(user.getUuid())
                 .username(user.getUsername())
                 .roles(user.getRoles())

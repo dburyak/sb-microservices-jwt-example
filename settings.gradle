@@ -13,6 +13,7 @@ include ':libs:mongo'
 include ':libs:err'
 include ':libs:api:api-common'
 include ':libs:api:public:auth-api-public'
+include ':libs:api:public:user-api-public'
 include ':libs:api:internal:auth-api-internal'
 
 // services

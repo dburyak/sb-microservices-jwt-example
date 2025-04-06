@@ -1,14 +1,17 @@
 plugins {
+    id 'org.springframework.boot' apply true
     id 'com.dburyak.example.jwt.gradle.sb-toolchain'
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     implementation project(':libs:auth')
 

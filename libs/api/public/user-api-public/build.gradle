@@ -1,10 +1,11 @@
 plugins {
-    id 'com.dburyak.example.jwt.gradle.sb-library'
+    id 'com.dburyak.example.jwt.gradle.dependency-management'
     id 'java-library'
 }
 
 dependencies {
     api project(':libs:api:api-common')
+    annotationProcessor 'org.projectlombok:lombok'
     api 'com.fasterxml.jackson.core:jackson-annotations'
     api 'org.hibernate.validator:hibernate-validator'
 }
