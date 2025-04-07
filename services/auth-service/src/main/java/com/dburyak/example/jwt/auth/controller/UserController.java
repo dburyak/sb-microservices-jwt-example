@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.dburyak.example.jwt.api.internal.auth.Paths.USER;
-import static com.dburyak.example.jwt.lib.auth.Attributes.TENANT_ID;
+import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_ID;
 
 @RestController
 @RequestMapping(USER)

@@ -7,3 +7,7 @@ plugins {
 dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 }
+
+[tasks.bootRun, tasks.bootTestRun, tasks.bootBuildImage, tasks.bootJar].each { task ->
+    task.enabled = false
+}

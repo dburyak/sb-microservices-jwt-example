@@ -14,7 +14,7 @@ public class JwtServiceTokenAutoConfiguration {
 
     @Bean
     public ServiceTokenManager serviceTokenManager(JwtAuthProperties props, JwtGenerator jwtGenerator,
-            @Value("${spring.application.name") String serviceName) {
+            @Value("${spring.application.name}") String serviceName) {
         return new ServiceTokenManager(props, jwtGenerator, serviceName);
     }
 }

@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.lib.auth;
+package com.dburyak.example.jwt.lib.req;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -6,9 +6,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.UUID;
 
-import static com.dburyak.example.jwt.lib.auth.Attributes.AUTH_TOKEN;
-import static com.dburyak.example.jwt.lib.auth.Attributes.TENANT_ID;
-import static com.dburyak.example.jwt.lib.auth.Attributes.USER_UUID;
+import static com.dburyak.example.jwt.lib.req.Attributes.AUTH_TOKEN;
+import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_ID;
+import static com.dburyak.example.jwt.lib.req.Attributes.USER_UUID;
 
 public class RequestUtil {
 
@@ -89,10 +89,11 @@ public class RequestUtil {
     }
 
     public <T> T getRequestAttr(HttpServletRequest req, String key) {
-        return (T) req.getAttribute(key);
+        return req != null ? (T) req.getAttribute(key) : null;
     }
 
     private HttpServletRequest currentRequest() {
-        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        var reqAttr = RequestContextHolder.getRequestAttributes();
+        return reqAttr != null ? ((ServletRequestAttributes) reqAttr).getRequest() : null;
     }
 }

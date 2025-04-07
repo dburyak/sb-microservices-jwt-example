@@ -4,7 +4,6 @@ import com.dburyak.example.jwt.api.auth.JwtLoginRequest;
 import com.dburyak.example.jwt.api.auth.JwtLoginResponse;
 import com.dburyak.example.jwt.api.auth.JwtRefreshTokenRequest;
 import com.dburyak.example.jwt.auth.service.AuthService;
-import com.dburyak.example.jwt.lib.auth.Attributes;
 import com.dburyak.example.jwt.lib.err.NotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.dburyak.example.jwt.api.internal.auth.Paths.AUTH_JWT;
 import static com.dburyak.example.jwt.api.internal.auth.Paths.AUTH_JWT_REFRESH;
 import static com.dburyak.example.jwt.api.internal.auth.Paths.AUTH_JWT_TOKEN;
+import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_ID;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestController
@@ -34,7 +34,7 @@ public class JwtTokenController {
 
     @PostMapping(AUTH_JWT_TOKEN)
     public ResponseEntity<JwtLoginResponse> createToken(
-            @NotBlank @RequestAttribute(Attributes.TENANT_ID) String tenantId,
+            @NotBlank @RequestAttribute(TENANT_ID) String tenantId,
             @Valid @RequestBody JwtLoginRequest req) {
         var resp = authService.createJwtToken(tenantId, req);
         return ResponseEntity.ok(resp);
@@ -42,7 +42,7 @@ public class JwtTokenController {
 
     @PostMapping(AUTH_JWT_REFRESH)
     public ResponseEntity<JwtLoginResponse> refreshToken(
-            @NotBlank @RequestAttribute(Attributes.TENANT_ID) String tenantId,
+            @NotBlank @RequestAttribute(TENANT_ID) String tenantId,
             @Valid @RequestBody JwtRefreshTokenRequest req) {
         var resp = authService.refreshJwtToken(tenantId, req);
         return ResponseEntity.ok(resp);

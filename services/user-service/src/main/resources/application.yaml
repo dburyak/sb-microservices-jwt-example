@@ -6,6 +6,7 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
+      database: ${MONGO_DATABASE:local-jwt-user}
 auth:
   jwt:
     enabled: true
@@ -19,7 +20,6 @@ auth:
       ttl: ${JWT_TTL:1h}
     service-token:
       enabled: true
-      issuer: ${JWT_ISSUER:user.local.jwt.example.dburyak.com}
 service-client:
   auth:
     enabled: true

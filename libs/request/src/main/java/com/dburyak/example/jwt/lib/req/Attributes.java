@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.lib.auth;
+package com.dburyak.example.jwt.lib.req;
 
 import lombok.experimental.UtilityClass;
 

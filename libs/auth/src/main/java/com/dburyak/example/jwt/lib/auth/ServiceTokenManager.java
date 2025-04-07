@@ -9,8 +9,8 @@ import java.util.UUID;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 
-import static com.dburyak.example.jwt.lib.auth.AuthConstants.SERVICE_UUIDS;
 import static com.dburyak.example.jwt.lib.auth.Role.SERVICE;
+import static com.dburyak.example.jwt.lib.req.ServiceUuids.SERVICE_UUIDS;
 
 public class ServiceTokenManager {
     private static final Set<String> SERVICE_ROLES = Set.of(SERVICE.getName());
@@ -25,7 +25,11 @@ public class ServiceTokenManager {
 
     public ServiceTokenManager(JwtAuthProperties props, JwtGenerator jwtGenerator, String serviceName) {
         this.jwtGenerator = jwtGenerator;
-        this.serviceUuid = SERVICE_UUIDS.get(serviceName);
+        var serviceUuid = SERVICE_UUIDS.get(serviceName);
+        if (serviceUuid == null) {
+            throw new IllegalStateException("Service UUID is not defined for service: " + serviceName);
+        }
+        this.serviceUuid = serviceUuid;
         this.ttl = props.getGenerator().getTtl().minus(RENEWAL_GAP);
     }
 

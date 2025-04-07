@@ -1,5 +1,6 @@
 package com.dburyak.example.jwt.lib.auth;
 
+import com.dburyak.example.jwt.lib.req.RequestUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

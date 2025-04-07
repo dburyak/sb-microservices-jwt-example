@@ -1,12 +1,12 @@
-package com.dburyak.example.jwt.lib.auth.cfg;
+package com.dburyak.example.jwt.lib.req.cfg;
 
-import com.dburyak.example.jwt.lib.auth.RequestUtil;
-import com.dburyak.example.jwt.lib.auth.TenantIdExtractionFilter;
+import com.dburyak.example.jwt.lib.req.RequestUtil;
+import com.dburyak.example.jwt.lib.req.TenantIdExtractionFilter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-public class UtilsAutoConfiguration {
+public class RequestAutoConfiguration {
 
     @Bean
     public RequestUtil requestUtil() {

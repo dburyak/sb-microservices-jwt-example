@@ -2,6 +2,7 @@ package com.dburyak.example.jwt.lib.auth;
 
 import com.dburyak.example.jwt.lib.auth.cfg.JwtAuthProperties;
 import io.jsonwebtoken.Jwts;
+import org.apache.commons.lang3.StringUtils;
 
 import java.security.Key;
 import java.time.Duration;
@@ -21,6 +22,7 @@ public class JwtGenerator {
     private final String keyId;
     private final String tenantIdKey;
     private final String deviceIdKey;
+    private final String serviceTokenIssuer;
 
     public JwtGenerator(JwtAuthProperties props) {
         if (!props.getGenerator().isEnabled()) {
@@ -33,6 +35,9 @@ public class JwtGenerator {
         this.keyId = props.getGenerator().getKey().getKid();
         this.tenantIdKey = props.getTenantIdKey();
         this.deviceIdKey = props.getDeviceIdKey();
+        this.serviceTokenIssuer = StringUtils.isNotBlank(props.getServiceToken().getIssuer())
+                ? props.getServiceToken().getIssuer()
+                : props.getGenerator().getIssuer();
     }
 
     /**
@@ -46,6 +51,22 @@ public class JwtGenerator {
      * @return JWT token
      */
     public String generateUserToken(String tenantId, UUID userUuid, String deviceId, Set<String> roles) {
+        return generateInternal(tenantId, userUuid, deviceId, roles, issuer);
+    }
+
+    /**
+     * Generate JWT token for service.
+     *
+     * @param serviceUuid special service uuid, one of {@link AuthConstants} SOME_SERVICE_UUID
+     * @param roles roles of the service
+     *
+     * @return JWT token
+     */
+    public String generateServiceToken(UUID serviceUuid, Set<String> roles) {
+        return generateInternal(SERVICE_TENANT_ID, serviceUuid, SERVICE_DEVICE_ID, roles, serviceTokenIssuer);
+    }
+
+    private String generateInternal(String tenantId, UUID userUuid, String deviceId, Set<String> roles, String issuer) {
         var now = Instant.now();
         return Jwts.builder()
                 .header()
@@ -61,17 +82,5 @@ public class JwtGenerator {
                 .claim(rolesKey, roles)
                 .signWith(key)
                 .compact();
-    }
-
-    /**
-     * Generate JWT token for service.
-     *
-     * @param serviceUuid special service uuid, one of {@link AuthConstants} SOME_SERVICE_UUID
-     * @param roles roles of the service
-     *
-     * @return JWT token
-     */
-    public String generateServiceToken(UUID serviceUuid, Set<String> roles) {
-        return generateUserToken(SERVICE_TENANT_ID, serviceUuid, SERVICE_DEVICE_ID, roles);
     }
 }

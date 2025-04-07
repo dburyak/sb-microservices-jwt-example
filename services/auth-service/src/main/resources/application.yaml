@@ -6,6 +6,7 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
+      database: ${MONGO_DATABASE:local-jwt-auth}
 auth:
   jwt:
     enabled: true
@@ -14,7 +15,7 @@ auth:
     keys: ${JWT_KNOWN_KEYS:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
     trusted-issuers:
       - local.jwt.example.dburyak.com
-      - auth.local.jwt.example.dburyak.com
+      - user.local.jwt.example.dburyak.com
     generator:
       enabled: true
       issuer: ${JWT_ISSUER:local.jwt.example.dburyak.com}

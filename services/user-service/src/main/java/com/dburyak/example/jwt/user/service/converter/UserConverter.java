@@ -29,11 +29,12 @@ public class UserConverter {
                 .build();
     }
 
-    public com.dburyak.example.jwt.api.internal.auth.User toApiModelAuth(User user) {
+    public com.dburyak.example.jwt.api.internal.auth.User toApiModelAuth(User reqUser,
+            com.dburyak.example.jwt.user.domain.User domainUser) {
         return com.dburyak.example.jwt.api.internal.auth.User.builder()
-                .uuid(user.getUuid())
-                .username(user.getUsername())
-                .password(user.getPassword())
+                .uuid(domainUser.getUuid())
+                .username(reqUser.getUsername())
+                .password(reqUser.getPassword())
                 .build();
     }
 }

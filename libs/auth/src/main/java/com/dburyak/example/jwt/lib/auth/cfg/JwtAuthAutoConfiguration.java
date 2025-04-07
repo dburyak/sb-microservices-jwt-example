@@ -5,7 +5,7 @@ import com.dburyak.example.jwt.lib.auth.JwtAuthoritiesMapper;
 import com.dburyak.example.jwt.lib.auth.JwtFilter;
 import com.dburyak.example.jwt.lib.auth.JwtParser;
 import com.dburyak.example.jwt.lib.auth.NoAuthoritiesMapper;
-import com.dburyak.example.jwt.lib.auth.RequestUtil;
+import com.dburyak.example.jwt.lib.req.RequestUtil;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

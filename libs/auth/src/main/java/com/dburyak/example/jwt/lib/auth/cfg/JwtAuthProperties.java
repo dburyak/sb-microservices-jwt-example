@@ -17,9 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
-import static com.dburyak.example.jwt.lib.auth.AuthConstants.SERVICE_UUIDS;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
@@ -187,7 +185,6 @@ public class JwtAuthProperties {
         @ConstructorBinding
         public ServiceToken(
                 @DefaultValue("false") boolean enabled,
-
                 @Nullable String issuer) {
             this.enabled = enabled;
             this.issuer = issuer;

@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.lib.auth;
+package com.dburyak.example.jwt.lib.req;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,7 +10,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.dburyak.example.jwt.lib.auth.Headers.TENANT_ID;
+import static com.dburyak.example.jwt.lib.req.Headers.TENANT_ID;
+
 
 /**
  * Filter to extract tenant ID from the request header and set it in the request attributes.
