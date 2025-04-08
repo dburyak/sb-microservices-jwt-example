@@ -1,19 +1,21 @@
 package com.dburyak.example.jwt.api.auth;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
+@Value
+@Builder(toBuilder = true)
 public class JwtLoginRequest {
 
     @NotBlank
-    private String username;
+    String username;
 
     @NotBlank
-    private String password;
+    String password;
 
     @NotBlank
-    private String deviceId;
+    String deviceId;
 
-    private Boolean rememberMe;
+    Boolean rememberMe;
 }

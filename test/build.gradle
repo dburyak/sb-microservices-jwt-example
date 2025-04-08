@@ -1,0 +1,35 @@
+plugins {
+    id 'com.dburyak.example.jwt.gradle.dependency-management'
+    id 'groovy'
+    id 'jvm-test-suite'
+}
+
+dependencies {
+    implementation 'org.apache.groovy:groovy-all'
+    implementation 'org.spockframework:spock-core'
+    runtimeOnly 'net.bytebuddy:byte-buddy'
+    runtimeOnly 'cglib:cglib-nodep'
+    runtimeOnly 'org.objenesis:objenesis'
+    implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // public services apis
+    implementation project(':libs:request')
+    implementation project(':libs:api:public:auth-api-public')
+    implementation project(':libs:api:public:tenant-api-public')
+    implementation project(':libs:api:public:user-api-public')
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+testing {
+    suites {
+        test {
+            useSpock(spockVersion)
+        }
+    }
+}

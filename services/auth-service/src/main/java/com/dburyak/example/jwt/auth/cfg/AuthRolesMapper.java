@@ -19,7 +19,7 @@ public class AuthRolesMapper implements JwtAuthoritiesMapper {
     private final Map<Role, Set<String>> mapping = Map.of(
             SUPER_ADMIN, Set.of(
                     USER_WRITE.name(),
-                    ACTUATOR_READ.name()
+                    ACTUATOR_READ
             ),
             SERVICE, Set.of(USER_WRITE.name())
     );

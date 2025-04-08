@@ -1,17 +1,17 @@
 package com.dburyak.example.jwt.api.auth;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Value;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
-@Builder
+@Value
+@Builder(toBuilder = true)
 public class JwtLoginResponse {
-    private UUID userUuid;
-    private String accessToken;
-    private Instant accessTokenExpiresAt;
-    private UUID refreshToken;
-    private Instant refreshTokenExpiresAt;
+    UUID userUuid;
+    String accessToken;
+    Instant accessTokenExpiresAt;
+    UUID refreshToken;
+    Instant refreshTokenExpiresAt;
 }

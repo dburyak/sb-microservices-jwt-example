@@ -15,11 +15,17 @@ include ':libs:err'
 include ':libs:api:api-common'
 include ':libs:api:public:auth-api-public'
 include ':libs:api:public:user-api-public'
+include ':libs:api:public:tenant-api-public'
+include ':libs:api:internal:tenant-api-internal'
 include ':libs:api:internal:auth-api-internal'
 
 // services
+include ':services:tenant-service'
 include ':services:auth-service'
 include ':services:user-service'
 include ':services:catalogue-service'
 include ':services:watch-history-service'
 include ':services:watch-state-service'
+
+// tests
+include ':test'

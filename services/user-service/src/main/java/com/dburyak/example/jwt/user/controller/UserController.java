@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.dburyak.example.jwt.api.user.Paths.USERS_ROOT;
 import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_ID;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping(USERS_ROOT)
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;

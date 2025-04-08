@@ -3,19 +3,21 @@ package com.dburyak.example.jwt.api.internal.auth;
 import com.dburyak.example.jwt.api.common.ApiView.CREATE;
 import com.dburyak.example.jwt.api.common.ApiView.READ;
 import com.dburyak.example.jwt.api.common.ApiView.UPDATE;
+import com.dburyak.example.jwt.api.common.AuditedModel;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
+import lombok.experimental.SuperBuilder;
 
-import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
 @Value
-@Builder(toBuilder = true)
-public class User {
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder(toBuilder = true)
+public class User extends AuditedModel {
 
     @NotNull(groups = {CREATE.class})
     @JsonView({READ.class, CREATE.class})
@@ -32,16 +34,4 @@ public class User {
 
     @JsonView({READ.class, CREATE.class, UPDATE.class})
     Set<String> roles;
-
-    @JsonView({READ.class})
-    UUID createdBy;
-
-    @JsonView({READ.class})
-    Instant createdDate;
-
-    @JsonView({READ.class})
-    UUID lastModifiedBy;
-
-    @JsonView({READ.class})
-    Instant lastModifiedDate;
 }

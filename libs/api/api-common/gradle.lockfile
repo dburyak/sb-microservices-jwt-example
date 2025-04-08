@@ -4,14 +4,14 @@
 cglib:cglib-nodep:3.3.0=integrationTestRuntimeClasspath
 ch.qos.logback:logback-classic:1.5.18=integrationTestCompileClasspath,integrationTestRuntimeClasspath
 ch.qos.logback:logback-core:1.5.18=integrationTestCompileClasspath,integrationTestRuntimeClasspath
-com.fasterxml.jackson.core:jackson-annotations:2.18.3=integrationTestCompileClasspath,integrationTestRuntimeClasspath
+com.fasterxml.jackson.core:jackson-annotations:2.18.3=compileClasspath,integrationTestCompileClasspath,integrationTestRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.fasterxml.jackson.core:jackson-core:2.18.3=integrationTestCompileClasspath,integrationTestRuntimeClasspath
 com.fasterxml.jackson.core:jackson-databind:2.18.3=integrationTestCompileClasspath,integrationTestRuntimeClasspath
 com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.3=integrationTestRuntimeClasspath
 com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.18.3=integrationTestCompileClasspath,integrationTestRuntimeClasspath
 com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.3=integrationTestCompileClasspath,integrationTestRuntimeClasspath
 com.fasterxml.jackson.module:jackson-module-parameter-names:2.18.3=integrationTestCompileClasspath,integrationTestRuntimeClasspath
-com.fasterxml.jackson:jackson-bom:2.18.3=integrationTestCompileClasspath,integrationTestRuntimeClasspath
+com.fasterxml.jackson:jackson-bom:2.18.3=compileClasspath,integrationTestCompileClasspath,integrationTestRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.github.docker-java:docker-java-api:3.4.1=integrationTestCompileClasspath,integrationTestRuntimeClasspath
 com.github.docker-java:docker-java-transport-zerodep:3.4.1=integrationTestCompileClasspath,integrationTestRuntimeClasspath
 com.github.docker-java:docker-java-transport:3.4.1=integrationTestCompileClasspath,integrationTestRuntimeClasspath

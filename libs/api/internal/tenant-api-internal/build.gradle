@@ -1,0 +1,12 @@
+plugins {
+    id 'com.dburyak.example.jwt.gradle.sb-library'
+    id 'java-library'
+}
+
+dependencies {
+    api project(':libs:api:api-common')
+    implementation project(':libs:auth')
+    api 'com.fasterxml.jackson.core:jackson-annotations'
+    api 'org.hibernate.validator:hibernate-validator'
+    implementation 'org.springframework:spring-web'
+}

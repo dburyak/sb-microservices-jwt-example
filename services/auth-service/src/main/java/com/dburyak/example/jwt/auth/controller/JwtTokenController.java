@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.dburyak.example.jwt.api.internal.auth.Paths.AUTH_JWT_ROOT;
-import static com.dburyak.example.jwt.api.internal.auth.Paths.AUTH_JWT_REFRESH;
-import static com.dburyak.example.jwt.api.internal.auth.Paths.AUTH_JWT_TOKEN;
+import static com.dburyak.example.jwt.api.auth.Paths.AUTH_JWT_REFRESH;
+import static com.dburyak.example.jwt.api.auth.Paths.AUTH_JWT_ROOT;
+import static com.dburyak.example.jwt.api.auth.Paths.AUTH_JWT_TOKEN;
 import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_ID;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 

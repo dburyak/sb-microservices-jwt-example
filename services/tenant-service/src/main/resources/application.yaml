@@ -1,0 +1,13 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: tenant-service
+  data:
+    mongodb:
+      auto-index-creation: true
+      database: ${MONGO_DATABASE:local-jwt-tenant}
+auth:
+  jwt:
+    enabled: true
+    keys: ${JWT_KNOWN_KEYS:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}

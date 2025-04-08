@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Value
 @Builder(toBuilder = true)
-@Jacksonized
+//@Jacksonized
 public class User {
 
     @JsonView({READ.class})

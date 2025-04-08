@@ -26,7 +26,7 @@ public class SecurityCfg {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(GET, "/actuator/**").hasAuthority(ACTUATOR_READ.name())
+                        .requestMatchers(GET, "/actuator/**").hasAuthority(ACTUATOR_READ)
 
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(POST, USER_REGISTRATION_ROOT).hasAuthority(USER_WRITE.name())
