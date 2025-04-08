@@ -3,6 +3,7 @@ package com.dburyak.example.jwt.auth.controller;
 import com.dburyak.example.jwt.api.common.ApiView.CREATE;
 import com.dburyak.example.jwt.api.internal.auth.User;
 import com.dburyak.example.jwt.auth.service.UserService;
+import com.dburyak.example.jwt.lib.auth.Role;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.dburyak.example.jwt.api.internal.auth.Paths.USER_ROOT;
+import java.util.Set;
+
+import static com.dburyak.example.jwt.api.internal.auth.Paths.USER_REGISTRATION_ROOT;
 import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_ID;
 
 @RestController
-@RequestMapping(USER_ROOT)
+@RequestMapping(USER_REGISTRATION_ROOT)
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -26,7 +29,7 @@ public class UserController {
     public ResponseEntity<User> create(
             @NotBlank @RequestAttribute(TENANT_ID) String tenantId,
             @Validated(CREATE.class) @RequestBody User req) {
-        var user = userService.create(tenantId, req);
+        var user = userService.create(tenantId, req, Set.of(Role.USER));
         return ResponseEntity.ok(user);
     }
 }

@@ -76,6 +76,22 @@ public class RequestUtil {
         putRequestAttr(req, Attributes.DEVICE_ID, deviceId);
     }
 
+    public boolean isServiceRequest() {
+        return Boolean.TRUE.equals(getRequestAttr(Attributes.IS_SERVICE_REQ));
+    }
+
+    public boolean isServiceRequest(HttpServletRequest req) {
+        return Boolean.TRUE.equals(getRequestAttr(req, Attributes.IS_SERVICE_REQ));
+    }
+
+    public void setServiceRequest(boolean isServiceRequest) {
+        putRequestAttr(Attributes.IS_SERVICE_REQ, isServiceRequest);
+    }
+
+    public void setServiceRequest(HttpServletRequest req, boolean isServiceRequest) {
+        putRequestAttr(req, Attributes.IS_SERVICE_REQ, isServiceRequest);
+    }
+
     public <T> void putRequestAttr(String key, T value) {
         putRequestAttr(currentRequest(), key, value);
     }

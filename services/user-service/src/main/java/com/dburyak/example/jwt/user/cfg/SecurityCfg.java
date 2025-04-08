@@ -1,7 +1,8 @@
 package com.dburyak.example.jwt.user.cfg;
 
 import com.dburyak.example.jwt.lib.auth.JwtFilter;
-import com.dburyak.example.jwt.lib.req.TenantIdExtractionFilter;
+import com.dburyak.example.jwt.lib.req.TenantIdHeaderExtractionFilter;
+import com.dburyak.example.jwt.lib.req.TenantIdQueryParamExtractionFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,7 +19,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityCfg {
 
     @Bean
-    public SecurityFilterChain security(HttpSecurity http, TenantIdExtractionFilter tenantIdFilter, JwtFilter jwtFilter)
+    public SecurityFilterChain security(HttpSecurity http, TenantIdHeaderExtractionFilter tenantIdFilter,
+            JwtFilter jwtFilter, TenantIdQueryParamExtractionFilter tenantIdQueryParamExtractionFilter)
             throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
@@ -28,8 +30,10 @@ public class SecurityCfg {
                         .requestMatchers(POST, "/user").permitAll()
                         .requestMatchers(GET, "/user").hasAuthority(USER_READ.name())
                         .anyRequest().denyAll())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(tenantIdFilter, JwtFilter.class)
+
+                .addFilterBefore(tenantIdFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(jwtFilter, TenantIdHeaderExtractionFilter.class)
+                .addFilterAfter(tenantIdQueryParamExtractionFilter, JwtFilter.class)
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
                 .build();
     }

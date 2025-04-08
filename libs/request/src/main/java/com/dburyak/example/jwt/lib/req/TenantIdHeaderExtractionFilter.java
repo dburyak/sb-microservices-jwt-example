@@ -18,7 +18,7 @@ import static com.dburyak.example.jwt.lib.req.Headers.TENANT_ID;
  * This is needed only for unprotected endpoints. In protected endpoints, the tenant ID is extracted from the JWT token.
  */
 @RequiredArgsConstructor
-public class TenantIdExtractionFilter extends OncePerRequestFilter {
+public class TenantIdHeaderExtractionFilter extends OncePerRequestFilter {
     private final RequestUtil requestUtil;
 
     @Override
@@ -26,7 +26,7 @@ public class TenantIdExtractionFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         var tenantId = request.getHeader(TENANT_ID.getHeader());
         if (StringUtils.isNotBlank(tenantId)) {
-            requestUtil.setTenantId(request, tenantId);
+            requestUtil.setTenantId(request, tenantId.strip());
         }
         filterChain.doFilter(request, response);
     }

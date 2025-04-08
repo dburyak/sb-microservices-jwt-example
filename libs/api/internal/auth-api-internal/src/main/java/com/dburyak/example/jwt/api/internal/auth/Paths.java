@@ -7,5 +7,5 @@ public class Paths {
     public static final String AUTH_JWT_ROOT = "/auth/jwt";
     public static final String AUTH_JWT_TOKEN = "/token";
     public static final String AUTH_JWT_REFRESH = "/refresh";
-    public static final String USER_ROOT = "/user";
+    public static final String USER_REGISTRATION_ROOT = "/user/registration";
 }

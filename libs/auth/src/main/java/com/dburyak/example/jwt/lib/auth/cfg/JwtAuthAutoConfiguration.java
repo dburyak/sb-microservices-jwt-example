@@ -12,8 +12,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @AutoConfiguration(after = JwtPropsAutoConfiguration.class)
+@EnableWebSecurity
 @ConditionalOnProperty(prefix = "auth.jwt", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class JwtAuthAutoConfiguration {
 
