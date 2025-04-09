@@ -6,14 +6,8 @@ spring:
   data:
     mongodb:
       database: ${MONGO_DATABASE:local-jwt-tenant}
-      auto-index-creation: false
-      uuid-representation: standard
 mongock:
   migration-scan-package: com.dburyak.example.jwt.tenant.repository.migration
-  runner-type: initializingbean
-  transactional: true
-  transaction-strategy: change_unit
 auth:
   jwt:
-    enabled: true
     keys: ${JWT_KNOWN_KEYS:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
