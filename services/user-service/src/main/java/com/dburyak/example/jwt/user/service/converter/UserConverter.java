@@ -8,7 +8,7 @@ public class UserConverter {
 
     public com.dburyak.example.jwt.user.domain.User toDomain(User user, String tenantId) {
         return com.dburyak.example.jwt.user.domain.User.builder()
-                .tenantId(tenantId)
+                .tenantUuid(tenantId)
                 .uuid(user.getUuid())
                 .displayName(user.getDisplayName())
                 .email(user.getEmail())

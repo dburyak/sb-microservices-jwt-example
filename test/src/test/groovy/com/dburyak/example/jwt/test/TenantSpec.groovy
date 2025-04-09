@@ -11,11 +11,11 @@ class TenantSpec extends JwtExampleSpec {
 
         when:
         def resp = tenantClient.create(Tenant.builder()
-                .tenantId(tenantId)
+                .name(tenantId)
                 .build())
 
         then:
-        resp.tenantId == tenantId
+        resp.name == tenantId
 
         and:
         tenantClient.tenantExists(tenantId)

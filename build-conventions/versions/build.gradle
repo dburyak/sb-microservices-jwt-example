@@ -11,7 +11,7 @@ dependencies {
     api platform("org.apache.groovy:groovy-bom:$groovyVersion")
     api platform("org.spockframework:spock-bom:$spockVersion")
     api platform('org.testcontainers:testcontainers-bom:1.20.4')
-    api platform('io.mongock:mongock-bom:5.5.0')
+    api platform('io.mongock:mongock-bom:5.5.1')
 
     constraints {
         api 'org.mongodb:mongodb-driver-sync:4.11.5'

@@ -2,7 +2,6 @@ package com.dburyak.example.jwt.tenant.cfg;
 
 import com.dburyak.example.jwt.lib.auth.JwtFilter;
 import com.dburyak.example.jwt.lib.req.TenantIdHeaderExtractionFilter;
-import com.dburyak.example.jwt.lib.req.TenantIdQueryParamExtractionFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,7 +11,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANTS_ROOT;
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANT_EXISTS;
 import static com.dburyak.example.jwt.lib.auth.StandardAuthorities.ACTUATOR_READ;
-import static com.dburyak.example.jwt.tenant.cfg.Authorities.TENANT_CREATE;
+import static com.dburyak.example.jwt.tenant.cfg.Authorities.TENANT_MANAGE;
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -22,20 +22,20 @@ public class SecurityCfg {
 
     @Bean
     public SecurityFilterChain security(HttpSecurity http, TenantIdHeaderExtractionFilter tenantIdFilter,
-            JwtFilter jwtFilter, TenantIdQueryParamExtractionFilter tenantIdQueryParamExtractionFilter)
-            throws Exception {
+            JwtFilter jwtFilter) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(GET, "/actuator/**").hasAuthority(ACTUATOR_READ)
 
-                        .requestMatchers(POST, TENANTS_ROOT).hasAuthority(TENANT_CREATE)
-                        .requestMatchers(GET, TENANTS_ROOT + TENANT_EXISTS).hasAuthority(Authorities.TENANT_EXISTS)
+                        .requestMatchers(POST, TENANTS_ROOT).hasAuthority(TENANT_MANAGE)
+                        .requestMatchers(DELETE, TENANTS_ROOT).hasAuthority(TENANT_MANAGE)
+                        .requestMatchers(GET, TENANTS_ROOT + "/*").hasAuthority(TENANT_MANAGE)
+                        .requestMatchers(GET, TENANTS_ROOT + "/*" + TENANT_EXISTS).authenticated()
                         .anyRequest().denyAll())
 
-                .addFilterBefore(tenantIdFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(jwtFilter, TenantIdHeaderExtractionFilter.class)
-                .addFilterAfter(tenantIdQueryParamExtractionFilter, JwtFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tenantIdFilter, JwtFilter.class)
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
                 .build();
     }

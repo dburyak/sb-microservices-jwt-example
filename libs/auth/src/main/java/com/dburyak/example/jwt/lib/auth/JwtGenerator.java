@@ -1,6 +1,7 @@
 package com.dburyak.example.jwt.lib.auth;
 
 import com.dburyak.example.jwt.lib.auth.cfg.JwtAuthProperties;
+import com.dburyak.example.jwt.lib.req.ReservedIdentifiers;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,11 +12,11 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_DEVICE_ID;
+import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_TENANT_UUID;
 import static java.util.Collections.emptySet;
 
 public class JwtGenerator {
-    static final String SERVICE_TENANT_ID = "service";
-    static final String SERVICE_DEVICE_ID = "service";
     private final String issuer;
     private final Duration ttl;
     private final String rolesKey;
@@ -51,23 +52,23 @@ public class JwtGenerator {
      *
      * @return JWT token
      */
-    public String generateUserToken(String tenantId, UUID userUuid, String deviceId, Set<String> roles) {
+    public String generateUserToken(UUID tenantId, UUID userUuid, String deviceId, Set<String> roles) {
         return generateInternal(tenantId, userUuid, deviceId, roles, issuer);
     }
 
     /**
      * Generate JWT token for service.
      *
-     * @param serviceUuid special service uuid, one of {@link com.dburyak.example.jwt.lib.req.ServiceUuids}
+     * @param serviceUuid special service uuid, one of {@link ReservedIdentifiers}
      * @param roles roles of the service
      *
      * @return JWT token
      */
     public String generateServiceToken(UUID serviceUuid, Set<String> roles) {
-        return generateInternal(SERVICE_TENANT_ID, serviceUuid, SERVICE_DEVICE_ID, roles, serviceTokenIssuer);
+        return generateInternal(SERVICE_TENANT_UUID, serviceUuid, SERVICE_DEVICE_ID, roles, serviceTokenIssuer);
     }
 
-    private String generateInternal(String tenantId, UUID userUuid, String deviceId, Set<String> roles, String issuer) {
+    private String generateInternal(UUID tenantId, UUID userUuid, String deviceId, Set<String> roles, String issuer) {
         var now = Instant.now();
         return Jwts.builder()
                 .header()

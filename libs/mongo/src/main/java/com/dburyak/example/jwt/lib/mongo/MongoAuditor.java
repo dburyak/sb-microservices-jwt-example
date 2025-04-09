@@ -6,7 +6,7 @@ import org.springframework.data.domain.AuditorAware;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.dburyak.example.jwt.lib.req.ServiceUuids.SERVICE_UUIDS;
+import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_UUIDS;
 
 public class MongoAuditor implements AuditorAware<UUID> {
     private final RequestUtil requestUtil;

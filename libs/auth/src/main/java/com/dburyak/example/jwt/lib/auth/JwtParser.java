@@ -49,12 +49,13 @@ public class JwtParser {
         if (!trustedIssuers.contains(issuer)) {
             return null;
         }
-        var tenantId = claims.get(tenantIdKey, String.class);
+        var tenantIdStr = claims.get(tenantIdKey, String.class);
         var userUuidStr = claims.getSubject();
         var deviceId = claims.get(deviceIdKey, String.class);
-        if (isBlank(tenantId) || isBlank(userUuidStr) || isBlank(deviceId)) {
+        if (isBlank(tenantIdStr) || isBlank(userUuidStr) || isBlank(deviceId)) {
             return null;
         }
+        var tenantId = UUID.fromString(tenantIdStr);
         var userUuid = UUID.fromString(userUuidStr);
         var rolesRaw = claims.get(rolesKey, ArrayList.class);
         var roles = new HashSet<Role>();

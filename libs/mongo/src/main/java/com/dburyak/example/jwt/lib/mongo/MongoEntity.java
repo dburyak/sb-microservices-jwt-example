@@ -21,16 +21,14 @@ import java.util.UUID;
  * - optimistic locking
  */
 @Data
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
-// sub-classes have to put this annotation for uuid+tenantId unique index, it's not inherited properly
-// @CompoundIndex(name = "uuid_1_tenantId_1", unique = true, def = "{'uuid': 1, 'tenantId': 1}")
 public abstract class MongoEntity {
 
     @Id
     private String id;
 
-    private String tenantId;
+    private UUID tenantUuid;
     private UUID uuid;
 
     @CreatedBy

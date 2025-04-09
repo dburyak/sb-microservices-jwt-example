@@ -14,14 +14,14 @@ import static java.util.stream.Collectors.toSet;
 
 @Getter
 public class JwtAuth implements Authentication {
-    private final String tenantId;
+    private final UUID tenantId;
     private final UUID userUuid;
     private final String deviceId;
     private final Set<Role> roles;
     private final Set<GrantedAuthority> authorities;
     private final boolean authenticated;
 
-    public JwtAuth(String tenantId, UUID userUuid, String deviceId, Set<Role> roles) {
+    public JwtAuth(UUID tenantId, UUID userUuid, String deviceId, Set<Role> roles) {
         this.tenantId = tenantId;
         this.userUuid = userUuid;
         this.deviceId = deviceId;
@@ -30,7 +30,7 @@ public class JwtAuth implements Authentication {
         authenticated = false;
     }
 
-    private JwtAuth(String tenantId, UUID userUuid, String deviceId, Set<Role> roles, Set<String> authorities) {
+    private JwtAuth(UUID tenantId, UUID userUuid, String deviceId, Set<Role> roles, Set<String> authorities) {
         this.tenantId = tenantId;
         this.userUuid = userUuid;
         this.deviceId = deviceId;

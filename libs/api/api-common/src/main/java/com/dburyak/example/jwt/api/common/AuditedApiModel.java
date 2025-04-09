@@ -10,7 +10,10 @@ import java.util.UUID;
 
 @Data
 @SuperBuilder(toBuilder = true)
-public abstract class AuditedModel {
+public abstract class AuditedApiModel {
+
+    @JsonView({READ.class})
+    protected final UUID uuid;
 
     @JsonView({READ.class})
     protected final UUID createdBy;

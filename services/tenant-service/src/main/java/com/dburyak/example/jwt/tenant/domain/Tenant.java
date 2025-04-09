@@ -1,37 +1,25 @@
 package com.dburyak.example.jwt.tenant.domain;
 
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Version;
+import com.dburyak.example.jwt.lib.mongo.MongoEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
 import java.util.Set;
-import java.util.UUID;
 
 import static com.dburyak.example.jwt.tenant.domain.Tenant.COLLECTION;
 
 @Document(collection = COLLECTION)
-public class Tenant {
+@Data
+@SuperBuilder(toBuilder = true)
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class Tenant extends MongoEntity {
     public static final String COLLECTION = "tenants";
 
-    private String tenantId;
+    private String name;
+    private String description;
     private Set<String> contactEmails;
-
-    @CreatedBy
-    private UUID createdBy;
-
-    @CreatedDate
-    private Instant createdDate;
-
-    @LastModifiedBy
-    private UUID lastModifiedBy;
-
-    @LastModifiedDate
-    private Instant lastModifiedDate;
-
-    @Version
-    private Integer version;
 }

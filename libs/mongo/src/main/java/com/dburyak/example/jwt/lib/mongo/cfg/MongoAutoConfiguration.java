@@ -2,6 +2,7 @@ package com.dburyak.example.jwt.lib.mongo.cfg;
 
 import com.dburyak.example.jwt.lib.mongo.MongoAuditor;
 import com.dburyak.example.jwt.lib.req.RequestUtil;
+import io.mongock.runner.springboot.EnableMongock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @AutoConfiguration
 @EnableMongoAuditing
+@EnableMongock
 public class MongoAutoConfiguration {
 
     @Bean

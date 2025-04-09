@@ -2,7 +2,6 @@ package com.dburyak.example.jwt.user.cfg;
 
 import com.dburyak.example.jwt.lib.auth.JwtFilter;
 import com.dburyak.example.jwt.lib.req.TenantIdHeaderExtractionFilter;
-import com.dburyak.example.jwt.lib.req.TenantIdQueryParamExtractionFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

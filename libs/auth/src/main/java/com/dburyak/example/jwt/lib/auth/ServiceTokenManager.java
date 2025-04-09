@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 
 import static com.dburyak.example.jwt.lib.auth.Role.SERVICE;
-import static com.dburyak.example.jwt.lib.req.ServiceUuids.SERVICE_UUIDS;
+import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_UUIDS;
 
 public class ServiceTokenManager {
     private static final Set<String> SERVICE_ROLES = Set.of(SERVICE.getName());

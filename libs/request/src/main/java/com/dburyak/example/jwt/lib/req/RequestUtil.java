@@ -28,19 +28,19 @@ public class RequestUtil {
         putRequestAttr(req, AUTH_TOKEN, authToken);
     }
 
-    public String getTenantId() {
+    public UUID getTenantId() {
         return getRequestAttr(TENANT_ID);
     }
 
-    public String getTenantId(HttpServletRequest req) {
+    public UUID getTenantId(HttpServletRequest req) {
         return getRequestAttr(req, TENANT_ID);
     }
 
-    public void setTenantId(String tenantId) {
+    public void setTenantId(UUID tenantId) {
         putRequestAttr(TENANT_ID, tenantId);
     }
 
-    public void setTenantId(HttpServletRequest req, String tenantId) {
+    public void setTenantId(HttpServletRequest req, UUID tenantId) {
         putRequestAttr(req, TENANT_ID, tenantId);
     }
 

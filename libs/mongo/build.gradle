@@ -5,4 +5,6 @@ plugins {
 dependencies {
     api project(':libs:request') // for auditing
     api 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    api 'io.mongock:mongock-springboot-v3'
+    implementation 'io.mongock:mongodb-springdata-v4-driver'
 }

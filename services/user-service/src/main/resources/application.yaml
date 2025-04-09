@@ -5,8 +5,9 @@ spring:
     name: user-service
   data:
     mongodb:
-      auto-index-creation: true
       database: ${MONGO_DATABASE:local-jwt-user}
+      auto-index-creation: true
+      uuid-representation: standard
 auth:
   jwt:
     enabled: true

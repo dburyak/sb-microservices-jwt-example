@@ -12,8 +12,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.dburyak.example.jwt.lib.auth.JwtGenerator.SERVICE_DEVICE_ID;
-import static com.dburyak.example.jwt.lib.auth.JwtGenerator.SERVICE_TENANT_ID;
+import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_DEVICE_ID;
+import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_TENANT_UUID;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -36,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 requestUtil.setTenantId(request, parsedToken.getTenantId());
                 requestUtil.setUserUuid(request, parsedToken.getUserUuid());
                 requestUtil.setDeviceId(request, parsedToken.getDeviceId());
-                requestUtil.setServiceRequest(SERVICE_TENANT_ID.equals(parsedToken.getTenantId()) &&
+                requestUtil.setServiceRequest(SERVICE_TENANT_UUID.equals(parsedToken.getTenantId()) &&
                         SERVICE_DEVICE_ID.equals(parsedToken.getDeviceId()));
             }
         }

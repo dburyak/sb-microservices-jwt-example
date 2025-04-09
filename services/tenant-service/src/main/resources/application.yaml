@@ -5,8 +5,14 @@ spring:
     name: tenant-service
   data:
     mongodb:
-      auto-index-creation: true
       database: ${MONGO_DATABASE:local-jwt-tenant}
+      auto-index-creation: false
+      uuid-representation: standard
+mongock:
+  migration-scan-package: com.dburyak.example.jwt.tenant.repository.migration
+  runner-type: initializingbean
+  transactional: true
+  transaction-strategy: change_unit
 auth:
   jwt:
     enabled: true

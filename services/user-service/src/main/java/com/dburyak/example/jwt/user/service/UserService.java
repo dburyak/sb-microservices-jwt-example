@@ -14,7 +14,7 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final UserConverter userConverter;
-    private final AuthServiceClient authService;
+    private final AuthServiceClient authServiceClient;
 
     public User create(String tenantId, User req) {
         var user = userConverter.toDomain(req, tenantId);
@@ -27,6 +27,6 @@ public class UserService {
     private void publishUserCreatedEvent(String tenantId, User reqUser,
             com.dburyak.example.jwt.user.domain.User domainUser) {
         // in a real-world app we'd rather publish it as an event, and let the relevant services handle it
-        authService.createUser(tenantId, userConverter.toApiModelAuth(reqUser, domainUser));
+        authServiceClient.createUser(tenantId, userConverter.toApiModelAuth(reqUser, domainUser));
     }
 }

@@ -14,7 +14,7 @@ import static com.dburyak.example.jwt.user.domain.User.COLLECTION;
 @CompoundIndex(name = "uuid_1_tenantId_1", unique = true, def = "{'uuid': 1, 'tenantId': 1}")
 @CompoundIndex(name = "email_1_tenantId_1", unique = true, def = "{'email': 1, 'tenantId': 1}")
 @Data
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class User extends MongoEntity {

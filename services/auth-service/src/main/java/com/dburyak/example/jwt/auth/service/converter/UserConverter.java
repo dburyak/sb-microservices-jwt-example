@@ -20,7 +20,7 @@ public class UserConverter {
 
     public com.dburyak.example.jwt.auth.domain.User toDomain(User user, String tenantId) {
         return com.dburyak.example.jwt.auth.domain.User.builder()
-                .tenantId(tenantId)
+                .tenantUuid(tenantId)
                 .uuid(user.getUuid())
                 .username(user.getUsername())
                 .roles(user.getRoles())
