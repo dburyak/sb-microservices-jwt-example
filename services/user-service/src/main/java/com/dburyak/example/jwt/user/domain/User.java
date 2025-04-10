@@ -11,8 +11,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import static com.dburyak.example.jwt.user.domain.User.COLLECTION;
 
 @Document(collection = COLLECTION)
-@CompoundIndex(name = "uuid_1_tenantId_1", unique = true, def = "{'uuid': 1, 'tenantId': 1}")
-@CompoundIndex(name = "email_1_tenantId_1", unique = true, def = "{'email': 1, 'tenantId': 1}")
+@CompoundIndex(name = "uuid_1_tenantUuid_1", unique = true, def = "{'uuid': 1, 'tenantUuid': 1}")
+@CompoundIndex(name = "email_1_tenantUuid_1", unique = true, def = "{'email': 1, 'tenantUuid': 1}")
 @Data
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor

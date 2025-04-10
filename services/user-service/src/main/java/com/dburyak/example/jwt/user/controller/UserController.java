@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 import static com.dburyak.example.jwt.api.user.Paths.USERS_ROOT;
-import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_ID;
+import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
 
 @RestController
 @RequestMapping(USERS_ROOT)
@@ -24,9 +26,9 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> create(
-            @NotBlank @RequestAttribute(TENANT_ID) String tenantId,
+            @NotBlank @RequestAttribute(TENANT_UUID) UUID tenantUuid,
             @Validated(CREATE.class) @RequestBody User req) {
-        var user = userService.create(tenantId, req);
+        var user = userService.create(tenantUuid, req);
         return ResponseEntity.ok(user);
     }
 }

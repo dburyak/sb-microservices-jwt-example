@@ -7,7 +7,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.UUID;
 
 import static com.dburyak.example.jwt.lib.req.Attributes.AUTH_TOKEN;
-import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_ID;
+import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
 import static com.dburyak.example.jwt.lib.req.Attributes.USER_UUID;
 
 public class RequestUtil {
@@ -28,20 +28,20 @@ public class RequestUtil {
         putRequestAttr(req, AUTH_TOKEN, authToken);
     }
 
-    public UUID getTenantId() {
-        return getRequestAttr(TENANT_ID);
+    public UUID getTenantUuid() {
+        return getRequestAttr(TENANT_UUID);
     }
 
-    public UUID getTenantId(HttpServletRequest req) {
-        return getRequestAttr(req, TENANT_ID);
+    public UUID getTenantUuid(HttpServletRequest req) {
+        return getRequestAttr(req, TENANT_UUID);
     }
 
-    public void setTenantId(UUID tenantId) {
-        putRequestAttr(TENANT_ID, tenantId);
+    public void setTenantUuid(UUID tenantUuid) {
+        putRequestAttr(TENANT_UUID, tenantUuid);
     }
 
-    public void setTenantId(HttpServletRequest req, UUID tenantId) {
-        putRequestAttr(req, TENANT_ID, tenantId);
+    public void setTenantUuid(HttpServletRequest req, UUID tenantUuid) {
+        putRequestAttr(req, TENANT_UUID, tenantUuid);
     }
 
     public UUID getUserUuid() {

@@ -6,10 +6,10 @@ import java.util.UUID;
 
 public interface RefreshTokenRepositoryCustom {
 
-    void insertOrReplaceByTenantIdAndUserUuidAndDeviceId(RefreshToken refreshToken);
+    void insertOrReplaceByTenantUuidAndUserUuidAndDeviceId(RefreshToken refreshToken);
 
-    boolean replaceOneByTenantIdAndUserUuidAndDeviceIdAndTokenAndNotExpired(RefreshToken refreshToken);
+    boolean replaceOneByTenantUuidAndUserUuidAndDeviceIdAndTokenAndNotExpired(RefreshToken refreshToken);
 
-    boolean deleteByTenantIdAndUserUuidAndDeviceIdAndTokenAndNotExpired(String tenantId, UUID userUuid,
+    boolean deleteByTenantUuidAndUserUuidAndDeviceIdAndTokenAndNotExpired(UUID tenantUuid, UUID userUuid,
             String deviceId, UUID token);
 }

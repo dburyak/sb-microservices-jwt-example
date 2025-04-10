@@ -20,7 +20,7 @@ public class RefreshToken {
     @Id
     private String id;
 
-    private String tenantId;
+    private UUID tenantUuid;
     private UUID userUuid;
     private String deviceId;
     private UUID token;

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface UserRepository extends MongoRepository<User, String> {
 
-    User findByTenantIdAndUsername(String tenantId, String username);
+    User findByTenantUuidAndUsername(UUID tenantUuid, String username);
 
-    User findByTenantIdAndUuid(String tenantId, UUID uuid);
+    User findByTenantUuidAndUuid(UUID tenantUuid, UUID uuid);
 }

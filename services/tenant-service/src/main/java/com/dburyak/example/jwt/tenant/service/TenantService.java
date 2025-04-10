@@ -23,26 +23,26 @@ public class TenantService {
         return converter.toApiModel(savedTenant);
     }
 
-    public Tenant get(UUID tenantId) {
-        var tenant = tenantRepository.findByUuid(tenantId);
+    public Tenant get(UUID tenantUuid) {
+        var tenant = tenantRepository.findByUuid(tenantUuid);
         if (tenant == null) {
-            throw new NotFoundException(NOT_FOUND_MSG.formatted(tenantId));
+            throw new NotFoundException(NOT_FOUND_MSG.formatted(tenantUuid));
         }
         return converter.toApiModel(tenant);
     }
 
-    public boolean delete(UUID tenantId) {
-        var deleted = tenantRepository.deleteByUuid(tenantId);
+    public boolean delete(UUID tenantUuid) {
+        var deleted = tenantRepository.deleteByUuid(tenantUuid);
         if (!deleted) {
-            throw new NotFoundException(NOT_FOUND_MSG.formatted(tenantId));
+            throw new NotFoundException(NOT_FOUND_MSG.formatted(tenantUuid));
         }
         return true;
     }
 
-    public void verifyExists(UUID tenantId) {
-        var exists = tenantRepository.existsByUuid(tenantId);
+    public void verifyExists(UUID tenantUuid) {
+        var exists = tenantRepository.existsByUuid(tenantUuid);
         if (!exists) {
-            throw new NotFoundException(NOT_FOUND_MSG.formatted(tenantId));
+            throw new NotFoundException(NOT_FOUND_MSG.formatted(tenantUuid));
         }
     }
 }

@@ -18,10 +18,10 @@ import static java.util.stream.Collectors.toSet;
 public class AuthRolesMapper implements JwtAuthoritiesMapper {
     private final Map<Role, Set<String>> mapping = Map.of(
             SUPER_ADMIN, Set.of(
-                    USER_WRITE.name(),
+                    USER_WRITE,
                     ACTUATOR_READ
             ),
-            SERVICE, Set.of(USER_WRITE.name())
+            SERVICE, Set.of(USER_WRITE)
     );
 
     @Override

@@ -1,7 +1,7 @@
 package com.dburyak.example.jwt.lib.req.cfg;
 
 import com.dburyak.example.jwt.lib.req.RequestUtil;
-import com.dburyak.example.jwt.lib.req.TenantIdHeaderExtractionFilter;
+import com.dburyak.example.jwt.lib.req.TenantUuidHeaderExtractionFilter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
@@ -14,7 +14,7 @@ public class RequestAutoConfiguration {
     }
 
     @Bean
-    public TenantIdHeaderExtractionFilter tenantIdHeaderExtractionFilter(RequestUtil requestUtil) {
-        return new TenantIdHeaderExtractionFilter(requestUtil);
+    public TenantUuidHeaderExtractionFilter tenantUuidHeaderExtractionFilter(RequestUtil requestUtil) {
+        return new TenantUuidHeaderExtractionFilter(requestUtil);
     }
 }

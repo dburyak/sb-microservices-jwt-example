@@ -22,7 +22,7 @@ public class JwtGenerator {
     private final String rolesKey;
     private final Key key;
     private final String keyId;
-    private final String tenantIdKey;
+    private final String tenantUuidKey;
     private final String deviceIdKey;
     private final String serviceTokenIssuer;
 
@@ -35,7 +35,7 @@ public class JwtGenerator {
         this.rolesKey = props.getRolesKey();
         this.key = props.getGenerator().getKey().toJdkKey();
         this.keyId = props.getGenerator().getKey().getKid();
-        this.tenantIdKey = props.getTenantIdKey();
+        this.tenantUuidKey = props.getTenantUuidKey();
         this.deviceIdKey = props.getDeviceIdKey();
         this.serviceTokenIssuer = StringUtils.isNotBlank(props.getServiceToken().getIssuer())
                 ? props.getServiceToken().getIssuer()
@@ -45,15 +45,15 @@ public class JwtGenerator {
     /**
      * Generate JWT token for user.
      *
-     * @param tenantId tenantId tenant id
-     * @param userUuid userUuid user unique identifier
+     * @param tenantUuid tenant uuid
+     * @param userUuid user unique identifier
      * @param deviceId device id
      * @param roles roles of the user
      *
      * @return JWT token
      */
-    public String generateUserToken(UUID tenantId, UUID userUuid, String deviceId, Set<String> roles) {
-        return generateInternal(tenantId, userUuid, deviceId, roles, issuer);
+    public String generateUserToken(UUID tenantUuid, UUID userUuid, String deviceId, Set<String> roles) {
+        return generateInternal(tenantUuid, userUuid, deviceId, roles, issuer);
     }
 
     /**
@@ -68,7 +68,7 @@ public class JwtGenerator {
         return generateInternal(SERVICE_TENANT_UUID, serviceUuid, SERVICE_DEVICE_ID, roles, serviceTokenIssuer);
     }
 
-    private String generateInternal(UUID tenantId, UUID userUuid, String deviceId, Set<String> roles, String issuer) {
+    private String generateInternal(UUID tenantUuid, UUID userUuid, String deviceId, Set<String> roles, String issuer) {
         var now = Instant.now();
         return Jwts.builder()
                 .header()
@@ -79,7 +79,7 @@ public class JwtGenerator {
                 .subject(userUuid.toString())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(ttl)))
-                .claim(tenantIdKey, tenantId)
+                .claim(tenantUuidKey, tenantUuid)
                 .claim(deviceIdKey, deviceId)
                 .claim(rolesKey, roles != null ? roles : emptySet())
                 .signWith(key)

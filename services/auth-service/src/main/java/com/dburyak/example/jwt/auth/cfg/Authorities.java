@@ -1,5 +1,8 @@
 package com.dburyak.example.jwt.auth.cfg;
 
-public enum Authorities {
-    USER_WRITE;
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
+public class Authorities {
+    public static final String USER_WRITE = "USER_WRITE";
 }

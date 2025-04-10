@@ -4,5 +4,5 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class PathParams {
-    public static final String TENANT_ID = "tenantId";
+    public static final String TENANT_UUID = "tenantUuid";
 }

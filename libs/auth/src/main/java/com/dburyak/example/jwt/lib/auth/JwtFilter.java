@@ -32,11 +32,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 var tokenWithAuthorities = authManager.authenticate(parsedToken);
                 SecurityContextHolder.getContext().setAuthentication(tokenWithAuthorities);
                 requestUtil.setAuthToken(request, jwtTokenStr);
-                // if tenantId is set in header, tenantId from JWT token always takes precedence
-                requestUtil.setTenantId(request, parsedToken.getTenantId());
+                // if tenantUuid is set in header, tenantUuid from JWT token always overrides it
+                requestUtil.setTenantUuid(request, parsedToken.getTenantUuid());
                 requestUtil.setUserUuid(request, parsedToken.getUserUuid());
                 requestUtil.setDeviceId(request, parsedToken.getDeviceId());
-                requestUtil.setServiceRequest(SERVICE_TENANT_UUID.equals(parsedToken.getTenantId()) &&
+                requestUtil.setServiceRequest(SERVICE_TENANT_UUID.equals(parsedToken.getTenantUuid()) &&
                         SERVICE_DEVICE_ID.equals(parsedToken.getDeviceId()));
             }
         }

@@ -14,15 +14,15 @@ import static java.util.stream.Collectors.toSet;
 
 @Getter
 public class JwtAuth implements Authentication {
-    private final UUID tenantId;
+    private final UUID tenantUuid;
     private final UUID userUuid;
     private final String deviceId;
     private final Set<Role> roles;
     private final Set<GrantedAuthority> authorities;
     private final boolean authenticated;
 
-    public JwtAuth(UUID tenantId, UUID userUuid, String deviceId, Set<Role> roles) {
-        this.tenantId = tenantId;
+    public JwtAuth(UUID tenantUuid, UUID userUuid, String deviceId, Set<Role> roles) {
+        this.tenantUuid = tenantUuid;
         this.userUuid = userUuid;
         this.deviceId = deviceId;
         this.roles = roles;
@@ -30,8 +30,8 @@ public class JwtAuth implements Authentication {
         authenticated = false;
     }
 
-    private JwtAuth(UUID tenantId, UUID userUuid, String deviceId, Set<Role> roles, Set<String> authorities) {
-        this.tenantId = tenantId;
+    private JwtAuth(UUID tenantUuid, UUID userUuid, String deviceId, Set<Role> roles, Set<String> authorities) {
+        this.tenantUuid = tenantUuid;
         this.userUuid = userUuid;
         this.deviceId = deviceId;
         this.roles = roles;
@@ -42,7 +42,7 @@ public class JwtAuth implements Authentication {
     }
 
     public JwtAuth withMappedAuthorities(Set<String> authorities) {
-        return new JwtAuth(tenantId, userUuid, deviceId, roles, authorities);
+        return new JwtAuth(tenantUuid, userUuid, deviceId, roles, authorities);
     }
 
     @Override

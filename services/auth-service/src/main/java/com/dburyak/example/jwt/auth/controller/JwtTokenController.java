@@ -3,14 +3,18 @@ package com.dburyak.example.jwt.auth.controller;
 import com.dburyak.example.jwt.api.auth.JwtLoginRequest;
 import com.dburyak.example.jwt.api.auth.JwtLoginResponse;
 import com.dburyak.example.jwt.api.auth.JwtRefreshTokenRequest;
+import com.dburyak.example.jwt.api.common.ApiView.CREATE;
+import com.dburyak.example.jwt.api.common.ApiView.READ;
 import com.dburyak.example.jwt.auth.service.AuthService;
 import com.dburyak.example.jwt.lib.err.NotFoundException;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -19,10 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 import static com.dburyak.example.jwt.api.auth.Paths.AUTH_JWT_REFRESH;
 import static com.dburyak.example.jwt.api.auth.Paths.AUTH_JWT_ROOT;
 import static com.dburyak.example.jwt.api.auth.Paths.AUTH_JWT_TOKEN;
-import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_ID;
+import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestController
@@ -33,18 +39,20 @@ public class JwtTokenController {
     private final AuthService authService;
 
     @PostMapping(AUTH_JWT_TOKEN)
+    @JsonView(READ.class)
     public ResponseEntity<JwtLoginResponse> createToken(
-            @NotBlank @RequestAttribute(TENANT_ID) String tenantId,
-            @Valid @RequestBody JwtLoginRequest req) {
-        var resp = authService.createJwtToken(tenantId, req);
+            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
+            @Validated(CREATE.class) @JsonView(CREATE.class) @RequestBody JwtLoginRequest req) {
+        var resp = authService.createJwtToken(tenantUuid, req);
         return ResponseEntity.ok(resp);
     }
 
     @PostMapping(AUTH_JWT_REFRESH)
+    @JsonView(READ.class)
     public ResponseEntity<JwtLoginResponse> refreshToken(
-            @NotBlank @RequestAttribute(TENANT_ID) String tenantId,
+            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @Valid @RequestBody JwtRefreshTokenRequest req) {
-        var resp = authService.refreshJwtToken(tenantId, req);
+        var resp = authService.refreshJwtToken(tenantUuid, req);
         return ResponseEntity.ok(resp);
     }
 

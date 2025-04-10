@@ -58,7 +58,7 @@ public class JwtAuthProperties {
     /**
      * JWT custom claim that contains the tenant id.
      */
-    String tenantIdKey;
+    String tenantUuidKey;
 
     /**
      * JWT custom claim that contains the device id.
@@ -82,7 +82,7 @@ public class JwtAuthProperties {
             @DefaultValue("local.jwt.example.dburyak.com") @NotEmpty Set<String> trustedIssuers,
             @DefaultValue("30s") @NotNull Duration allowedClockSkew,
             @DefaultValue("r") @NotBlank String rolesKey,
-            @DefaultValue("tid") @NotBlank String tenantIdKey,
+            @DefaultValue("tid") @NotBlank String tenantUuidKey,
             @DefaultValue("did") @NotBlank String deviceIdKey,
             @DefaultValue Generator generator,
             @DefaultValue ServiceToken serviceToken) {
@@ -103,7 +103,7 @@ public class JwtAuthProperties {
         this.trustedIssuers = trustedIssuers;
         this.allowedClockSkew = allowedClockSkew;
         this.rolesKey = rolesKey;
-        this.tenantIdKey = tenantIdKey;
+        this.tenantUuidKey = tenantUuidKey;
         this.deviceIdKey = deviceIdKey;
         this.generator = generator;
         this.serviceToken = serviceToken;

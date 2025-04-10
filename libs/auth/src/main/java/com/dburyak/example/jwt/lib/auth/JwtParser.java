@@ -17,7 +17,7 @@ public class JwtParser {
     private final io.jsonwebtoken.JwtParser jjwtParser;
     private final Set<String> trustedIssuers;
     private final String rolesKey;
-    private final String tenantIdKey;
+    private final String tenantUuidKey;
     private final String deviceIdKey;
 
     public JwtParser(JwtAuthProperties props) {
@@ -31,7 +31,7 @@ public class JwtParser {
                 .build();
         this.trustedIssuers = props.getTrustedIssuers();
         this.rolesKey = props.getRolesKey();
-        this.tenantIdKey = props.getTenantIdKey();
+        this.tenantUuidKey = props.getTenantUuidKey();
         this.deviceIdKey = props.getDeviceIdKey();
     }
 
@@ -49,19 +49,19 @@ public class JwtParser {
         if (!trustedIssuers.contains(issuer)) {
             return null;
         }
-        var tenantIdStr = claims.get(tenantIdKey, String.class);
+        var tenantUuidStr = claims.get(tenantUuidKey, String.class);
         var userUuidStr = claims.getSubject();
         var deviceId = claims.get(deviceIdKey, String.class);
-        if (isBlank(tenantIdStr) || isBlank(userUuidStr) || isBlank(deviceId)) {
+        if (isBlank(tenantUuidStr) || isBlank(userUuidStr) || isBlank(deviceId)) {
             return null;
         }
-        var tenantId = UUID.fromString(tenantIdStr);
+        var tenantUuid = UUID.fromString(tenantUuidStr);
         var userUuid = UUID.fromString(userUuidStr);
         var rolesRaw = claims.get(rolesKey, ArrayList.class);
         var roles = new HashSet<Role>();
         for (var roleRaw : rolesRaw) {
             roles.add(Role.byName(roleRaw.toString()));
         }
-        return new JwtAuth(tenantId, userUuid, deviceId, Set.copyOf(roles));
+        return new JwtAuth(tenantUuid, userUuid, deviceId, Set.copyOf(roles));
     }
 }

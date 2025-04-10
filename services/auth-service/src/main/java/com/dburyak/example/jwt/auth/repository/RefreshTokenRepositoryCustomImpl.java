@@ -14,7 +14,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 @RequiredArgsConstructor
 public class RefreshTokenRepositoryCustomImpl implements RefreshTokenRepositoryCustom {
-    private static final String TENANT_ID = "tenantId";
+    private static final String TENANT_UUID = "tenantUuid";
     private static final String USER_UUID = "userUuid";
     private static final String DEVICE_ID = "deviceId";
     private static final String TOKEN = "token";
@@ -22,8 +22,8 @@ public class RefreshTokenRepositoryCustomImpl implements RefreshTokenRepositoryC
     private final MongoTemplate mongo;
 
     @Override
-    public void insertOrReplaceByTenantIdAndUserUuidAndDeviceId(RefreshToken refreshToken) {
-        var q = query(where(TENANT_ID).is(refreshToken.getTenantId())
+    public void insertOrReplaceByTenantUuidAndUserUuidAndDeviceId(RefreshToken refreshToken) {
+        var q = query(where(TENANT_UUID).is(refreshToken.getTenantUuid())
                 .and(USER_UUID).is(refreshToken.getUserUuid())
                 .and(DEVICE_ID).is(refreshToken.getDeviceId()));
         var opts = replaceOptions().upsert();
@@ -31,8 +31,8 @@ public class RefreshTokenRepositoryCustomImpl implements RefreshTokenRepositoryC
     }
 
     @Override
-    public boolean replaceOneByTenantIdAndUserUuidAndDeviceIdAndTokenAndNotExpired(RefreshToken refreshToken) {
-        var q = query(where(TENANT_ID).is(refreshToken.getTenantId())
+    public boolean replaceOneByTenantUuidAndUserUuidAndDeviceIdAndTokenAndNotExpired(RefreshToken refreshToken) {
+        var q = query(where(TENANT_UUID).is(refreshToken.getTenantUuid())
                 .and(USER_UUID).is(refreshToken.getUserUuid())
                 .and(DEVICE_ID).is(refreshToken.getDeviceId())
                 .and(TOKEN).is(refreshToken.getToken())
@@ -42,9 +42,9 @@ public class RefreshTokenRepositoryCustomImpl implements RefreshTokenRepositoryC
     }
 
     @Override
-    public boolean deleteByTenantIdAndUserUuidAndDeviceIdAndTokenAndNotExpired(String tenantId, UUID userUuid,
+    public boolean deleteByTenantUuidAndUserUuidAndDeviceIdAndTokenAndNotExpired(UUID tenantUuid, UUID userUuid,
             String deviceId, UUID token) {
-        var q = query(where(TENANT_ID).is(tenantId)
+        var q = query(where(TENANT_UUID).is(tenantUuid)
                 .and(USER_UUID).is(userUuid)
                 .and(DEVICE_ID).is(deviceId)
                 .and(TOKEN).is(token)

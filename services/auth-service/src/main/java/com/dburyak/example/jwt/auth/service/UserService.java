@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -19,8 +20,8 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    public User create(String tenantId, User req, Set<Role> roles) {
-        var user = converter.toDomain(req, tenantId);
+    public User create(UUID tenantUUid, User req, Set<Role> roles) {
+        var user = converter.toDomain(req, tenantUUid);
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         user.setRoles(roles.stream().map(Role::getName).collect(toSet()));
         var savedUser = repository.save(user);

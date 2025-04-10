@@ -3,6 +3,8 @@ package com.dburyak.example.jwt.auth.service.converter;
 import com.dburyak.example.jwt.api.internal.auth.User;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class UserConverter {
 
@@ -18,9 +20,9 @@ public class UserConverter {
                 .build();
     }
 
-    public com.dburyak.example.jwt.auth.domain.User toDomain(User user, String tenantId) {
+    public com.dburyak.example.jwt.auth.domain.User toDomain(User user, UUID tenantUuid) {
         return com.dburyak.example.jwt.auth.domain.User.builder()
-                .tenantUuid(tenantId)
+                .tenantUuid(tenantUuid)
                 .uuid(user.getUuid())
                 .username(user.getUsername())
                 .roles(user.getRoles())

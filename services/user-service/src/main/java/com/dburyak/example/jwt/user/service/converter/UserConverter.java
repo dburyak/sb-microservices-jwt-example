@@ -3,12 +3,14 @@ package com.dburyak.example.jwt.user.service.converter;
 import com.dburyak.example.jwt.api.user.User;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class UserConverter {
 
-    public com.dburyak.example.jwt.user.domain.User toDomain(User user, String tenantId) {
+    public com.dburyak.example.jwt.user.domain.User toDomain(User user, UUID tenantUuid) {
         return com.dburyak.example.jwt.user.domain.User.builder()
-                .tenantUuid(tenantId)
+                .tenantUuid(tenantUuid)
                 .uuid(user.getUuid())
                 .displayName(user.getDisplayName())
                 .email(user.getEmail())

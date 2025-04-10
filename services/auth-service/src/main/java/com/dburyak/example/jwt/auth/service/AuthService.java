@@ -28,64 +28,64 @@ public class AuthService {
     private final JwtGenerator jwtGenerator;
     private final JwtAuthProperties jwtAuthProps;
 
-    public JwtLoginResponse createJwtToken(String tenantId, JwtLoginRequest req) {
-        var user = userRepository.findByTenantIdAndUsername(tenantId, req.getUsername());
+    public JwtLoginResponse createJwtToken(UUID tenantUuid, JwtLoginRequest req) {
+        var user = userRepository.findByTenantUuidAndUsername(tenantUuid, req.getUsername());
         if (user == null) {
             throw new NotFoundException(String.format("User(username=%s)", req.getUsername()));
         }
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid password for user: " + req.getUsername());
         }
-        var accessToken = jwtGenerator.generateUserToken(tenantId, user.getUuid(), req.getDeviceId(), user.getRoles());
+        var accessToken = jwtGenerator.generateUserToken(tenantUuid, user.getUuid(), req.getDeviceId(), user.getRoles());
         var resp = JwtLoginResponse.builder()
                 .userUuid(user.getUuid())
                 .accessToken(accessToken)
                 .accessTokenExpiresAt(Instant.now().plus(jwtAuthProps.getGenerator().getTtl()));
         if (req.getRememberMe() == null || req.getRememberMe()) { // rememberMe=true if not specified explicitly
             var refreshToken = RefreshToken.builder()
-                    .tenantId(tenantId)
+                    .tenantUuid(tenantUuid)
                     .userUuid(user.getUuid())
                     .deviceId(req.getDeviceId())
                     .token(UUID.randomUUID())
                     .expiresAt(Instant.now().plus(jwtAuthProps.getGenerator().getRefreshTokenTtl()))
                     .build();
-            refreshTokenRepository.insertOrReplaceByTenantIdAndUserUuidAndDeviceId(refreshToken);
+            refreshTokenRepository.insertOrReplaceByTenantUuidAndUserUuidAndDeviceId(refreshToken);
             resp.refreshToken(refreshToken.getToken())
                     .refreshTokenExpiresAt(refreshToken.getExpiresAt());
         }
         return resp.build();
     }
 
-    public JwtLoginResponse refreshJwtToken(String tenantId, JwtRefreshTokenRequest req) {
+    public JwtLoginResponse refreshJwtToken(UUID tenantUuid, JwtRefreshTokenRequest req) {
         var found = false;
         var resp = JwtLoginResponse.builder()
                 .userUuid(req.getUserUuid());
         if (req.getRememberMe()) { // generate a new refresh-token, and replace the current one
             var newRefreshToken = RefreshToken.builder()
-                    .tenantId(tenantId)
+                    .tenantUuid(tenantUuid)
                     .userUuid(req.getUserUuid())
                     .deviceId(req.getDeviceId())
                     .token(UUID.randomUUID())
                     .expiresAt(Instant.now().plus(jwtAuthProps.getGenerator().getRefreshTokenTtl()))
                     .build();
-            found = refreshTokenRepository.replaceOneByTenantIdAndUserUuidAndDeviceIdAndTokenAndNotExpired(
+            found = refreshTokenRepository.replaceOneByTenantUuidAndUserUuidAndDeviceIdAndTokenAndNotExpired(
                     newRefreshToken);
             if (found) {
                 resp.refreshToken(newRefreshToken.getToken())
                         .accessTokenExpiresAt(newRefreshToken.getExpiresAt());
             }
         } else { // delete current refresh-token
-            found = refreshTokenRepository.deleteByTenantIdAndUserUuidAndDeviceIdAndTokenAndNotExpired(
-                    tenantId, req.getUserUuid(), req.getDeviceId(), req.getRefreshToken());
+            found = refreshTokenRepository.deleteByTenantUuidAndUserUuidAndDeviceIdAndTokenAndNotExpired(
+                    tenantUuid, req.getUserUuid(), req.getDeviceId(), req.getRefreshToken());
         }
         if (!found) {
             throw new NotFoundException(String.format("RefreshToken(token=%s)", req.getRefreshToken()));
         }
-        var user = userRepository.findByTenantIdAndUuid(tenantId, req.getUserUuid());
+        var user = userRepository.findByTenantUuidAndUuid(tenantUuid, req.getUserUuid());
         if (user == null) {
             throw new NotFoundException(String.format("User(uuid=%s)", req.getUserUuid()));
         }
-        var accessToken = jwtGenerator.generateUserToken(tenantId, user.getUuid(), req.getDeviceId(), user.getRoles());
+        var accessToken = jwtGenerator.generateUserToken(tenantUuid, user.getUuid(), req.getDeviceId(), user.getRoles());
         return resp.accessToken(accessToken)
                 .accessTokenExpiresAt(Instant.now().plus(jwtAuthProps.getGenerator().getTtl()))
                 .build();
