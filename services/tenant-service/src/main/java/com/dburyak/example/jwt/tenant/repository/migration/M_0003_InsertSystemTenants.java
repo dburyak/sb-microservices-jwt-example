@@ -19,10 +19,10 @@ import static com.dburyak.example.jwt.tenant.repository.migration.M_0002_CreateT
 @ChangeUnit(id = "0003-insert-system-tenants", order = "0003", author = "dmytro.buryak")
 public class M_0003_InsertSystemTenants {
     static final String SERVICE_TENANT_NAME = "service";
-    static final UUID SERVICE_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    static final UUID SERVICE_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
     static final String SA_TENANT_NAME = "system-admin";
-    static final UUID SA_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
-    static final UUID TENANT_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000002");
+    static final UUID SA_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    static final UUID TENANT_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000003");
 
     static final String FIELD_DESCRIPTION = "description";
     static final String FIELD_CONTACT_EMAILS = "contactEmails";

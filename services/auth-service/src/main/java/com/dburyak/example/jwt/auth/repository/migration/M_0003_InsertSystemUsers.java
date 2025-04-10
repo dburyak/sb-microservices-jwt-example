@@ -21,8 +21,9 @@ import static com.dburyak.example.jwt.auth.repository.migration.M_0002_CreateUse
 public class M_0003_InsertSystemUsers {
     static final String SA_USERNAME = "sa";
     static final Set<String> SA_ROLES = Set.of("sa");
-    static final UUID SA_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
-    public static final UUID AUTH_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    static final UUID SA_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    static final UUID SA_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    static final UUID AUTH_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     static final String FIELD_PASSWORD = "password";
     static final String FIELD_ROLES = "roles";
@@ -37,7 +38,7 @@ public class M_0003_InsertSystemUsers {
         var now = Instant.now();
         LinkedHashMap<String, Object> saUserMap = new LinkedHashMap<>();
         saUserMap.put(FIELD_TENANT_UUID, SA_TENANT_UUID);
-        saUserMap.put(FIELD_UUID, UUID.randomUUID());
+        saUserMap.put(FIELD_UUID, SA_USER_UUID);
         saUserMap.put(FIELD_USERNAME, SA_USERNAME);
         saUserMap.put(FIELD_PASSWORD, null); // no initial password for SA
         saUserMap.put(FIELD_ROLES, SA_ROLES);
