@@ -17,8 +17,8 @@ import static com.dburyak.example.jwt.auth.repository.migration.M_0002_CreateUse
 import static com.dburyak.example.jwt.auth.repository.migration.M_0002_CreateUserIndexes.FIELD_USERNAME;
 import static com.dburyak.example.jwt.auth.repository.migration.M_0002_CreateUserIndexes.FIELD_UUID;
 
-@ChangeUnit(id = "0003-insert-system-users", order = "0003", author = "dmytro.buryak")
-public class M_0003_InsertSystemUsers {
+@ChangeUnit(id = "0003-insert-super-admin-user", order = "0003", author = "dmytro.buryak")
+public class M_0003_InsertSuperAdminUser {
     static final String SA_USERNAME = "sa";
     static final String ROLE_SA = "sa";
     static final UUID SA_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
@@ -54,7 +54,7 @@ public class M_0003_InsertSystemUsers {
         var collection = mongo.getCollection(COLLECTION_USERS);
         collection.deleteOne(new Document(Map.of(
                 FIELD_TENANT_UUID, SA_TENANT_UUID,
-                FIELD_USERNAME, SA_USERNAME
+                FIELD_UUID, SA_USER_UUID
         )));
     }
 }

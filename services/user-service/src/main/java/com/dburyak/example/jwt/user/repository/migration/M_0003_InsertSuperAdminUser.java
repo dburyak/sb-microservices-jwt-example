@@ -15,8 +15,8 @@ import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUse
 import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_TENANT_UUID;
 import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_UUID;
 
-@ChangeUnit(id = "0003-insert-system-users", order = "0003", author = "dmytro.buryak")
-public class M_0003_InsertSystemUsers {
+@ChangeUnit(id = "0003-insert-super-admin-user", order = "0003", author = "dmytro.buryak")
+public class M_0003_InsertSuperAdminUser {
     static final UUID SA_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     static final UUID SA_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     static final String SA_DISPLAY_NAME = "Super Admin with full access to all tenants";
