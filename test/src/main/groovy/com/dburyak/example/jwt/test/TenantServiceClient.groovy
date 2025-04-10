@@ -4,7 +4,6 @@ import com.dburyak.example.jwt.api.tenant.Tenant
 
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANT_EXISTS
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANTS_ROOT
-import static com.dburyak.example.jwt.test.JwtExampleSpec.TENANT_ID_QUERY_PARAM
 import static com.dburyak.example.jwt.test.JwtExampleSpec.TENANT_SERVICE_URL
 import static org.springframework.http.HttpStatus.OK
 import static org.springframework.http.MediaType.APPLICATION_JSON

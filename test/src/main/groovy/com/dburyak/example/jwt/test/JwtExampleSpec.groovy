@@ -1,17 +1,20 @@
 package com.dburyak.example.jwt.test
 
-import com.dburyak.example.jwt.lib.req.Attributes
-import com.dburyak.example.jwt.lib.req.Headers
 import spock.lang.Shared
 import spock.lang.Specification
 
 abstract class JwtExampleSpec extends Specification {
-    static String AUTH_SERVICE_URL = System.getenv('AUTH_SERVICE_URL') ?: 'http://localhost:8080'
-    static String USER_SERVICE_URL = System.getenv('USER_SERVICE_URL') ?: 'http://localhost:8081'
-    static String TENANT_SERVICE_URL = System.getenv('TENANT_SERVICE_URL') ?: 'http://localhost:8082'
-    static String TENANT_ID_HEADER = Headers.TENANT_UUID.header
-    static String TENANT_ID_QUERY_PARAM = Attributes.TENANT_UUID
-    static String TENANT_ID = System.getenv('TENANT_ID') ?: 'test-tenant'
+    static final String AUTH_SERVICE_URL = System.getenv('AUTH_SERVICE_URL') ?: 'http://localhost:8080'
+    static final String USER_SERVICE_URL = System.getenv('USER_SERVICE_URL') ?: 'http://localhost:8081'
+    static final String TENANT_SERVICE_URL = System.getenv('TENANT_SERVICE_URL') ?: 'http://localhost:8082'
+    static final String TENANT_NAME = System.getenv('TENANT_NAME') ?: 'test'
+    static final UUID TENANT_UUID =
+            UUID.fromString(System.getenv('TENANT_UUID') ?: '1f3af2c3-a4f7-43c4-9df0-b877bfe7d92d')
+    static final String USERNAME = System.getenv('USERNAME') ?: 'test-user'
+    static final String SA_USERNAME = System.getenv('SA_USERNAME') ?: 'test-super-admin'
+    static final String ADMIN_USERNAME = System.getenv('ADMIN_USERNAME') ?: 'test-admin'
+    static final String CONTENT_MANAGER_USERNAME = System.getenv('CONTENT_MANAGER_USERNAME') ?: 'test-content-manager'
+    static final String USER_MANAGER_USERNAME = System.getenv('USER_MANAGER_USERNAME') ?: 'test-user-manager'
 
     @Shared
     AuthServiceClient authClient = new AuthServiceClient()

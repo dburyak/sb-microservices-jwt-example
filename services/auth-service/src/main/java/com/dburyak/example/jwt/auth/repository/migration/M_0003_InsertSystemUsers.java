@@ -20,7 +20,7 @@ import static com.dburyak.example.jwt.auth.repository.migration.M_0002_CreateUse
 @ChangeUnit(id = "0003-insert-system-users", order = "0003", author = "dmytro.buryak")
 public class M_0003_InsertSystemUsers {
     static final String SA_USERNAME = "sa";
-    static final Set<String> SA_ROLES = Set.of("sa");
+    static final String ROLE_SA = "sa";
     static final UUID SA_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     static final UUID SA_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     static final UUID AUTH_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
@@ -41,7 +41,7 @@ public class M_0003_InsertSystemUsers {
         saUserMap.put(FIELD_UUID, SA_USER_UUID);
         saUserMap.put(FIELD_USERNAME, SA_USERNAME);
         saUserMap.put(FIELD_PASSWORD, null); // no initial password for SA
-        saUserMap.put(FIELD_ROLES, SA_ROLES);
+        saUserMap.put(FIELD_ROLES, Set.of(ROLE_SA));
         saUserMap.put(FIELD_CREATED_BY, AUTH_SERVICE_USER_UUID);
         saUserMap.put(FIELD_CREATED_DATE, now);
         saUserMap.put(FIELD_LAST_MODIFIED_BY, AUTH_SERVICE_USER_UUID);
