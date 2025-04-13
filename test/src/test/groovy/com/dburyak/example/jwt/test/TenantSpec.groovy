@@ -2,25 +2,32 @@ package com.dburyak.example.jwt.test
 
 import com.dburyak.example.jwt.api.tenant.Tenant
 
-class TenantSpec extends JwtExampleSpec {
+class TenantSpec extends SuperAdminLoggedInSpec {
+    static final String TENANT_DESCRIPTION = 'test tenant created by tests'
 
-    def 'create tenant'() {
-        given: 'authenticated as SA'
-        def tenantId = "test-tenant-${System.currentTimeMillis()}"
-        def tenantClient = new TenantServiceClient(tenantId)
+    def tenantName = "test-tenant-${System.currentTimeMillis()}"
+    def adminEmail = "admin-$tenantName@test.jwt.example.dburyak.com"
+    def createTenantReq = Tenant.builder()
+            .name(tenantName)
+            .description(TENANT_DESCRIPTION)
+            .adminEmail(adminEmail)
+            .build()
 
+    def 'create tenant - creates tenant successfully'() {
         when:
-        def resp = tenantClient.create(Tenant.builder()
-                .name(tenantId)
-                .build())
+        def resp = tenantServiceClientSA.create(createTenantReq)
 
         then:
-        resp.name == tenantId
+        resp.name == tenantName
 
         and:
-        tenantClient.tenantExists(tenantId)
+        tenantServiceClientSA.tenantExistsByName(tenantName)
 
         cleanup:
-        tenantClient.delete(tenantId)
+        tenantServiceClientSA.delete(tenantName)
+    }
+
+    def 'create tenant - creates tenant admin'() {
+
     }
 }

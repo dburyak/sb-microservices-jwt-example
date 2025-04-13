@@ -11,4 +11,10 @@ public interface TenantRepository extends MongoRepository<Tenant, String> {
     boolean deleteByUuid(UUID uuid);
 
     boolean existsByUuid(UUID uuid);
+
+    boolean existsByName(String name);
+
+    boolean existsByUuidAndName(UUID uuid, String name);
+
+    Tenant findByName(String name);
 }

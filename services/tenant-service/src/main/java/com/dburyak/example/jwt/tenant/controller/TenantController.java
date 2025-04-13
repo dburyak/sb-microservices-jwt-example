@@ -5,6 +5,7 @@ import com.dburyak.example.jwt.api.common.ApiView.READ;
 import com.dburyak.example.jwt.api.tenant.Tenant;
 import com.dburyak.example.jwt.tenant.service.TenantService;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+import static com.dburyak.example.jwt.api.internal.tenant.Paths.TENANT_EXISTS;
+import static com.dburyak.example.jwt.api.tenant.PathParams.TENANT_NAME;
 import static com.dburyak.example.jwt.api.tenant.PathParams.TENANT_UUID;
-import static com.dburyak.example.jwt.api.tenant.Paths.TENANT;
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANTS_ROOT;
-import static com.dburyak.example.jwt.api.tenant.Paths.TENANT_EXISTS;
+import static com.dburyak.example.jwt.api.tenant.Paths.TENANT_BY_NAME;
+import static com.dburyak.example.jwt.api.tenant.Paths.TENANT_BY_UUID;
 
 @RestController
 @RequestMapping(TENANTS_ROOT)
@@ -37,22 +40,35 @@ public class TenantController {
         return ResponseEntity.ok(tenant);
     }
 
-    @GetMapping(TENANT)
+    @GetMapping(TENANT_BY_UUID)
     @JsonView(READ.class)
-    public ResponseEntity<Tenant> get(@PathVariable(name = TENANT_UUID) @NotNull UUID tenantUuid) {
+    public ResponseEntity<Tenant> getByUuid(@PathVariable(name = TENANT_UUID) @NotNull UUID tenantUuid) {
         var tenant = tenantService.get(tenantUuid);
         return tenant != null ? ResponseEntity.ok(tenant) : ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping(TENANT)
+    @GetMapping(TENANT_BY_NAME)
+    @JsonView(READ.class)
+    public ResponseEntity<Tenant> getByName(@PathVariable(name = TENANT_NAME) @NotBlank String tenantName) {
+        var tenant = tenantService.get(tenantName);
+        return tenant != null ? ResponseEntity.ok(tenant) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping(TENANT_BY_UUID)
     public ResponseEntity<Void> delete(@PathVariable(name = TENANT_UUID) @NotNull UUID tenantUuid) {
         tenantService.delete(tenantUuid);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(TENANT + TENANT_EXISTS)
-    public ResponseEntity<Void> exists(@PathVariable(name = TENANT_UUID) @NotNull UUID tenantUuid) {
-        tenantService.verifyExists(tenantUuid);
+    @GetMapping(TENANT_BY_UUID + TENANT_EXISTS)
+    public ResponseEntity<Void> existsByUuid(@PathVariable(name = TENANT_UUID) @NotNull UUID tenantUuid) {
+        tenantService.verifyExistsByUuid(tenantUuid);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(TENANT_BY_NAME + TENANT_EXISTS)
+    public ResponseEntity<Void> existsByName(@PathVariable(name = TENANT_NAME) @NotBlank String tenantName) {
+        tenantService.verifyExistsByName(tenantName);
         return ResponseEntity.ok().build();
     }
 }

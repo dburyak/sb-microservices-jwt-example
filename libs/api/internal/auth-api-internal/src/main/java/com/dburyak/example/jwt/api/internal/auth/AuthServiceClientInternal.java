@@ -12,11 +12,11 @@ import static com.dburyak.example.jwt.lib.req.Headers.BEARER;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-public class AuthServiceClient {
+public class AuthServiceClientInternal {
     private final RestClient rest;
     private final ServiceTokenManager tokenManager;
 
-    public AuthServiceClient(AuthServiceClientProperties props, ServiceTokenManager tokenManager) {
+    public AuthServiceClientInternal(AuthServiceClientProperties props, ServiceTokenManager tokenManager) {
         this.rest = RestClient.builder()
                 .baseUrl(props.getUrl())
                 .build();

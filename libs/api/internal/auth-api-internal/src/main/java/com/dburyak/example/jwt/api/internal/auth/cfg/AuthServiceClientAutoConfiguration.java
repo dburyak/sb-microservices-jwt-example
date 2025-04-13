@@ -1,6 +1,6 @@
 package com.dburyak.example.jwt.api.internal.auth.cfg;
 
-import com.dburyak.example.jwt.api.internal.auth.AuthServiceClient;
+import com.dburyak.example.jwt.api.internal.auth.AuthServiceClientInternal;
 import com.dburyak.example.jwt.lib.auth.ServiceTokenManager;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Bean;
 public class AuthServiceClientAutoConfiguration {
 
     @Bean
-    public AuthServiceClient authServiceClient(AuthServiceClientProperties props,
+    public AuthServiceClientInternal authServiceClient(AuthServiceClientProperties props,
             ServiceTokenManager serviceTokenManager) {
-        return new AuthServiceClient(props, serviceTokenManager);
+        return new AuthServiceClientInternal(props, serviceTokenManager);
     }
 }

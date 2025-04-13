@@ -110,13 +110,43 @@ We basically have three key pieces of spring-security to make all this work:
 
 # running
 
+## requirements
+
+I tried to make it as easy to run as possible. You'll need
+
+- java-21 (for unix systems I recommend https://sdkman.io)
+- mongodb - is expected to run on standard port 27017 to work without extra
+  configuration
+
+## build system
+
+## IDE
+
+## running from CLI
+
+## running from IDE
+
+## building and running jars
+
 ## initial setup
 
 Initial data is set up only for SA (super-admin) tenant and user. SA user does
-not have initial password set up, so as the first step you need to reset 
+not have initial password set up, so as the first step you need to reset
 password for SA user.
 
-## tests
+# tests
 
 Functional tests are located in `test` folder. They are supposed to be executed
 against a fully running system.
+
+## pre-requisites
+
+Tests always create all the data from scratch - tenants, users, etc. In order to
+do so, tests use SA user (that's the only standard built-in user that can
+create new tenants). Hence, to run tests, you need to reset password for SA
+and export it as an environment variable `SA_PASSWORD` for test process.
+
+For resetting password use:
+```shell
+
+```

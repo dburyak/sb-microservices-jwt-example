@@ -9,6 +9,7 @@ import org.bson.Document;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.dburyak.example.jwt.tenant.repository.migration.M_0001_CreateTenantsCollection.COLLECTION_TENANTS;
@@ -47,7 +48,7 @@ public class M_0003_InsertSystemTenants {
                     FIELD_UUID, tenantUuid,
                     FIELD_NAME, tenantName,
                     FIELD_DESCRIPTION, tenantDescription,
-                    FIELD_CONTACT_EMAILS, Map.of(),
+                    FIELD_CONTACT_EMAILS, Set.of(),
                     FIELD_CREATED_BY, TENANT_SERVICE_USER_UUID,
                     FIELD_CREATED_DATE, now,
                     FIELD_LAST_MODIFIED_BY, TENANT_SERVICE_USER_UUID,

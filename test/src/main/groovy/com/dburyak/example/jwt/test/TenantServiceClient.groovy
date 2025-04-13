@@ -1,26 +1,35 @@
 package com.dburyak.example.jwt.test
 
+
 import com.dburyak.example.jwt.api.tenant.Tenant
 
-import static com.dburyak.example.jwt.api.tenant.Paths.TENANT_EXISTS
+import static BaseSpec.TENANT_SERVICE_URL
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANTS_ROOT
-import static com.dburyak.example.jwt.test.JwtExampleSpec.TENANT_SERVICE_URL
 import static org.springframework.http.HttpStatus.OK
 import static org.springframework.http.MediaType.APPLICATION_JSON
 
 class TenantServiceClient extends ServiceClient {
 
-    TenantServiceClient(String tenantId = null, String jwtToken = null) {
-        super(TENANT_SERVICE_URL, tenantId, jwtToken)
+    TenantServiceClient(UUID tenantUuid = null, String jwtToken = null) {
+        super(TENANT_SERVICE_URL, tenantUuid, jwtToken)
     }
 
-    boolean tenantExists(String tenantId = null) {
+    @Override
+    protected TenantServiceClient create(UUID tenantUuid = null, String jwtToken = null) {
+        new TenantServiceClient(tenantUuid, jwtToken)
+    }
+
+    boolean tenantExists(UUID tenantUuid, String tenantName) {
+        assert tenantUuid || tenantName
         def resp = rest.get()
                 .uri {
                     it.path(TENANTS_ROOT + TENANT_EXISTS)
                             .tap {
-                                if (tenantId) {
-                                    queryParam(TENANT_ID_QUERY_PARAM, tenantId)
+                                if (tenantUuid) {
+                                    queryParam(QueryParams.TENANT_UUID, tenantUuid)
+                                }
+                                if (tenantName) {
+                                    queryParam(QueryParams.TENANT_NAME, tenantName)
                                 }
                             }
                             .build()
@@ -28,6 +37,14 @@ class TenantServiceClient extends ServiceClient {
                 .retrieve()
                 .toBodilessEntity()
         resp.statusCode == OK
+    }
+
+    boolean tenantExistsByName(String tenantName) {
+        tenantExists(null, tenantName)
+    }
+
+    boolean tenantExistsByUuid(UUID uuid) {
+        tenantExists(uuid, null)
     }
 
     Tenant create(Tenant tenant) {
