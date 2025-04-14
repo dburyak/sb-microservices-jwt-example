@@ -108,6 +108,25 @@ We basically have three key pieces of spring-security to make all this work:
 - auth providers
 - security filter chain configuration
 
+## messaging
+
+At first, I wanted to avoid using messaging for simplicity's sake. But at some
+point having multiple rest calls to hardcoded endpoints to notify of
+tenant creation/deletion/etc. became too ugly. Additionally, showcasing how
+nicely JWT auth fits into messaging is a good idea.
+
+I decided to use redis pub/sub for messaging here ONLY for setup simplicity, as
+it doesn't require any additional configuration, it works out of the box.
+In a real-world scenario, redis doesn't fit for `PointToPointMsgQueue` use case
+since it's not durable/persistent. Moreover, it works as a simple "fan out"
+messaging which fits better for `PubSubMsgQueue` use case.
+
+Ideally, `PointToPointMsgQueue` should be implemented with something like
+Kafka, RabbitMQ, GCP PubSub, AWS SQS, etc. Because in practically all cases
+where it needs to be applied, it has to be durable with guaranteed delivery.
+Whereas `PubSubMsgQueue` implementation depends on the use-case, and redis
+implementation may be fine for it.
+
 # running
 
 ## requirements
@@ -115,8 +134,11 @@ We basically have three key pieces of spring-security to make all this work:
 I tried to make it as easy to run as possible. You'll need
 
 - java-21 (for unix systems I recommend https://sdkman.io)
-- mongodb - is expected to run on standard port 27017 to work without extra
-  configuration
+- mongodb
+- redis
+
+If you run mongodb and redis with default settings (i.e. without custom
+configuration), everything should work out of the box.
 
 ## build system
 
@@ -147,6 +169,7 @@ create new tenants). Hence, to run tests, you need to reset password for SA
 and export it as an environment variable `SA_PASSWORD` for test process.
 
 For resetting password use:
+
 ```shell
 
 ```

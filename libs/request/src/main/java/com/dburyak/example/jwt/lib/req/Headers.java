@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Headers {
     BEARER("Bearer "), // technically it's not a header, but it's related to headers processing
-    TENANT_UUID("x-tenant-uuid");
+    TENANT_UUID("x-tenant-uuid"),
+    API_KEY("x-api-key");
 
     @Getter
     private final String header;

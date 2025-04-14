@@ -1,0 +1,11 @@
+plugins {
+    id 'com.dburyak.example.jwt.gradle.sb-library'
+}
+
+dependencies {
+    api 'org.springframework.boot:spring-boot-starter-security'
+    api project(':libs:auth')
+    implementation 'com.esotericsoftware:kryo'
+    implementation 'redis.clients:jedis'
+    implementation 'org.apache.commons:commons-lang3'
+}

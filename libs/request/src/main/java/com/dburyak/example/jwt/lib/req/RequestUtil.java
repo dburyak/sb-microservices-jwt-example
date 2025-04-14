@@ -28,6 +28,22 @@ public class RequestUtil {
         putRequestAttr(req, AUTH_TOKEN, authToken);
     }
 
+    public String getApiKey() {
+        return getRequestAttr(Attributes.API_KEY);
+    }
+
+    public String getApiKey(HttpServletRequest req) {
+        return getRequestAttr(req, Attributes.API_KEY);
+    }
+
+    public void setApiKey(String apiKey) {
+        putRequestAttr(Attributes.API_KEY, apiKey);
+    }
+
+    public void setApiKey(HttpServletRequest req, String apiKey) {
+        putRequestAttr(req, Attributes.API_KEY, apiKey);
+    }
+
     public UUID getTenantUuid() {
         return getRequestAttr(TENANT_UUID);
     }

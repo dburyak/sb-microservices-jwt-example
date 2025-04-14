@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.dburyak.example.jwt.api.internal.auth.Paths.USERS_ROOT;
-import static com.dburyak.example.jwt.lib.req.QueryParams.TENANT_UUID;
+import static com.dburyak.example.jwt.api.internal.auth.QueryParams.TENANT_UUID;
 
 @RestController
 @RequestMapping(USERS_ROOT)
@@ -28,7 +28,7 @@ public class UserController {
 
     /**
      * Only regular users can be created by this endpoint.
-     * Part of the regular self-registration flows.
+     * Part of the regular self-registration flow.
      * It is supposed to be called with a service token.
      *
      * @param tenantUuid tenantUuid of the user being created. This is NOT the tenantUuid of the caller. Caller
