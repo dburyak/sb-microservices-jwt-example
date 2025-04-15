@@ -1,5 +1,6 @@
-package com.dburyak.example.jwt.lib.auth;
+package com.dburyak.example.jwt.lib.auth.jwt;
 
+import com.dburyak.example.jwt.lib.auth.AuthoritiesMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -7,7 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 
 @RequiredArgsConstructor
 public class JwtAuthProvider implements AuthenticationProvider {
-    private final JwtAuthoritiesMapper rolesMapper;
+    private final AuthoritiesMapper rolesMapper;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

@@ -1,7 +1,6 @@
 package com.dburyak.example.jwt.lib.auth;
 
 import lombok.Getter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -13,24 +12,16 @@ import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toSet;
 
 @Getter
-public class JwtAuth implements Authentication {
-    private final UUID tenantUuid;
-    private final UUID userUuid;
-    private final String deviceId;
-    private final Set<Role> roles;
-    private final Set<GrantedAuthority> authorities;
-    private final boolean authenticated;
+public abstract class AbstractAppAuthentication implements AppAuthentication {
+    protected final UUID tenantUuid;
+    protected final UUID userUuid;
+    protected final String deviceId;
+    protected final Set<Role> roles;
+    protected final Set<GrantedAuthority> authorities;
+    protected final boolean authenticated;
 
-    public JwtAuth(UUID tenantUuid, UUID userUuid, String deviceId, Set<Role> roles) {
-        this.tenantUuid = tenantUuid;
-        this.userUuid = userUuid;
-        this.deviceId = deviceId;
-        this.roles = roles;
-        authorities = null;
-        authenticated = false;
-    }
-
-    private JwtAuth(UUID tenantUuid, UUID userUuid, String deviceId, Set<Role> roles, Set<String> authorities) {
+    protected AbstractAppAuthentication(UUID tenantUuid, UUID userUuid, String deviceId, Set<Role> roles,
+            Set<String> authorities) {
         this.tenantUuid = tenantUuid;
         this.userUuid = userUuid;
         this.deviceId = deviceId;
@@ -39,10 +30,6 @@ public class JwtAuth implements Authentication {
                 ? Set.copyOf(authorities.stream().map(SimpleGrantedAuthority::new).collect(toSet()))
                 : null;
         authenticated = authorities != null;
-    }
-
-    public JwtAuth withMappedAuthorities(Set<String> authorities) {
-        return new JwtAuth(tenantUuid, userUuid, deviceId, roles, authorities);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.dburyak.example.jwt.auth.cfg;
 
-import com.dburyak.example.jwt.lib.auth.JwtAuthoritiesMapper;
+import com.dburyak.example.jwt.lib.auth.AuthoritiesMapper;
 import com.dburyak.example.jwt.lib.auth.Role;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toSet;
 
 @Component
-public class AuthRolesMapper implements JwtAuthoritiesMapper {
+public class AuthRolesMapper implements AuthoritiesMapper {
     private final Map<Role, Set<String>> mapping = Map.of(
             SUPER_ADMIN, Set.of(
                     USER_WRITE,

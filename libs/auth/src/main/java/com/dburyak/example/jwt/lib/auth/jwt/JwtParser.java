@@ -1,5 +1,6 @@
-package com.dburyak.example.jwt.lib.auth;
+package com.dburyak.example.jwt.lib.auth.jwt;
 
+import com.dburyak.example.jwt.lib.auth.Role;
 import com.dburyak.example.jwt.lib.auth.cfg.JwtAuthProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -62,6 +63,6 @@ public class JwtParser {
         for (var roleRaw : rolesRaw) {
             roles.add(Role.byName(roleRaw.toString()));
         }
-        return new JwtAuth(tenantUuid, userUuid, deviceId, Set.copyOf(roles));
+        return new JwtAuth(jwtStr, tenantUuid, userUuid, deviceId, Set.copyOf(roles));
     }
 }

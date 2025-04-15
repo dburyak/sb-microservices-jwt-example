@@ -1,10 +1,10 @@
 package com.dburyak.example.jwt.lib.auth.cfg;
 
-import com.dburyak.example.jwt.lib.auth.JwtAuthProvider;
-import com.dburyak.example.jwt.lib.auth.JwtAuthoritiesMapper;
-import com.dburyak.example.jwt.lib.auth.JwtFilter;
-import com.dburyak.example.jwt.lib.auth.JwtParser;
-import com.dburyak.example.jwt.lib.auth.NoAuthoritiesMapper;
+import com.dburyak.example.jwt.lib.auth.jwt.JwtAuthProvider;
+import com.dburyak.example.jwt.lib.auth.AuthoritiesMapper;
+import com.dburyak.example.jwt.lib.auth.jwt.JwtFilter;
+import com.dburyak.example.jwt.lib.auth.jwt.JwtParser;
+import com.dburyak.example.jwt.lib.auth.jwt.NoAuthoritiesMapper;
 import com.dburyak.example.jwt.lib.req.RequestUtil;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,7 +30,7 @@ public class JwtAuthAutoConfiguration {
     }
 
     @Bean
-    public JwtAuthProvider jwtAuthProvider(JwtAuthoritiesMapper rolesMapper) {
+    public JwtAuthProvider jwtAuthProvider(AuthoritiesMapper rolesMapper) {
         // if jwt-auth is enabled for a service, it must define roles mapper
         return new JwtAuthProvider(rolesMapper);
     }
@@ -43,7 +43,7 @@ public class JwtAuthAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public JwtAuthoritiesMapper jwtAuthoritiesMapper() {
+    public AuthoritiesMapper jwtAuthoritiesMapper() {
         return new NoAuthoritiesMapper();
     }
 }

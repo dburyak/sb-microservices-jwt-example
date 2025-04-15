@@ -1,6 +1,6 @@
 package com.dburyak.example.jwt.user.cfg;
 
-import com.dburyak.example.jwt.lib.auth.JwtFilter;
+import com.dburyak.example.jwt.lib.auth.jwt.JwtFilter;
 import com.dburyak.example.jwt.lib.req.TenantUuidHeaderExtractionFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

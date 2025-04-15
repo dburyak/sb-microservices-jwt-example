@@ -1,6 +1,6 @@
 package com.dburyak.example.jwt.lib.msg.redis;
 
-import com.dburyak.example.jwt.lib.auth.ServiceTokenManager;
+import com.dburyak.example.jwt.lib.auth.jwt.JwtServiceTokenManager;
 import com.dburyak.example.jwt.lib.msg.Msg;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.lib.req.RequestUtil;
@@ -42,7 +42,7 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
 
     private final JedisPool jedisPool;
     private final Executor subscriberExecutor;
-    private final ServiceTokenManager serviceTokenManager;
+    private final JwtServiceTokenManager jwtServiceTokenManager;
     private final RequestUtil requestUtil;
     private final AuthorizationManager<RequestAuthorizationContext> auth;
 
@@ -56,12 +56,12 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
 
     public PointToPointMsgQueueRedisImpl(JedisPool jedisPool,
             Executor subscriberExecutor,
-            Optional<ServiceTokenManager> serviceTokenManager,
+            Optional<JwtServiceTokenManager> serviceTokenManager,
             RequestUtil requestUtil,
             AuthorizationManager<RequestAuthorizationContext> auth) {
         this.jedisPool = jedisPool;
         this.subscriberExecutor = subscriberExecutor;
-        this.serviceTokenManager = serviceTokenManager.orElse(null);
+        this.jwtServiceTokenManager = serviceTokenManager.orElse(null);
         this.requestUtil = requestUtil;
         this.auth = auth;
         subKryo = new Kryo();
@@ -162,8 +162,8 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
         if (isNotBlank(apiKey)) {
             return Map.of(API_KEY.getHeader(), apiKey);
         }
-        if (serviceTokenManager != null) {
-            return Map.of(AUTHORIZATION, "Bearer " + serviceTokenManager.getServiceToken());
+        if (jwtServiceTokenManager != null) {
+            return Map.of(AUTHORIZATION, "Bearer " + jwtServiceTokenManager.getServiceToken());
         }
         return Map.of();
     }

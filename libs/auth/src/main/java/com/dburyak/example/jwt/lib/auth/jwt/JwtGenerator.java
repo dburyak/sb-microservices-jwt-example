@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.lib.auth;
+package com.dburyak.example.jwt.lib.auth.jwt;
 
 import com.dburyak.example.jwt.lib.auth.cfg.JwtAuthProperties;
 import com.dburyak.example.jwt.lib.req.ReservedIdentifiers;

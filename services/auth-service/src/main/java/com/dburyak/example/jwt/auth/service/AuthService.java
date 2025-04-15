@@ -6,7 +6,7 @@ import com.dburyak.example.jwt.api.auth.JwtRefreshTokenRequest;
 import com.dburyak.example.jwt.auth.domain.RefreshToken;
 import com.dburyak.example.jwt.auth.repository.RefreshTokenRepository;
 import com.dburyak.example.jwt.auth.repository.UserRepository;
-import com.dburyak.example.jwt.lib.auth.JwtGenerator;
+import com.dburyak.example.jwt.lib.auth.jwt.JwtGenerator;
 import com.dburyak.example.jwt.lib.auth.cfg.JwtAuthProperties;
 import com.dburyak.example.jwt.lib.err.NotFoundException;
 import lombok.RequiredArgsConstructor;

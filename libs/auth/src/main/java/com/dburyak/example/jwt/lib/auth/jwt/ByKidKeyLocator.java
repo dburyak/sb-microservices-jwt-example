@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.lib.auth;
+package com.dburyak.example.jwt.lib.auth.jwt;
 
 import io.jsonwebtoken.LocatorAdapter;
 import io.jsonwebtoken.ProtectedHeader;

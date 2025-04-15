@@ -1,6 +1,6 @@
 package com.dburyak.example.jwt.lib.auth.cfg;
 
-import com.dburyak.example.jwt.lib.auth.JwtGenerator;
+import com.dburyak.example.jwt.lib.auth.jwt.JwtGenerator;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

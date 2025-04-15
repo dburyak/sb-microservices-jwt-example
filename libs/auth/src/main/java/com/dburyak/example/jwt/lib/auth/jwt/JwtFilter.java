@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.lib.auth;
+package com.dburyak.example.jwt.lib.auth.jwt;
 
 import com.dburyak.example.jwt.lib.req.RequestUtil;
 import jakarta.servlet.FilterChain;
@@ -36,8 +36,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 requestUtil.setTenantUuid(request, parsedToken.getTenantUuid());
                 requestUtil.setUserUuid(request, parsedToken.getUserUuid());
                 requestUtil.setDeviceId(request, parsedToken.getDeviceId());
-                requestUtil.setServiceRequest(SERVICE_TENANT_UUID.equals(parsedToken.getTenantUuid()) &&
-                        SERVICE_DEVICE_ID.equals(parsedToken.getDeviceId()));
+                var isServiceRequest = SERVICE_TENANT_UUID.equals(parsedToken.getTenantUuid()) &&
+                        SERVICE_DEVICE_ID.equals(parsedToken.getDeviceId());
+                requestUtil.setServiceRequest(request, isServiceRequest);
             }
         }
         filterChain.doFilter(request, response);

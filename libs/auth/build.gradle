@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api project(':libs:request')
+    implementation project(':libs:api:internal:auth-api-internal') // for verifying api-keys
     api 'org.springframework.boot:spring-boot-starter-web'
     api 'org.springframework.boot:spring-boot-starter-security'
     api 'org.springframework.boot:spring-boot-starter-validation'
