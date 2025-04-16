@@ -11,28 +11,37 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static com.dburyak.example.jwt.lib.req.Headers.API_KEY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @RequiredArgsConstructor
 public class ApiKeyFilter extends OncePerRequestFilter {
+    private final ApiKeyAuthExtractor apiKeyExtractor;
     private final RequestUtil requestUtil;
     private final AuthenticationManager autManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        var apiKey = request.getHeader(API_KEY.getHeader());
-        if (isNotBlank(apiKey)) {
-            var auth = new ApiKeyAuth(apiKey);
-            var authWithAuthorities = autManager.authenticate(auth);
-            if (authWithAuthorities instanceof ApiKeyAuth apiKeyAuth) {
-                SecurityContextHolder.getContext().setAuthentication(apiKeyAuth);
-                requestUtil.setApiKey(apiKey);
-                requestUtil.setTenantUuid(request, apiKeyAuth.getTenantUuid());
-                requestUtil.setUserUuid(request, apiKeyAuth.getUserUuid());
-                requestUtil.setDeviceId(request, apiKeyAuth.getDeviceId());
+        var currentAuth = SecurityContextHolder.getContext().getAuthentication();
+        if (currentAuth != null && currentAuth.isAuthenticated()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        var relevantHeaders = Map.of(API_KEY.getHeader(), request.getHeader(API_KEY.getHeader()));
+        var apiKey = apiKeyExtractor.extract(relevantHeaders);
+        if (apiKey != null) {
+            SecurityContextHolder.getContext().setAuthentication(apiKey);
+            var authenticated = autManager.authenticate(apiKey);
+            if (authenticated instanceof ApiKeyAuth authenticatedApiKey) { // != null
+                SecurityContextHolder.getContext().setAuthentication(authenticatedApiKey);
+                requestUtil.setApiKey(request, authenticatedApiKey.getApiKey());
+                // if tenantUuid is set in header, tenantUuid that apiKey belongs to always overrides it
+                requestUtil.setTenantUuid(request, authenticatedApiKey.getTenantUuid());
+                requestUtil.setUserUuid(request, authenticatedApiKey.getUserUuid());
+                requestUtil.setDeviceId(request, authenticatedApiKey.getDeviceId());
+                // service-to-service communications never use api-keys, only jwt service tokens
                 requestUtil.setServiceRequest(request, false);
             }
         }

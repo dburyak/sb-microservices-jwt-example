@@ -109,7 +109,7 @@ public class RequestUtil {
     }
 
     public <T> void putRequestAttr(String key, T value) {
-        putRequestAttr(currentRequest(), key, value);
+        putRequestAttr(getCurrentHttpRequest(), key, value);
     }
 
     public <T> void putRequestAttr(HttpServletRequest req, String key, T value) {
@@ -117,14 +117,14 @@ public class RequestUtil {
     }
 
     public <T> T getRequestAttr(String key) {
-        return getRequestAttr(currentRequest(), key);
+        return getRequestAttr(getCurrentHttpRequest(), key);
     }
 
     public <T> T getRequestAttr(HttpServletRequest req, String key) {
         return req != null ? (T) req.getAttribute(key) : null;
     }
 
-    private HttpServletRequest currentRequest() {
+    public HttpServletRequest getCurrentHttpRequest() {
         var reqAttr = RequestContextHolder.getRequestAttributes();
         return reqAttr != null ? ((ServletRequestAttributes) reqAttr).getRequest() : null;
     }

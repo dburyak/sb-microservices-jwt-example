@@ -9,6 +9,7 @@ import com.esotericsoftware.kryo.SerializerFactory;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import redis.clients.jedis.BinaryJedisPubSub;
@@ -23,6 +24,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 import static com.dburyak.example.jwt.lib.req.Headers.API_KEY;
+import static com.dburyak.example.jwt.lib.req.Headers.TENANT_UUID;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -34,6 +36,7 @@ import static redis.clients.jedis.params.SetParams.setParams;
  * simplicity, I'll put auth code right here, and use kryo directly with simple mutex and no any performance
  * optimizations.
  */
+@Slf4j
 public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T> {
     private static final String DUP_PREFIX = "dup:";
     private static final String DEFAULT_CONSUMER_GROUP = "dfl"; // shorter version
@@ -99,18 +102,32 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
                 var subscriber = new BinaryJedisPubSub() {
                     @Override
                     public void onMessage(byte[] topic, byte[] msgBytes) {
-                        var msg = deserialize(msgBytes);
+                        var unauthenticatedMsg = deserialize(msgBytes);
+                        var msg = authenticate(unauthenticatedMsg);
+                        if (msg == null) {
+                            log.warn("received msg with bad auth: topic={}, msg={}", topic, unauthenticatedMsg);
+                            return;
+                        }
                         var dupKey = DUP_PREFIX + consumerGroup + msg.getMsgId();
                         var ifNotExistsAndWithTtl = setParams().nx().ex(DUP_LOCK_TTL.toSeconds());
-                        var keyBytes = dupKey.getBytes(UTF_8);
+                        var dupKeyBytes = dupKey.getBytes(UTF_8);
                         var isDup = false;
                         try (var jedisForCmd = jedisPool.getResource()) {
-                            isDup = (jedisForCmd.set(keyBytes, NO_DATA, ifNotExistsAndWithTtl) == null);
+                            isDup = (jedisForCmd.set(dupKeyBytes, NO_DATA, ifNotExistsAndWithTtl) == null);
                         }
                         if (!isDup) {
                             subscriberExecutor.execute(() -> {
-                                // TODO: authN and authZ before processing the message
-                                handler.accept(msg);
+                                try {
+                                    handler.accept(msg);
+                                    msg.ack();
+                                } catch (Throwable anyErr) {
+                                    if (isRetryable(anyErr)) {
+                                        try (var jedisForCmd = jedisPool.getResource()) {
+                                            jedisForCmd.del(dupKeyBytes);
+                                        }
+                                    }
+                                    msg.nack();
+                                }
                             });
                         }
                     }
@@ -154,17 +171,30 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
     }
 
     private Map<String, String> buildHeaders() {
+        var headers = new HashMap<String, String>();
         var authToken = requestUtil.getAuthToken();
         if (isNotBlank(authToken)) {
-            return Map.of(AUTHORIZATION, "Bearer " + authToken);
+            headers.put(AUTHORIZATION, "Bearer " + authToken);
+        } else {
+            var apiKey = requestUtil.getApiKey();
+            if (isNotBlank(apiKey)) {
+                headers.put(API_KEY.getHeader(), apiKey);
+            } else if (jwtServiceTokenManager != null) {
+                return Map.of(AUTHORIZATION, "Bearer " + jwtServiceTokenManager.getServiceToken());
+            }
         }
-        var apiKey = requestUtil.getApiKey();
-        if (isNotBlank(apiKey)) {
-            return Map.of(API_KEY.getHeader(), apiKey);
+        // it's safer to forbid unauthenticated messages, there are no realistic use cases for this anyway
+        throw new IllegalArgumentException("auth information is not found");
+    }
+
+    private MsgRedisImpl<T> authenticate(MsgRedisImpl<T> unauthenticatedMsg) {
+
+    }
+
+    private boolean isRetryable(Throwable err) {
+        if (err instanceof Error || err instanceof IllegalArgumentException) {
+            return false;
         }
-        if (jwtServiceTokenManager != null) {
-            return Map.of(AUTHORIZATION, "Bearer " + jwtServiceTokenManager.getServiceToken());
-        }
-        return Map.of();
+        return true;
     }
 }
