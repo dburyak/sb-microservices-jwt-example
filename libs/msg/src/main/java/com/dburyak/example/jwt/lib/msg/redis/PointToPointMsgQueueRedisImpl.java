@@ -1,5 +1,9 @@
 package com.dburyak.example.jwt.lib.msg.redis;
 
+import com.dburyak.example.jwt.lib.auth.AppAuthentication;
+import com.dburyak.example.jwt.lib.auth.AuthExtractor;
+import com.dburyak.example.jwt.lib.auth.apikey.ApiKeyAuth;
+import com.dburyak.example.jwt.lib.auth.jwt.JwtAuth;
 import com.dburyak.example.jwt.lib.auth.jwt.JwtServiceTokenManager;
 import com.dburyak.example.jwt.lib.msg.Msg;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
@@ -10,21 +14,25 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authorization.AuthorizationManager;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.context.SecurityContextHolder;
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.JedisPool;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static com.dburyak.example.jwt.lib.req.Headers.API_KEY;
-import static com.dburyak.example.jwt.lib.req.Headers.TENANT_UUID;
+import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_DEVICE_ID;
+import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_TENANT_UUID;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -47,7 +55,8 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
     private final Executor subscriberExecutor;
     private final JwtServiceTokenManager jwtServiceTokenManager;
     private final RequestUtil requestUtil;
-    private final AuthorizationManager<RequestAuthorizationContext> auth;
+    private final List<AuthExtractor> authExtractors;
+    private final AuthenticationManager authManager;
 
     private final Object subLock = new Object();
     private final Kryo subKryo;
@@ -61,12 +70,14 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
             Executor subscriberExecutor,
             Optional<JwtServiceTokenManager> serviceTokenManager,
             RequestUtil requestUtil,
-            AuthorizationManager<RequestAuthorizationContext> auth) {
+            List<AuthExtractor> authExtractors,
+            AuthenticationManager authManager) {
         this.jedisPool = jedisPool;
         this.subscriberExecutor = subscriberExecutor;
         this.jwtServiceTokenManager = serviceTokenManager.orElse(null);
         this.requestUtil = requestUtil;
-        this.auth = auth;
+        this.authExtractors = authExtractors;
+        this.authManager = authManager;
         subKryo = new Kryo();
         // UUID serializer is not registered by default, have to do it manually
         subKryo.addDefaultSerializer(UUID.class, new DefaultSerializers.UUIDSerializer());
@@ -91,12 +102,14 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
     }
 
     @Override
-    public void subscribe(String topic, Consumer<Msg<T>> handler) {
-        subscribe(topic, DEFAULT_CONSUMER_GROUP, handler); // with a shorter version of the default consumer group
+    public void subscribe(String topic, Predicate<AppAuthentication> access, Consumer<Msg<T>> handler) {
+        // with a shorter version of the default consumer group to save few bytes in redis
+        subscribe(topic, DEFAULT_CONSUMER_GROUP, access, handler);
     }
 
     @Override
-    public void subscribe(String topic, String consumerGroup, Consumer<Msg<T>> handler) {
+    public void subscribe(String topic, String consumerGroup, Predicate<AppAuthentication> access,
+            Consumer<Msg<T>> handler) {
         subscriberExecutor.execute(() -> {
             try (var jedis = jedisPool.getResource()) {
                 var subscriber = new BinaryJedisPubSub() {
@@ -106,6 +119,11 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
                         var msg = authenticate(unauthenticatedMsg);
                         if (msg == null) {
                             log.warn("received msg with bad auth: topic={}, msg={}", topic, unauthenticatedMsg);
+                            return;
+                        }
+                        var isAllowed = access.test(msg.getAuth());
+                        if (!isAllowed) {
+                            log.warn("received msg with not enough privileges: topic={}, msg={}", topic, msg);
                             return;
                         }
                         var dupKey = DUP_PREFIX + consumerGroup + msg.getMsgId();
@@ -118,9 +136,12 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
                         if (!isDup) {
                             subscriberExecutor.execute(() -> {
                                 try {
+                                    populateRequestCtx(msg.getAuth());
                                     handler.accept(msg);
+                                    clearRequestCtx();
                                     msg.ack();
                                 } catch (Throwable anyErr) {
+                                    clearRequestCtx();
                                     if (isRetryable(anyErr)) {
                                         try (var jedisForCmd = jedisPool.getResource()) {
                                             jedisForCmd.del(dupKeyBytes);
@@ -188,11 +209,41 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
     }
 
     private MsgRedisImpl<T> authenticate(MsgRedisImpl<T> unauthenticatedMsg) {
+        var auth = authExtractors.stream()
+                .map(e -> e.extract(unauthenticatedMsg.getHeaders()))
+                .filter(Objects::nonNull)
+                .map(authManager::authenticate)
+                .filter(a -> a != null && a.isAuthenticated())
+                .findFirst().orElse(null);
+        if (auth instanceof AppAuthentication appAuth) {
+            return unauthenticatedMsg.withAuth(appAuth);
+        } else {
+            return null;
+        }
+    }
 
+    private void populateRequestCtx(AppAuthentication auth) {
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        // ugly, but it's not worth the effort to redesign
+        if (auth instanceof JwtAuth jwtAuth) {
+            requestUtil.setAuthToken(null, jwtAuth.getJwtToken());
+        } else if (auth instanceof ApiKeyAuth apiKeyAuth) {
+            requestUtil.setApiKey(null, apiKeyAuth.getApiKey());
+        }
+        requestUtil.setTenantUuid(null, auth.getTenantUuid());
+        requestUtil.setUserUuid(null, auth.getUserUuid());
+        requestUtil.setDeviceId(null, auth.getDeviceId());
+        var isServiceRequest = SERVICE_TENANT_UUID.equals(auth.getTenantUuid()) &&
+                SERVICE_DEVICE_ID.equals(auth.getDeviceId());
+        requestUtil.setServiceRequest(null, isServiceRequest);
+    }
+
+    private void clearRequestCtx() {
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     private boolean isRetryable(Throwable err) {
-        if (err instanceof Error || err instanceof IllegalArgumentException) {
+        if (err instanceof IllegalArgumentException) {
             return false;
         }
         return true;

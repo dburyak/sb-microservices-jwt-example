@@ -1,6 +1,9 @@
 package com.dburyak.example.jwt.lib.msg;
 
+import com.dburyak.example.jwt.lib.auth.AppAuthentication;
+
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Point-to-point message queue. One message is delivered to a single consumer in a group. For example, "tenant created"
@@ -11,9 +14,9 @@ public interface PointToPointMsgQueue<T> {
 
     void publish(String topic, T msg);
 
-    void subscribe(String topic, String consumerGroup, Consumer<Msg<T>> handler);
+    void subscribe(String topic, String consumerGroup, Predicate<AppAuthentication> access, Consumer<Msg<T>> handler);
 
-    default void subscribe(String topic, Consumer<Msg<T>> handler) {
-        subscribe(topic, DEFAULT_CONSUMER_GROUP, handler);
+    default void subscribe(String topic, Predicate<AppAuthentication> access, Consumer<Msg<T>> handler) {
+        subscribe(topic, DEFAULT_CONSUMER_GROUP, access, handler);
     }
 }

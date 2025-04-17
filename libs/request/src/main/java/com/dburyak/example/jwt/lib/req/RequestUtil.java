@@ -4,13 +4,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.dburyak.example.jwt.lib.req.Attributes.AUTH_TOKEN;
+import static com.dburyak.example.jwt.lib.req.Attributes.IS_SERVICE_REQ;
 import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
 import static com.dburyak.example.jwt.lib.req.Attributes.USER_UUID;
 
 public class RequestUtil {
+    // thread local map to simulate request attributes for messaging
+    private final ThreadLocal<Map<String, Object>> threadLocal = ThreadLocal.withInitial(HashMap::new);
 
     public String getAuthToken() {
         return getRequestAttr(AUTH_TOKEN);
@@ -26,6 +31,14 @@ public class RequestUtil {
 
     public void setAuthToken(HttpServletRequest req, String authToken) {
         putRequestAttr(req, AUTH_TOKEN, authToken);
+    }
+
+    public void clearAuthToken() {
+        clearRequestAttr(AUTH_TOKEN);
+    }
+
+    public void clearAuthToken(HttpServletRequest req) {
+        clearRequestAttr(req, AUTH_TOKEN);
     }
 
     public String getApiKey() {
@@ -44,6 +57,14 @@ public class RequestUtil {
         putRequestAttr(req, Attributes.API_KEY, apiKey);
     }
 
+    public void clearApiKey() {
+        clearRequestAttr(Attributes.API_KEY);
+    }
+
+    public void clearApiKey(HttpServletRequest req) {
+        clearRequestAttr(req, Attributes.API_KEY);
+    }
+
     public UUID getTenantUuid() {
         return getRequestAttr(TENANT_UUID);
     }
@@ -58,6 +79,14 @@ public class RequestUtil {
 
     public void setTenantUuid(HttpServletRequest req, UUID tenantUuid) {
         putRequestAttr(req, TENANT_UUID, tenantUuid);
+    }
+
+    public void clearTenantUuid() {
+        clearRequestAttr(TENANT_UUID);
+    }
+
+    public void clearTenantUuid(HttpServletRequest req) {
+        clearRequestAttr(req, TENANT_UUID);
     }
 
     public UUID getUserUuid() {
@@ -76,6 +105,14 @@ public class RequestUtil {
         putRequestAttr(req, USER_UUID, userUuid);
     }
 
+    public void clearUserUuid() {
+        clearRequestAttr(USER_UUID);
+    }
+
+    public void clearUserUuid(HttpServletRequest req) {
+        clearRequestAttr(req, USER_UUID);
+    }
+
     public String getDeviceId() {
         return getRequestAttr(Attributes.DEVICE_ID);
     }
@@ -92,20 +129,36 @@ public class RequestUtil {
         putRequestAttr(req, Attributes.DEVICE_ID, deviceId);
     }
 
+    public void clearDeviceId() {
+        clearRequestAttr(Attributes.DEVICE_ID);
+    }
+
+    public void clearDeviceId(HttpServletRequest req) {
+        clearRequestAttr(req, Attributes.DEVICE_ID);
+    }
+
     public boolean isServiceRequest() {
-        return Boolean.TRUE.equals(getRequestAttr(Attributes.IS_SERVICE_REQ));
+        return Boolean.TRUE.equals(getRequestAttr(IS_SERVICE_REQ));
     }
 
     public boolean isServiceRequest(HttpServletRequest req) {
-        return Boolean.TRUE.equals(getRequestAttr(req, Attributes.IS_SERVICE_REQ));
+        return Boolean.TRUE.equals(getRequestAttr(req, IS_SERVICE_REQ));
     }
 
     public void setServiceRequest(boolean isServiceRequest) {
-        putRequestAttr(Attributes.IS_SERVICE_REQ, isServiceRequest);
+        putRequestAttr(IS_SERVICE_REQ, isServiceRequest);
     }
 
     public void setServiceRequest(HttpServletRequest req, boolean isServiceRequest) {
-        putRequestAttr(req, Attributes.IS_SERVICE_REQ, isServiceRequest);
+        putRequestAttr(req, IS_SERVICE_REQ, isServiceRequest);
+    }
+
+    public void clearServiceRequest() {
+        clearRequestAttr(IS_SERVICE_REQ);
+    }
+
+    public void clearServiceRequest(HttpServletRequest req) {
+        clearRequestAttr(req, IS_SERVICE_REQ);
     }
 
     public <T> void putRequestAttr(String key, T value) {
@@ -113,7 +166,11 @@ public class RequestUtil {
     }
 
     public <T> void putRequestAttr(HttpServletRequest req, String key, T value) {
-        req.setAttribute(key, value);
+        if (req != null) {
+            req.setAttribute(key, value);
+        } else {
+            threadLocal.get().put(key, value);
+        }
     }
 
     public <T> T getRequestAttr(String key) {
@@ -121,7 +178,19 @@ public class RequestUtil {
     }
 
     public <T> T getRequestAttr(HttpServletRequest req, String key) {
-        return req != null ? (T) req.getAttribute(key) : null;
+        return req != null ? (T) req.getAttribute(key) : (T) threadLocal.get().get(key);
+    }
+
+    public void clearRequestAttr(String key) {
+        clearRequestAttr(getCurrentHttpRequest(), key);
+    }
+
+    public void clearRequestAttr(HttpServletRequest req, String key) {
+        if (req != null) {
+            req.removeAttribute(key);
+        } else {
+            threadLocal.get().remove(key);
+        }
     }
 
     public HttpServletRequest getCurrentHttpRequest() {
