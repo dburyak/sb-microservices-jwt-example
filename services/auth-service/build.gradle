@@ -5,6 +5,8 @@ plugins {
 dependencies {
     implementation project(':libs:mongo')
     implementation project(':libs:err')
+    implementation project(':libs:msg')
     implementation project(':libs:api:public:auth-api-public')
     implementation project(':libs:api:internal:auth-api-internal')
+    implementation project(':libs:api:internal:tenant-api-internal')
 }

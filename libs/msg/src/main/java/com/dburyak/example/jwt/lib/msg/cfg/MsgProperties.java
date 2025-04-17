@@ -1,6 +1,5 @@
-package com.dburyak.example.jwt.api.internal.auth.cfg;
+package com.dburyak.example.jwt.lib.msg.cfg;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,19 +7,15 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 
-@ConfigurationProperties(prefix = "service-client.auth")
+@ConfigurationProperties(prefix = "msg")
 @Validated
 @Value
 @NonFinal
-public class AuthServiceClientProperties {
+public class MsgProperties {
     boolean enabled;
-    String url;
 
     @ConstructorBinding
-    public AuthServiceClientProperties(
-            @DefaultValue("true") boolean enabled,
-            @DefaultValue("http://localhost:8080") @NotBlank String url) {
+    public MsgProperties(@DefaultValue("false") boolean enabled) {
         this.enabled = enabled;
-        this.url = url;
     }
 }

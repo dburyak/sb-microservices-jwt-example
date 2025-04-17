@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  * </ul>
  * NOTE: most likely, this type of message queue is not needed in this example application.
  */
-public interface PubSubMsgQueue<T> {
-    void publish(String topic, T msg);
-    void subscribe(String topic, Consumer<Msg<T>> handler);
+public interface PubSubMsgQueue {
+    <T> void publish(String topic, T msg);
+    <T> void subscribe(String topic, Consumer<Msg<T>> handler);
 }

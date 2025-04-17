@@ -20,7 +20,7 @@ public class JwtAuthProvider implements AuthenticationProvider {
     }
 
     @Override
-    public boolean supports(Class<?> authentication) {
-        return JwtAuth.class.isAssignableFrom(authentication);
+    public boolean supports(Class<?> authenticationType) {
+        return JwtAuth.class.isAssignableFrom(authenticationType);
     }
 }

@@ -45,7 +45,7 @@ import static redis.clients.jedis.params.SetParams.setParams;
  * optimizations.
  */
 @Slf4j
-public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T> {
+public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
     private static final String DUP_PREFIX = "dup:";
     private static final String DEFAULT_CONSUMER_GROUP = "dfl"; // shorter version
     private static final Duration DUP_LOCK_TTL = Duration.ofHours(1); // this should be configurable
@@ -92,7 +92,7 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
     }
 
     @Override
-    public void publish(String topic, T msg) {
+    public <T> void publish(String topic, T msg) {
         var msgId = UUID.randomUUID();
         var headers = buildHeaders();
         var msgBytes = serialize(msgId, headers, msg);
@@ -102,20 +102,20 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
     }
 
     @Override
-    public void subscribe(String topic, Predicate<AppAuthentication> access, Consumer<Msg<T>> handler) {
+    public <T> void subscribe(String topic, Predicate<AppAuthentication> access, Consumer<Msg<T>> handler) {
         // with a shorter version of the default consumer group to save few bytes in redis
         subscribe(topic, DEFAULT_CONSUMER_GROUP, access, handler);
     }
 
     @Override
-    public void subscribe(String topic, String consumerGroup, Predicate<AppAuthentication> access,
+    public <T> void subscribe(String topic, String consumerGroup, Predicate<AppAuthentication> access,
             Consumer<Msg<T>> handler) {
         subscriberExecutor.execute(() -> {
             try (var jedis = jedisPool.getResource()) {
                 var subscriber = new BinaryJedisPubSub() {
                     @Override
                     public void onMessage(byte[] topic, byte[] msgBytes) {
-                        var unauthenticatedMsg = deserialize(msgBytes);
+                        MsgRedisImpl<T> unauthenticatedMsg = deserialize(msgBytes);
                         var msg = authenticate(unauthenticatedMsg);
                         if (msg == null) {
                             log.warn("received msg with bad auth: topic={}, msg={}", topic, unauthenticatedMsg);
@@ -158,7 +158,7 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
         });
     }
 
-    private byte[] serialize(UUID msgId, Map<String, String> headers, T msg) {
+    private <T> byte[] serialize(UUID msgId, Map<String, String> headers, T msg) {
         synchronized (pubLock) {
             pubKryoOutput.reset();
             pubKryo.writeObject(pubKryoOutput, msgId);
@@ -175,7 +175,7 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
         }
     }
 
-    private MsgRedisImpl<T> deserialize(byte[] msgBytes) {
+    private <T> MsgRedisImpl<T> deserialize(byte[] msgBytes) {
         synchronized (subLock) {
             subKryoInput.setBuffer(msgBytes);
             var msgId = subKryo.readObject(subKryoInput, UUID.class);
@@ -208,7 +208,7 @@ public class PointToPointMsgQueueRedisImpl<T> implements PointToPointMsgQueue<T>
         throw new IllegalArgumentException("auth information is not found");
     }
 
-    private MsgRedisImpl<T> authenticate(MsgRedisImpl<T> unauthenticatedMsg) {
+    private <T> MsgRedisImpl<T> authenticate(MsgRedisImpl<T> unauthenticatedMsg) {
         var auth = authExtractors.stream()
                 .map(e -> e.extract(unauthenticatedMsg.getHeaders()))
                 .filter(Objects::nonNull)

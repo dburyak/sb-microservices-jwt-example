@@ -1,2 +1,3 @@
 com.dburyak.example.jwt.api.internal.auth.cfg.AuthServiceClientPropsAutoConfiguration
 com.dburyak.example.jwt.api.internal.auth.cfg.AuthServiceClientAutoConfiguration
+com.dburyak.example.jwt.api.internal.auth.cfg.ApiKeyAuthProviderAutoConfiguration

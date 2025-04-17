@@ -5,7 +5,11 @@ plugins {
 dependencies {
     api 'org.springframework.boot:spring-boot-starter-security'
     api project(':libs:auth')
+
+    // ideally, there should be separate msg-api, msg-redis, msg-kafka, etc. libraries with their respective dependencies
+    // so services can pull only those messaging libraries they need
+    // for simplicity, we'll put everything here, since we won't be using anything but redis for messaging
+    api 'redis.clients:jedis'
     implementation 'com.esotericsoftware:kryo'
-    implementation 'redis.clients:jedis'
     implementation 'org.apache.commons:commons-lang3'
 }

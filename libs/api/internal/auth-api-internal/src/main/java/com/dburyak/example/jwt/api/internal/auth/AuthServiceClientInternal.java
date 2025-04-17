@@ -1,7 +1,7 @@
 package com.dburyak.example.jwt.api.internal.auth;
 
 import com.dburyak.example.jwt.api.internal.auth.cfg.AuthServiceClientProperties;
-import com.dburyak.example.jwt.lib.auth.jwt.JwtServiceTokenManager;
+import com.dburyak.example.jwt.lib.auth.ServiceTokenManager;
 import com.dburyak.example.jwt.lib.req.Attributes;
 import org.springframework.web.client.RestClient;
 
@@ -14,9 +14,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 public class AuthServiceClientInternal {
     private final RestClient rest;
-    private final JwtServiceTokenManager tokenManager;
+    private final ServiceTokenManager tokenManager;
 
-    public AuthServiceClientInternal(AuthServiceClientProperties props, JwtServiceTokenManager tokenManager) {
+    public AuthServiceClientInternal(AuthServiceClientProperties props, ServiceTokenManager tokenManager) {
         this.rest = RestClient.builder()
                 .baseUrl(props.getUrl())
                 .build();

@@ -1,2 +1,2 @@
-com.dburyak.example.jwt.api.internal.tenant.cfg.TenantServiceClientPropsAutoConfiguration
+com.dburyak.example.jwt.api.internal.tenant.cfg.TenantApiInternalPropsAutoConfiguration
 com.dburyak.example.jwt.api.internal.tenant.cfg.TenantServiceClientAutoConfiguration
