@@ -27,4 +27,8 @@ public class UserService {
         var savedUser = repository.save(user);
         return converter.toApiModel(savedUser);
     }
+
+    public void deleteAllByTenantUuid(UUID tenantUuid) {
+        repository.deleteAllByTenantUuid(tenantUuid);
+    }
 }

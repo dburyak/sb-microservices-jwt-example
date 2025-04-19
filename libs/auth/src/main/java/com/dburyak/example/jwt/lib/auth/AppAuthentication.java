@@ -11,10 +11,8 @@ import java.util.UUID;
  */
 public interface AppAuthentication extends Authentication {
     UUID getTenantUuid();
-
     UUID getUserUuid();
-
     String getDeviceId();
-
     Set<Role> getRoles();
+    Set<String> getAuthorityNames();
 }

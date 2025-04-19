@@ -17,6 +17,7 @@ public abstract class AbstractAppAuthentication implements AppAuthentication {
     protected final UUID userUuid;
     protected final String deviceId;
     protected final Set<Role> roles;
+    protected final Set<String> authorityNames;
     protected final Set<GrantedAuthority> authorities;
     protected final boolean authenticated;
 
@@ -26,6 +27,7 @@ public abstract class AbstractAppAuthentication implements AppAuthentication {
         this.userUuid = userUuid;
         this.deviceId = deviceId;
         this.roles = roles;
+        this.authorityNames = authorities;
         this.authorities = (authorities != null)
                 ? Set.copyOf(authorities.stream().map(SimpleGrantedAuthority::new).collect(toSet()))
                 : null;

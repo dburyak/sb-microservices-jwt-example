@@ -1,7 +1,11 @@
 package com.dburyak.example.jwt.tenant.service;
 
+import com.dburyak.example.jwt.api.internal.tenant.TenantCreatedMsg;
+import com.dburyak.example.jwt.api.internal.tenant.TenantDeletedMsg;
+import com.dburyak.example.jwt.api.internal.tenant.cfg.TenantMsgProperties;
 import com.dburyak.example.jwt.api.tenant.Tenant;
 import com.dburyak.example.jwt.lib.err.NotFoundException;
+import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.tenant.repository.TenantRepository;
 import com.dburyak.example.jwt.tenant.service.converter.TenantConverter;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +22,18 @@ public class TenantService {
     private static final String NOT_FOUND_BY_NAME_MSG = "Tenant(name=%s)";
     private final TenantRepository tenantRepository;
     private final TenantConverter converter;
+    private final TenantMsgProperties msgProps;
+    private final PointToPointMsgQueue msgQueue;
 
     public Tenant create(Tenant req) {
         var tenant = converter.toDomain(req);
         tenant.setUuid(UUID.randomUUID());
         var savedTenant = tenantRepository.save(tenant);
-        publishTenantCreatedEvent(savedTenant, req);
+        var tenantCreatedMsg = TenantCreatedMsg.builder()
+                .uuid(savedTenant.getUuid())
+                .adminEmail(req.getAdminEmail())
+                .build();
+        msgQueue.publish(msgProps.getTopics().getTenantCreated().getTopicName(), tenantCreatedMsg);
         return converter.toApiModel(savedTenant);
     }
 
@@ -51,7 +61,7 @@ public class TenantService {
         if (!deleted) {
             throw new NotFoundException(NOT_FOUND_BY_UUID_MSG.formatted(tenantUuid));
         }
-        publishTenantDeletedEvent(tenantUuid);
+        msgQueue.publish(msgProps.getTopics().getTenantDeleted().getTopicName(), new TenantDeletedMsg(tenantUuid));
         return true;
     }
 
@@ -76,10 +86,6 @@ public class TenantService {
     }
 
     private void publishTenantCreatedEvent(com.dburyak.example.jwt.tenant.domain.Tenant savedTenant, Tenant req) {
-        // TODO: implement
-    }
-
-    private void publishTenantDeletedEvent(UUID tenantUuid) {
         // TODO: implement
     }
 }

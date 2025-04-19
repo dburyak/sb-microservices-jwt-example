@@ -1,7 +1,9 @@
 package com.dburyak.example.jwt.api.internal.tenant.cfg;
 
+import com.dburyak.example.jwt.api.internal.common.msg.TopicCfgProps;
+import com.dburyak.example.jwt.api.internal.common.msg.Transport;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.experimental.NonFinal;
@@ -9,6 +11,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @ConfigurationProperties(prefix = "msg.tenant")
 @Validated
@@ -43,40 +47,31 @@ public class TenantMsgProperties {
         @Value
         @NonFinal
         @EqualsAndHashCode(callSuper = true)
-        public static class TenantCreatedTopic extends Topic {
+        public static class TenantCreatedTopic extends TopicCfgProps {
 
             @ConstructorBinding
             public TenantCreatedTopic(
-                    @DefaultValue("tenant.created") @NotBlank String name,
+                    @DefaultValue("tenant.created") @NotBlank String topicName,
+                    String subscriptionName,
                     String consumerGroup,
-                    @DefaultValue("redis") Transport transport) {
-                super(name, consumerGroup, transport);
+                    @DefaultValue("redis") @NotNull Transport transport) {
+                super(topicName, isNotBlank(subscriptionName) ? subscriptionName : topicName, consumerGroup, transport);
             }
         }
 
         @Value
         @NonFinal
         @EqualsAndHashCode(callSuper = true)
-        public static class TenantDeletedTopic extends Topic {
+        public static class TenantDeletedTopic extends TopicCfgProps {
 
             @ConstructorBinding
             public TenantDeletedTopic(
-                    @DefaultValue("tenant.deleted") @NotBlank String name,
+                    @DefaultValue("tenant.deleted") @NotBlank String topicName,
+                    String subscriptionName,
                     String consumerGroup,
-                    @DefaultValue("redis") Transport transport) {
-                super(name, consumerGroup, transport);
+                    @DefaultValue("redis") @NotNull Transport transport) {
+                super(topicName, isNotBlank(subscriptionName) ? subscriptionName : topicName, consumerGroup, transport);
             }
         }
-    }
-
-    @Data
-    public abstract static class Topic {
-        protected final String name;
-        protected final String consumerGroup;
-        protected final Transport transport;
-    }
-
-    public enum Transport {
-        REDIS;
     }
 }

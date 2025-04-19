@@ -24,6 +24,10 @@ public class UserService {
         return userConverter.toApiModel(savedUser);
     }
 
+    public void deleteAllByTenantUuid(UUID tenantUuid) {
+        userRepository.deleteAllByTenantUuid(tenantUuid);
+    }
+
     private void publishUserCreatedEvent(UUID tenantUuid, User reqUser,
             com.dburyak.example.jwt.user.domain.User domainUser) {
         // in a real-world app we'd rather publish it as an event, and let the relevant services handle it

@@ -10,4 +10,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     User findByTenantUuidAndUsername(UUID tenantUuid, String username);
 
     User findByTenantUuidAndUuid(UUID tenantUuid, UUID uuid);
+
+    void deleteAllByTenantUuid(UUID tenantUuid);
 }

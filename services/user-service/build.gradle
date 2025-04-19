@@ -7,6 +7,7 @@ dependencies {
   implementation project(':libs:err')
   implementation project(':libs:msg')
   implementation project(':libs:api:public:user-api-public')
+  implementation project(':libs:api:internal:user-api-internal')
   implementation project(':libs:api:internal:auth-api-internal')
   implementation project(':libs:api:internal:tenant-api-internal')
 }

@@ -2,9 +2,9 @@ package com.dburyak.example.jwt.lib.msg.redis;
 
 import com.dburyak.example.jwt.lib.auth.AppAuthentication;
 import com.dburyak.example.jwt.lib.auth.AuthExtractor;
+import com.dburyak.example.jwt.lib.auth.ServiceTokenManager;
 import com.dburyak.example.jwt.lib.auth.apikey.ApiKeyAuth;
 import com.dburyak.example.jwt.lib.auth.jwt.JwtAuth;
-import com.dburyak.example.jwt.lib.auth.jwt.JwtServiceTokenManager;
 import com.dburyak.example.jwt.lib.msg.Msg;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.lib.req.RequestUtil;
@@ -13,6 +13,7 @@ import com.esotericsoftware.kryo.SerializerFactory;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,7 +54,7 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
 
     private final JedisPool jedisPool;
     private final Executor subscriberExecutor;
-    private final JwtServiceTokenManager jwtServiceTokenManager;
+    private final ServiceTokenManager serviceTokenManager;
     private final RequestUtil requestUtil;
     private final List<AuthExtractor> authExtractors;
     private final AuthenticationManager authManager;
@@ -68,13 +69,13 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
 
     public PointToPointMsgQueueRedisImpl(JedisPool jedisPool,
             Executor subscriberExecutor,
-            Optional<JwtServiceTokenManager> serviceTokenManager,
+            Optional<ServiceTokenManager> serviceTokenManager,
             RequestUtil requestUtil,
             List<AuthExtractor> authExtractors,
             AuthenticationManager authManager) {
         this.jedisPool = jedisPool;
         this.subscriberExecutor = subscriberExecutor;
-        this.jwtServiceTokenManager = serviceTokenManager.orElse(null);
+        this.serviceTokenManager = serviceTokenManager.orElse(null);
         this.requestUtil = requestUtil;
         this.authExtractors = authExtractors;
         this.authManager = authManager;
@@ -138,10 +139,10 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
                                 try {
                                     populateRequestCtx(msg.getAuth());
                                     handler.accept(msg);
-                                    clearRequestCtx();
+                                    clearRequestCtx(msg.getAuth());
                                     msg.ack();
                                 } catch (Throwable anyErr) {
-                                    clearRequestCtx();
+                                    clearRequestCtx(msg.getAuth());
                                     if (isRetryable(anyErr)) {
                                         try (var jedisForCmd = jedisPool.getResource()) {
                                             jedisForCmd.del(dupKeyBytes);
@@ -200,8 +201,8 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
             var apiKey = requestUtil.getApiKey();
             if (isNotBlank(apiKey)) {
                 headers.put(API_KEY.getHeader(), apiKey);
-            } else if (jwtServiceTokenManager != null) {
-                return Map.of(AUTHORIZATION, "Bearer " + jwtServiceTokenManager.getServiceToken());
+            } else if (serviceTokenManager != null) {
+                return Map.of(AUTHORIZATION, "Bearer " + serviceTokenManager.getServiceToken());
             }
         }
         // it's safer to forbid unauthenticated messages, there are no realistic use cases for this anyway
@@ -224,22 +225,32 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
 
     private void populateRequestCtx(AppAuthentication auth) {
         SecurityContextHolder.getContext().setAuthentication(auth);
+        HttpServletRequest noReq = null;
         // ugly, but it's not worth the effort to redesign
         if (auth instanceof JwtAuth jwtAuth) {
-            requestUtil.setAuthToken(null, jwtAuth.getJwtToken());
+            requestUtil.setAuthToken(noReq, jwtAuth.getJwtToken());
         } else if (auth instanceof ApiKeyAuth apiKeyAuth) {
-            requestUtil.setApiKey(null, apiKeyAuth.getApiKey());
+            requestUtil.setApiKey(noReq, apiKeyAuth.getApiKey());
         }
-        requestUtil.setTenantUuid(null, auth.getTenantUuid());
-        requestUtil.setUserUuid(null, auth.getUserUuid());
-        requestUtil.setDeviceId(null, auth.getDeviceId());
+        requestUtil.setTenantUuid(noReq, auth.getTenantUuid());
+        requestUtil.setUserUuid(noReq, auth.getUserUuid());
+        requestUtil.setDeviceId(noReq, auth.getDeviceId());
         var isServiceRequest = SERVICE_TENANT_UUID.equals(auth.getTenantUuid()) &&
                 SERVICE_DEVICE_ID.equals(auth.getDeviceId());
-        requestUtil.setServiceRequest(null, isServiceRequest);
+        requestUtil.setServiceRequest(noReq, isServiceRequest);
     }
 
-    private void clearRequestCtx() {
-        throw new UnsupportedOperationException("not implemented yet");
+    private void clearRequestCtx(AppAuthentication auth) {
+        HttpServletRequest noReq = null;
+        if (auth instanceof JwtAuth) {
+            requestUtil.clearAuthToken(noReq);
+        } else if (auth instanceof ApiKeyAuth) {
+            requestUtil.clearApiKey(noReq);
+        }
+        requestUtil.clearTenantUuid(noReq);
+        requestUtil.clearUserUuid(noReq);
+        requestUtil.clearDeviceId(noReq);
+        requestUtil.clearServiceRequest(noReq);
     }
 
     private boolean isRetryable(Throwable err) {

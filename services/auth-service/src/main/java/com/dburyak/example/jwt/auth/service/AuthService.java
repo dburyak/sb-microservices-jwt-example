@@ -6,8 +6,8 @@ import com.dburyak.example.jwt.api.auth.JwtRefreshTokenRequest;
 import com.dburyak.example.jwt.auth.domain.RefreshToken;
 import com.dburyak.example.jwt.auth.repository.RefreshTokenRepository;
 import com.dburyak.example.jwt.auth.repository.UserRepository;
-import com.dburyak.example.jwt.lib.auth.jwt.JwtGenerator;
 import com.dburyak.example.jwt.lib.auth.cfg.JwtAuthProperties;
+import com.dburyak.example.jwt.lib.auth.jwt.JwtGenerator;
 import com.dburyak.example.jwt.lib.err.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,7 +36,8 @@ public class AuthService {
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid password for user: " + req.getUsername());
         }
-        var accessToken = jwtGenerator.generateUserToken(tenantUuid, user.getUuid(), req.getDeviceId(), user.getRoles());
+        var accessToken =
+                jwtGenerator.generateUserToken(tenantUuid, user.getUuid(), req.getDeviceId(), user.getRoles());
         var resp = JwtLoginResponse.builder()
                 .userUuid(user.getUuid())
                 .accessToken(accessToken)
@@ -85,9 +86,14 @@ public class AuthService {
         if (user == null) {
             throw new NotFoundException(String.format("User(uuid=%s)", req.getUserUuid()));
         }
-        var accessToken = jwtGenerator.generateUserToken(tenantUuid, user.getUuid(), req.getDeviceId(), user.getRoles());
+        var accessToken =
+                jwtGenerator.generateUserToken(tenantUuid, user.getUuid(), req.getDeviceId(), user.getRoles());
         return resp.accessToken(accessToken)
                 .accessTokenExpiresAt(Instant.now().plus(jwtAuthProps.getGenerator().getTtl()))
                 .build();
+    }
+
+    public void deleteAllAuthDataOfTenantUuid(UUID tenantUuid) {
+        refreshTokenRepository.deleteAllByTenantUuid(tenantUuid);
     }
 }

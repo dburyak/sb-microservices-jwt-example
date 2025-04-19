@@ -1,2 +1,4 @@
 com.dburyak.example.jwt.lib.msg.cfg.PropsAutoConfiguration
 com.dburyak.example.jwt.lib.msg.cfg.MsgAutoConfiguration
+com.dburyak.example.jwt.lib.msg.redis.PropsAutoConfiguration
+com.dburyak.example.jwt.lib.msg.redis.MsgRedisAutoConfiguration

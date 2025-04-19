@@ -1,0 +1,6 @@
+plugins {
+    id 'com.dburyak.example.jwt.gradle.sb-library'
+}
+
+dependencies {
+}

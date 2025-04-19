@@ -17,8 +17,10 @@ include ':libs:api:api-common'
 include ':libs:api:public:auth-api-public'
 include ':libs:api:public:user-api-public'
 include ':libs:api:public:tenant-api-public'
+include ':libs:api:internal:common-msg'
 include ':libs:api:internal:tenant-api-internal'
 include ':libs:api:internal:auth-api-internal'
+include ':libs:api:internal:user-api-internal'
 
 // services
 include ':services:tenant-service'
