@@ -21,6 +21,8 @@ include ':libs:api:internal:common-msg'
 include ':libs:api:internal:tenant-api-internal'
 include ':libs:api:internal:auth-api-internal'
 include ':libs:api:internal:user-api-internal'
+include ':libs:api:internal:otp-api-internal'
+include ':libs:api:internal:email-api-internal'
 
 // services
 include ':services:tenant-service'
@@ -29,6 +31,8 @@ include ':services:user-service'
 include ':services:catalogue-service'
 include ':services:watch-history-service'
 include ':services:watch-state-service'
+include ':services:otp-service'
+include ':services:email-service'
 
 // tests
 include ':test'

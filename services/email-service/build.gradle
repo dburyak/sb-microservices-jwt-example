@@ -1,0 +1,10 @@
+plugins {
+    id 'com.dburyak.example.jwt.gradle.sb-microservice'
+}
+
+dependencies {
+    implementation project(':libs:mongo')
+    implementation project(':libs:err')
+    implementation project(':libs:msg')
+    implementation project(':libs:api:internal:email-api-internal')
+}

@@ -103,14 +103,13 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
     }
 
     @Override
-    public <T> void subscribe(String topic, Predicate<AppAuthentication> access, Consumer<Msg<T>> handler) {
+    public <T> void subscribe(String topic, Predicate<Msg<T>> access, Consumer<Msg<T>> handler) {
         // with a shorter version of the default consumer group to save few bytes in redis
         subscribe(topic, DEFAULT_CONSUMER_GROUP, access, handler);
     }
 
     @Override
-    public <T> void subscribe(String topic, String consumerGroup, Predicate<AppAuthentication> access,
-            Consumer<Msg<T>> handler) {
+    public <T> void subscribe(String topic, String consumerGroup, Predicate<Msg<T>> access, Consumer<Msg<T>> handler) {
         subscriberExecutor.execute(() -> {
             try (var jedis = jedisPool.getResource()) {
                 var subscriber = new BinaryJedisPubSub() {
@@ -122,7 +121,7 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
                             log.warn("received msg with bad auth: topic={}, msg={}", topic, unauthenticatedMsg);
                             return;
                         }
-                        var isAllowed = access.test(msg.getAuth());
+                        var isAllowed = access.test(msg);
                         if (!isAllowed) {
                             log.warn("received msg with not enough privileges: topic={}, msg={}", topic, msg);
                             return;

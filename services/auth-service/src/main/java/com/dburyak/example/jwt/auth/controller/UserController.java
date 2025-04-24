@@ -37,4 +37,6 @@ public class UserController {
         var user = userService.create(tenantUuid, req, Set.of(Role.USER));
         return ResponseEntity.ok(user);
     }
+
+
 }

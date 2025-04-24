@@ -1,5 +1,6 @@
 package com.dburyak.example.jwt.test
 
+import com.dburyak.example.jwt.api.auth.JwtLoginRequest
 import com.dburyak.example.jwt.api.tenant.Tenant
 
 class TenantSpec extends SuperAdminLoggedInSpec {
@@ -15,10 +16,10 @@ class TenantSpec extends SuperAdminLoggedInSpec {
 
     def 'create tenant - creates tenant successfully'() {
         when:
-        def resp = tenantServiceClientSA.create(createTenantReq)
+        def tenantResp = tenantServiceClientSA.create(createTenantReq)
 
         then:
-        resp.name == tenantName
+        tenantResp.name == tenantName
 
         and:
         tenantServiceClientSA.tenantExistsByName(tenantName)
@@ -27,7 +28,20 @@ class TenantSpec extends SuperAdminLoggedInSpec {
         tenantServiceClientSA.delete(tenantName)
     }
 
-    def 'create tenant - creates tenant admin'() {
+    def 'create tenant - creates tenant admin user'() {
+        when:
+        def tenantResp = tenantServiceClientSA.create(createTenantReq)
+        sleep 1_000 // wait for async msg being published, password hashed, saved to db
 
+        and:
+        def tenantUuid = tenantResp.uuid
+        def authServiceClientAdmin = new AuthServiceClient(tenantUuid)
+        def loginAdminResp = authServiceClientAdmin.jwtLogin(JwtLoginRequest.builder()
+                .username(adminEmail)
+                .password(createTenantReq.password)
+                .build())
+
+        then:
+        loginAdminResp.accessToken
     }
 }

@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.api.internal.tenant.cfg;
+package com.dburyak.example.jwt.api.internal.email.cfg;
 
 import com.dburyak.example.jwt.api.internal.common.msg.MsgProperties;
 import com.dburyak.example.jwt.api.internal.common.msg.TopicCfgProps;
@@ -15,16 +15,16 @@ import org.springframework.validation.annotation.Validated;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-@ConfigurationProperties(prefix = "msg.tenant")
+@ConfigurationProperties(prefix = "msg.email")
 @Validated
 @Value
 @EqualsAndHashCode(callSuper = true)
 @NonFinal
-public class TenantMsgProperties extends MsgProperties {
+public class EmailMsgProperties extends MsgProperties {
     Topics topics;
 
     @ConstructorBinding
-    public TenantMsgProperties(
+    public EmailMsgProperties(
             String consumerGroup,
             @DefaultValue Topics topics) {
         super(consumerGroup);
@@ -34,40 +34,22 @@ public class TenantMsgProperties extends MsgProperties {
     @Value
     @NonFinal
     public static class Topics {
-        TenantCreatedTopic tenantCreated;
-        TenantDeletedTopic tenantDeleted;
+        SendEmailTopic sendEmail;
 
         @ConstructorBinding
         public Topics(
-                @DefaultValue TenantCreatedTopic tenantCreated,
-                @DefaultValue TenantDeletedTopic tenantDeleted) {
-            this.tenantCreated = tenantCreated;
-            this.tenantDeleted = tenantDeleted;
+                @DefaultValue SendEmailTopic sendEmail) {
+            this.sendEmail = sendEmail;
         }
 
         @Value
         @NonFinal
         @EqualsAndHashCode(callSuper = true)
-        public static class TenantCreatedTopic extends TopicCfgProps {
+        public static class SendEmailTopic extends TopicCfgProps {
 
             @ConstructorBinding
-            public TenantCreatedTopic(
-                    @DefaultValue("tenant.created") @NotBlank String topicName,
-                    String subscriptionName,
-                    String consumerGroup,
-                    @DefaultValue("redis") @NotNull Transport transport) {
-                super(topicName, isNotBlank(subscriptionName) ? subscriptionName : topicName, consumerGroup, transport);
-            }
-        }
-
-        @Value
-        @NonFinal
-        @EqualsAndHashCode(callSuper = true)
-        public static class TenantDeletedTopic extends TopicCfgProps {
-
-            @ConstructorBinding
-            public TenantDeletedTopic(
-                    @DefaultValue("tenant.deleted") @NotBlank String topicName,
+            public SendEmailTopic(
+                    @DefaultValue("email.send") @NotBlank String topicName,
                     String subscriptionName,
                     String consumerGroup,
                     @DefaultValue("redis") @NotNull Transport transport) {
