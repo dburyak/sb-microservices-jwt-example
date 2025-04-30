@@ -1,5 +1,6 @@
 package com.dburyak.example.jwt.user.service.converter;
 
+import com.dburyak.example.jwt.api.user.ContactInfo;
 import com.dburyak.example.jwt.api.user.User;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,7 @@ public class UserConverter {
                 .tenantUuid(tenantUuid)
                 .uuid(user.getUuid())
                 .displayName(user.getDisplayName())
-                .email(user.getEmail())
+                .contactInfo(toDomain(user.getContactInfo()))
                 .profileIcon(user.getProfileIcon())
                 .build();
     }
@@ -22,12 +23,24 @@ public class UserConverter {
         return User.builder()
                 .uuid(user.getUuid())
                 .displayName(user.getDisplayName())
-                .email(user.getEmail())
+                .contactInfo(toApiModel(user.getContactInfo()))
                 .profileIcon(user.getProfileIcon())
                 .createdDate(user.getCreatedDate())
                 .createdBy(user.getCreatedBy())
                 .lastModifiedDate(user.getLastModifiedDate())
                 .lastModifiedBy(user.getLastModifiedBy())
+                .build();
+    }
+
+    public com.dburyak.example.jwt.user.domain.ContactInfo toDomain(ContactInfo contactInfo) {
+        return com.dburyak.example.jwt.user.domain.ContactInfo.builder()
+                .email(contactInfo.getEmail())
+                .build();
+    }
+
+    public ContactInfo toApiModel(com.dburyak.example.jwt.user.domain.ContactInfo contactInfo) {
+        return ContactInfo.builder()
+                .email(contactInfo.getEmail())
                 .build();
     }
 

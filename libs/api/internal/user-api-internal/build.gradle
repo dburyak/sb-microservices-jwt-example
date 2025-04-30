@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api project(':libs:api:api-common')
+    api project(':libs:api:public:user-api-public')
     api project(':libs:api:internal:common-msg')
     implementation project(':libs:auth')
     api 'com.fasterxml.jackson.core:jackson-annotations'

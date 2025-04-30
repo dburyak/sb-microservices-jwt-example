@@ -22,6 +22,7 @@ public class OTP extends MongoEntity {
 
     private UUID userUuid;
     private String deviceId;
+    private String externalId; // email, phone number, etc., when userUuid is not known (anonymous user)
     private OTPType type;
     private String code;
     private Instant expiresAt;

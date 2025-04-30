@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.api.internal.tenant;
+package com.dburyak.example.jwt.api.internal.user;
 
 import lombok.Builder;
 import lombok.Value;

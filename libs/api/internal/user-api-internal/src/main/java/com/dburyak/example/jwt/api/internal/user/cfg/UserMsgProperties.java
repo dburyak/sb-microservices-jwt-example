@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.api.internal.tenant.cfg;
+package com.dburyak.example.jwt.api.internal.user.cfg;
 
 import com.dburyak.example.jwt.api.internal.common.msg.TopicCfgProps;
 import com.dburyak.example.jwt.api.internal.common.msg.Transport;

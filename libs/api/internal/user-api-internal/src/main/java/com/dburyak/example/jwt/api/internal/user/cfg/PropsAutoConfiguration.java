@@ -1,9 +1,9 @@
-package com.dburyak.example.jwt.api.internal.tenant.cfg;
+package com.dburyak.example.jwt.api.internal.user.cfg;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @AutoConfiguration
-@EnableConfigurationProperties(UserMsgProperties.class)
+@EnableConfigurationProperties({UserMsgProperties.class, UserServiceClientProperties.class})
 public class PropsAutoConfiguration {
 }

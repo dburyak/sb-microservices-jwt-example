@@ -1,6 +1,7 @@
 package com.dburyak.example.jwt.lib.req;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.client.RestClient.RequestHeadersSpec;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -12,6 +13,10 @@ import static com.dburyak.example.jwt.lib.req.Attributes.AUTH_TOKEN;
 import static com.dburyak.example.jwt.lib.req.Attributes.IS_SERVICE_REQ;
 import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
 import static com.dburyak.example.jwt.lib.req.Attributes.USER_UUID;
+import static com.dburyak.example.jwt.lib.req.Headers.API_KEY;
+import static com.dburyak.example.jwt.lib.req.Headers.BEARER;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class RequestUtil {
     // thread local map to simulate request attributes for messaging
@@ -196,5 +201,18 @@ public class RequestUtil {
     public HttpServletRequest getCurrentHttpRequest() {
         var reqAttr = RequestContextHolder.getRequestAttributes();
         return reqAttr != null ? ((ServletRequestAttributes) reqAttr).getRequest() : null;
+    }
+
+    public <T extends RequestHeadersSpec<T>> RequestHeadersSpec<T> withPropagatedAuth(
+            RequestHeadersSpec<T> spec) {
+        var authToken = getAuthToken();
+        if (isNotBlank(authToken)) {
+            return spec.header(AUTHORIZATION, BEARER.getHeader() + authToken);
+        }
+        var apiKey = getApiKey();
+        if (isNotBlank(apiKey)) {
+            return spec.header(API_KEY.getHeader(), apiKey);
+        }
+        throw new IllegalStateException("no auth info found in request ctx");
     }
 }

@@ -1,6 +1,7 @@
 package com.dburyak.example.jwt.otp.listener;
 
-import com.dburyak.example.jwt.api.internal.otp.CreateOTPMsg;
+import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForAnonymousUserMsg;
+import com.dburyak.example.jwt.api.internal.otp.CreateOTPForRegisteredUserMsg;
 import com.dburyak.example.jwt.api.internal.otp.cfg.OTPMsgProperties;
 import com.dburyak.example.jwt.lib.msg.Msg;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
@@ -28,17 +29,22 @@ public class CreateOTPMsgListener {
 
     @EventListener(ApplicationReadyEvent.class)
     public void startMsgProcessing() {
-        subscribeToCreateOTPMessages();
+        subscribeToCreateOTPForRegisteredUserMessages();
     }
 
-    public void createOTP(UUID tenantUuid, UUID userUuid, String deviceId, @Valid Msg<CreateOTPMsg> msg) {
-        otpService.create(tenantUuid, userUuid, deviceId, msg.getData());
+    public void createOTPForRegisteredUser(UUID tenantUuid, UUID userUuid, String deviceId,
+            @Valid Msg<CreateOTPForRegisteredUserMsg> msg) {
+        otpService.createForRegisteredUser(tenantUuid, userUuid, deviceId, msg.getData());
     }
 
-    private void subscribeToCreateOTPMessages() {
-        var topic = props.getTopics().getCreateOTP().getTopicName();
+    public void createOTPForAnonymousUser(@Valid Msg<CreateEmailOTPForAnonymousUserMsg> msg) {
+        otpService.createForAnonymousUser(msg.getData());
+    }
+
+    private void subscribeToCreateOTPForRegisteredUserMessages() {
+        var topic = props.getTopics().getCreateOTPForRegisteredUser().getTopicName();
         var consumerGroup = props.getConsumerGroup();
-        Predicate<Msg<CreateOTPMsg>> accessCheck = msg -> {
+        Predicate<Msg<CreateOTPForRegisteredUserMsg>> accessCheck = msg -> {
             // TODO: add security check
             log.warn("auth check is not implemented, skipping: msg={}", msg);
             return true;
@@ -47,7 +53,18 @@ public class CreateOTPMsgListener {
             var tenandUuid = requestUtil.getTenantUuid();
             var userUuid = requestUtil.getUserUuid();
             var deviceId = requestUtil.getDeviceId();
-            self.createOTP(tenandUuid, userUuid, deviceId, msg);
+            self.createOTPForRegisteredUser(tenandUuid, userUuid, deviceId, msg);
         });
+    }
+
+    private void subscribeToCreateOTPForAnonymousUserMessages() {
+        var topic = props.getTopics().getCreateOTPForAnonymousUser().getTopicName();
+        var consumerGroup = props.getConsumerGroup();
+        Predicate<Msg<CreateEmailOTPForAnonymousUserMsg>> accessCheck = msg -> {
+            // TODO: add security check
+            log.warn("auth check is not implemented, skipping: msg={}", msg);
+            return true;
+        };
+        msgQueue.subscribe(topic, consumerGroup, accessCheck, self::createOTPForAnonymousUser);
     }
 }

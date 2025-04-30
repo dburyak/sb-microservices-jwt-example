@@ -33,22 +33,40 @@ public class OTPMsgProperties extends MsgProperties {
     @Value
     @NonFinal
     public static class Topics {
-        CreateOTPTopic createOTP;
+        CreateOTPForAnonymousUserTopic createOTPForAnonymousUser;
+        CreateOTPForRegisteredUserTopic createOTPForRegisteredUser;
 
         @ConstructorBinding
         public Topics(
-                @DefaultValue CreateOTPTopic createOTP) {
-            this.createOTP = createOTP;
+                @DefaultValue CreateOTPForAnonymousUserTopic createOTPForAnonymousUser,
+                @DefaultValue CreateOTPForRegisteredUserTopic createOTPForRegisteredUser) {
+            this.createOTPForAnonymousUser = createOTPForAnonymousUser;
+            this.createOTPForRegisteredUser = createOTPForRegisteredUser;
         }
 
         @Value
         @NonFinal
         @EqualsAndHashCode(callSuper = true)
-        public static class CreateOTPTopic extends TopicCfgProps {
+        public static class CreateOTPForAnonymousUserTopic extends TopicCfgProps {
 
             @ConstructorBinding
-            public CreateOTPTopic(
-                    @DefaultValue("otp.create") String topicName,
+            public CreateOTPForAnonymousUserTopic(
+                    @DefaultValue("otp.create-for-anonymous-user") String topicName,
+                    String subscriptionName,
+                    String consumerGroup,
+                    @DefaultValue("redis") @NotNull Transport transport) {
+                super(topicName, isNotBlank(subscriptionName) ? subscriptionName : topicName, consumerGroup, transport);
+            }
+        }
+
+        @Value
+        @NonFinal
+        @EqualsAndHashCode(callSuper = true)
+        public static class CreateOTPForRegisteredUserTopic extends TopicCfgProps {
+
+            @ConstructorBinding
+            public CreateOTPForRegisteredUserTopic(
+                    @DefaultValue("otp.create-for-registered-user") String topicName,
                     String subscriptionName,
                     String consumerGroup,
                     @DefaultValue("redis") @NotNull Transport transport) {

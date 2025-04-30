@@ -2,9 +2,9 @@ package com.dburyak.example.jwt.user.listener;
 
 import com.dburyak.example.jwt.api.internal.tenant.TenantCreatedMsg;
 import com.dburyak.example.jwt.api.internal.tenant.TenantDeletedMsg;
-import com.dburyak.example.jwt.api.internal.tenant.UserCreatedMsg;
+import com.dburyak.example.jwt.api.internal.user.UserCreatedMsg;
 import com.dburyak.example.jwt.api.internal.tenant.cfg.TenantMsgProperties;
-import com.dburyak.example.jwt.api.internal.tenant.cfg.UserMsgProperties;
+import com.dburyak.example.jwt.api.internal.user.cfg.UserMsgProperties;
 import com.dburyak.example.jwt.api.user.User;
 import com.dburyak.example.jwt.lib.auth.AppAuthentication;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;

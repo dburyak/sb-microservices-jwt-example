@@ -21,6 +21,6 @@ public class User extends MongoEntity {
     public static final String COLLECTION = "users";
 
     private String displayName;
-    private String email;
     private String profileIcon;
+    private ContactInfo contactInfo;
 }
