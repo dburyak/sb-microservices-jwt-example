@@ -1,8 +1,8 @@
 package com.dburyak.example.jwt.api.internal.auth;
 
+import com.dburyak.example.jwt.api.common.QueryParams;
 import com.dburyak.example.jwt.api.internal.auth.cfg.AuthServiceClientProperties;
 import com.dburyak.example.jwt.lib.auth.ServiceTokenManager;
-import com.dburyak.example.jwt.lib.req.Attributes;
 import org.springframework.web.client.RestClient;
 
 import java.util.UUID;
@@ -27,7 +27,7 @@ public class AuthServiceClientInternal {
         return rest.post()
                 .uri(u -> u
                         .path(USERS_ROOT)
-                        .queryParam(Attributes.TENANT_UUID, tenantUuid)
+                        .queryParam(QueryParams.TENANT_UUID, tenantUuid)
                         .build())
                 .contentType(APPLICATION_JSON)
                 .header(AUTHORIZATION, BEARER.getHeader() + tokenManager.getServiceToken())

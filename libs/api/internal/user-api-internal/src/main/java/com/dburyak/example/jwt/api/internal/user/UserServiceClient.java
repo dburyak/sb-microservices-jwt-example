@@ -1,8 +1,8 @@
 package com.dburyak.example.jwt.api.internal.user;
 
+import com.dburyak.example.jwt.api.common.QueryParams;
 import com.dburyak.example.jwt.api.internal.user.cfg.UserServiceClientProperties;
 import com.dburyak.example.jwt.api.user.ContactInfo;
-import com.dburyak.example.jwt.lib.req.Attributes;
 import com.dburyak.example.jwt.lib.req.RequestUtil;
 import org.springframework.web.client.RestClient;
 
@@ -28,7 +28,7 @@ public class UserServiceClient {
         return requestUtil.withPropagatedAuth(rest.get()
                         .uri(u -> u
                                 .path(USERS_ROOT + USER_BY_UUID + CONTACT_INFO)
-                                .queryParam(Attributes.TENANT_UUID, tenantUuid) // in case if it's a service request
+                                .queryParam(QueryParams.TENANT_UUID, tenantUuid) // in case if it's a service request
                                 .build(userUuid))
                         .accept(APPLICATION_JSON)
                 )

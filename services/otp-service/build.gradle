@@ -7,5 +7,6 @@ dependencies {
     implementation project(':libs:err')
     implementation project(':libs:msg')
     implementation project(':libs:api:internal:otp-api-internal')
+    implementation project(':libs:api:internal:user-api-internal')
     implementation project(':libs:api:internal:email-api-internal')
 }
