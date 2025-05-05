@@ -203,8 +203,7 @@ public class RequestUtil {
         return reqAttr != null ? ((ServletRequestAttributes) reqAttr).getRequest() : null;
     }
 
-    public <T extends RequestHeadersSpec<T>> RequestHeadersSpec<T> withPropagatedAuth(
-            RequestHeadersSpec<T> spec) {
+    public <T extends RequestHeadersSpec<T>> RequestHeadersSpec<T> withPropagatedAuth(RequestHeadersSpec<T> spec) {
         var authToken = getAuthToken();
         if (isNotBlank(authToken)) {
             return spec.header(AUTHORIZATION, BEARER.getHeader() + authToken);

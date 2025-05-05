@@ -1,1 +1,2 @@
 com.dburyak.example.jwt.api.internal.otp.cfg.PropsAutoConfiguration
+com.dburyak.example.jwt.api.internal.otp.cfg.ClientAutoConfiguration

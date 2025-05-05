@@ -24,6 +24,17 @@ public class UserServiceClient {
                 .build();
     }
 
+    public ContactInfo getContactInfo(UUID userUuid) {
+        return requestUtil.withPropagatedAuth(rest.get()
+                        .uri(u -> u
+                                .path(USERS_ROOT + USER_BY_UUID + CONTACT_INFO)
+                                .build(userUuid))
+                        .accept(APPLICATION_JSON)
+                )
+                .retrieve()
+                .body(ContactInfo.class);
+    }
+
     public ContactInfo getContactInfo(UUID tenantUuid, UUID userUuid) {
         return requestUtil.withPropagatedAuth(rest.get()
                         .uri(u -> u
