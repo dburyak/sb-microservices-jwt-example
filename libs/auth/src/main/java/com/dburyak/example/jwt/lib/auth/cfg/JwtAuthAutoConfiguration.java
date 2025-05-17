@@ -1,6 +1,8 @@
 package com.dburyak.example.jwt.lib.auth.cfg;
 
 import com.dburyak.example.jwt.lib.auth.AuthoritiesMapper;
+import com.dburyak.example.jwt.lib.auth.FilterRegistrationHttpConfigurer;
+import com.dburyak.example.jwt.lib.auth.SecurityFilterChainHttpConfigurer;
 import com.dburyak.example.jwt.lib.auth.jwt.JwtAuthExtractor;
 import com.dburyak.example.jwt.lib.auth.jwt.JwtAuthProvider;
 import com.dburyak.example.jwt.lib.auth.jwt.JwtFilter;
@@ -12,8 +14,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
 @AutoConfiguration(after = PropsAutoConfiguration.class)
 @EnableWebSecurity
@@ -43,14 +45,14 @@ public class JwtAuthAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(AuthenticationManager.class)
-    public AuthenticationManager authManager(JwtAuthProvider jwtAuthProvider) {
-        return new ProviderManager(jwtAuthProvider);
-    }
-
-    @Bean
     @ConditionalOnMissingBean
     public AuthoritiesMapper jwtAuthoritiesMapper() {
         return new NoAuthoritiesMapper();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(SecurityFilterChain.class)
+    public SecurityFilterChainHttpConfigurer jwtFilterConfigurer(JwtFilter jwtFilter) {
+        return new FilterRegistrationHttpConfigurer(jwtFilter, jwtFilter.getOrder());
     }
 }

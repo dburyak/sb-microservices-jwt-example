@@ -1,7 +1,7 @@
 package com.dburyak.example.jwt.user.cfg;
 
 import com.dburyak.example.jwt.lib.auth.jwt.JwtFilter;
-import com.dburyak.example.jwt.lib.req.TenantUuidHeaderExtractionFilter;
+import com.dburyak.example.jwt.lib.req.TenantUuidExtractionFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,7 +19,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityCfg {
 
     @Bean
-    public SecurityFilterChain security(HttpSecurity http, TenantUuidHeaderExtractionFilter tenantUuidFilter,
+    public SecurityFilterChain security(HttpSecurity http, TenantUuidExtractionFilter tenantUuidFilter,
             JwtFilter jwtFilter)
             throws Exception {
         return http.csrf(csrf -> csrf.disable())
@@ -32,7 +32,7 @@ public class SecurityCfg {
                         .anyRequest().denyAll())
 
                 .addFilterBefore(tenantUuidFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(jwtFilter, TenantUuidHeaderExtractionFilter.class)
+                .addFilterAfter(jwtFilter, TenantUuidExtractionFilter.class)
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
                 .build();
     }

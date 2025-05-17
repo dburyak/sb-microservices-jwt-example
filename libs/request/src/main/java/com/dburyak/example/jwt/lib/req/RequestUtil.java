@@ -70,6 +70,30 @@ public class RequestUtil {
         clearRequestAttr(req, Attributes.API_KEY);
     }
 
+    public UUID getCallersTenantUuid() {
+        return getRequestAttr(Attributes.CALLERS_TENANT_UUID);
+    }
+
+    public UUID getCallersTenantUuid(HttpServletRequest req) {
+        return getRequestAttr(req, Attributes.CALLERS_TENANT_UUID);
+    }
+
+    public void setCallersTenantUuid(UUID callersTenantUuid) {
+        putRequestAttr(Attributes.CALLERS_TENANT_UUID, callersTenantUuid);
+    }
+
+    public void setCallersTenantUuid(HttpServletRequest req, UUID callersTenantUuid) {
+        putRequestAttr(req, Attributes.CALLERS_TENANT_UUID, callersTenantUuid);
+    }
+
+    public void clearCallersTenantUuid() {
+        clearRequestAttr(Attributes.CALLERS_TENANT_UUID);
+    }
+
+    public void clearCallersTenantUuid(HttpServletRequest req) {
+        clearRequestAttr(req, Attributes.CALLERS_TENANT_UUID);
+    }
+
     public UUID getTenantUuid() {
         return getRequestAttr(TENANT_UUID);
     }

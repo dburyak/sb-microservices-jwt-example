@@ -1,11 +1,14 @@
 package com.dburyak.example.jwt.lib.auth.jwt;
 
 import com.dburyak.example.jwt.lib.req.RequestUtil;
+import com.dburyak.example.jwt.lib.req.cfg.FilterOrder;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,10 +21,13 @@ import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_TENANT
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter implements Ordered {
     private final JwtAuthExtractor jwtExtractor;
     private final AuthenticationManager authManager;
     private final RequestUtil requestUtil;
+
+    @Getter
+    private final int order = FilterOrder.JWT_AUTH.getOrder();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
