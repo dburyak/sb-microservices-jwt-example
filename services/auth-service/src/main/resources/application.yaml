@@ -15,9 +15,16 @@ auth:
     keys: ${JWT_KNOWN_KEYS:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
     trusted-issuers:
       - local.jwt.example.dburyak.com
+      - auth.local.jwt.example.dburyak.com
       - user.local.jwt.example.dburyak.com
+    service-token:
+      enabled: true
+      issuer: ${JWT_SERVICE_TOKEN_ISSUER:auth.local.jwt.example.dburyak.com}
     generator:
       enabled: true
       issuer: ${JWT_ISSUER:local.jwt.example.dburyak.com}
       key: ${JWT_SIGN_KEY:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
       ttl: ${JWT_TTL:1h}
+service-client:
+  auth:
+    enabled: true

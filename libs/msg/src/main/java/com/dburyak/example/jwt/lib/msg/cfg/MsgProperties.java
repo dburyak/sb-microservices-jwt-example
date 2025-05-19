@@ -32,7 +32,7 @@ public class MsgProperties {
 
     @ConstructorBinding
     public MsgProperties(
-            @DefaultValue("false") boolean enabled,
+            @DefaultValue("true") boolean enabled,
             @DefaultValue("VIRTUAL") @NotNull ExecType execType,
             @DefaultValue("3") @Min(2) int minThreads,
             @Positive Integer maxThreads) {

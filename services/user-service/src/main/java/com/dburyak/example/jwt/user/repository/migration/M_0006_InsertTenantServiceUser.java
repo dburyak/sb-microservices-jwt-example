@@ -26,7 +26,7 @@ import static com.dburyak.example.jwt.user.repository.migration.M_0004_InsertAut
 @ChangeUnit(id = "0006-insert-tenant-service-user", order = "0006", author = "dmytro.buryak")
 public class M_0006_InsertTenantServiceUser {
     static final UUID TENANT_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000003");
-    static final String DISPLAY_NAME = "Tenant Service User";
+    static final String DISPLAY_NAME = "tenant-service user";
     static final String EMAIL = "tenant.service@jwt.example.dbruayk.com";
     static final String PROFILE_ICON = "service";
 

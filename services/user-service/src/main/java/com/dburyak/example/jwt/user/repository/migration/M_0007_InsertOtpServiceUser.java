@@ -8,6 +8,7 @@ import org.bson.Document;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.dburyak.example.jwt.user.repository.migration.M_0001_CreateUsersCollection.COLLECTION_USERS;
 import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_EMAIL;
@@ -22,10 +23,11 @@ import static com.dburyak.example.jwt.user.repository.migration.M_0003_InsertSup
 import static com.dburyak.example.jwt.user.repository.migration.M_0003_InsertSuperAdminUser.USER_SERVICE_USER_UUID;
 import static com.dburyak.example.jwt.user.repository.migration.M_0004_InsertAuthServiceUser.SERVICE_TENANT_UUID;
 
-@ChangeUnit(id = "0005-insert-user-service-user", order = "0005", author = "dmytro.buryak")
-public class M_0005_InsertUserServiceUser {
-    static final String DISPLAY_NAME = "user-service user";
-    static final String EMAIL = "user.service@jwt.example.dburyak.com";
+@ChangeUnit(id = "0007-insert-otp-service-user", order = "0007", author = "dmytro.buryak")
+public class M_0007_InsertOtpServiceUser {
+    static final UUID OTP_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000004");
+    static final String DISPLAY_NAME = "otps-service user";
+    static final String EMAIL = "otp.service@jwt.example.dburyak.com";
     static final String PROFILE_ICON = "service";
 
     @Execution
@@ -34,7 +36,7 @@ public class M_0005_InsertUserServiceUser {
         var now = Instant.now();
         collection.insertOne(new Document(Map.of(
                 FIELD_TENANT_UUID, SERVICE_TENANT_UUID,
-                FIELD_UUID, USER_SERVICE_USER_UUID,
+                FIELD_UUID, OTP_SERVICE_USER_UUID,
                 FIELD_DISPLAY_NAME, DISPLAY_NAME,
                 FIELD_EMAIL, EMAIL,
                 FIELD_PROFILE_ICON, PROFILE_ICON,
@@ -50,7 +52,7 @@ public class M_0005_InsertUserServiceUser {
         var collection = mongo.getCollection(COLLECTION_USERS);
         collection.deleteOne(new Document(Map.of(
                 FIELD_TENANT_UUID, SERVICE_TENANT_UUID,
-                FIELD_UUID, USER_SERVICE_USER_UUID
+                FIELD_UUID, OTP_SERVICE_USER_UUID
         )));
     }
 }

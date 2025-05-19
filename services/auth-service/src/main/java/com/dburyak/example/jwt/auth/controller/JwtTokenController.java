@@ -65,6 +65,7 @@ public class JwtTokenController {
     @ExceptionHandler
     @ResponseStatus(UNAUTHORIZED)
     public ProblemDetail onNotFound(NotFoundException err) {
+        // user/refresh-token/whatever not found also means invalid credentials
         return buildInvalidCredsProblemDetail();
     }
 

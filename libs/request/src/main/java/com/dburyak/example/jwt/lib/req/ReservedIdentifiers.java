@@ -12,10 +12,14 @@ public class ReservedIdentifiers {
     public static final UUID AUTH_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
     public static final UUID USER_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000002");
     public static final UUID TENANT_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000003");
+    public static final UUID OTP_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000004");
+    public static final UUID EMAIL_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000005");
     public static final Map<String, UUID> SERVICE_UUIDS = Map.of(
             "auth-service", AUTH_SERVICE_USER_UUID,
             "user-service", USER_SERVICE_USER_UUID,
-            "tenant-service", TENANT_SERVICE_USER_UUID
+            "tenant-service", TENANT_SERVICE_USER_UUID,
+            "otp-service", OTP_SERVICE_USER_UUID,
+            "email-service", EMAIL_SERVICE_USER_UUID
     );
 
     // reserved tenant uuids

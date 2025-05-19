@@ -10,4 +10,7 @@ import java.util.UUID;
 public interface OTPRepository extends MongoRepository<OTP, String>, OTPRepositoryCustom {
     OTP findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndExpiresAtBefore(UUID tenantUuid, UUID userUuid, String deviceId,
             OTPType type, Instant expiresAtBefore);
+
+    OTP findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(UUID tenantUuid, UUID userUuid,
+            String deviceId, OTPType type, String code, Instant expiresAtBefore);
 }

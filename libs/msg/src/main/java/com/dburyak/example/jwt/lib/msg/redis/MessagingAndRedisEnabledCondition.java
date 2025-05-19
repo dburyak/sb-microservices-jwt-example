@@ -11,11 +11,11 @@ public class MessagingAndRedisEnabledCondition extends AllNestedConditions {
         super(PARSE_CONFIGURATION);
     }
 
-    @ConditionalOnProperty(prefix = "msg", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "msg", name = "enabled", havingValue = "true", matchIfMissing = true)
     public static class MessagingEnabledCondition {
     }
 
-    @ConditionalOnProperty(prefix = "msg.redis", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "msg.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
     public static class RedisMessagingEnabledCondition {
     }
 }

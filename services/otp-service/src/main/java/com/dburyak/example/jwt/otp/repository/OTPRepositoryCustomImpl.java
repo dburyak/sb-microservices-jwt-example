@@ -1,9 +1,13 @@
 package com.dburyak.example.jwt.otp.repository;
 
 import com.dburyak.example.jwt.otp.domain.OTP;
+import com.dburyak.example.jwt.otp.domain.OTPType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.FindAndReplaceOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.time.Instant;
+import java.util.UUID;
 
 import static com.dburyak.example.jwt.otp.domain.OTP.COLLECTION;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -27,5 +31,17 @@ public class OTPRepositoryCustomImpl implements OTPRepositoryCustom {
                 .and(TENANT_UUID).is(otp.getTenantUuid()));
         var opts = new FindAndReplaceOptions().upsert();
         return mongo.findAndReplace(q, otp, opts, OTP.class, COLLECTION);
+    }
+
+    @Override
+    public OTP findAndDeleteByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(UUID tenantUuid,
+            UUID userUuid, String deviceId, OTPType type, String code, Instant expiresAtBefore) {
+        var q = query(where(USER_UUID).is(tenantUuid)
+                .and(DEVICE_ID).is(deviceId)
+                .and(TYPE).is(type)
+                .and(TENANT_UUID).is(tenantUuid)
+                .and(CODE).is(code)
+                .and(EXPIRES_AT).lt(expiresAtBefore));
+        return mongo.findAndRemove(q, OTP.class, COLLECTION);
     }
 }

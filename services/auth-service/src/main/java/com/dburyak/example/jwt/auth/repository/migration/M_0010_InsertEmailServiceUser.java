@@ -26,10 +26,10 @@ import static com.dburyak.example.jwt.auth.repository.migration.M_0003_InsertSup
 import static com.dburyak.example.jwt.auth.repository.migration.M_0006_InsertAuthServiceUser.ROLE_SERVICE;
 import static com.dburyak.example.jwt.auth.repository.migration.M_0006_InsertAuthServiceUser.SERVICE_TENANT_UUID;
 
-@ChangeUnit(id = "0007-insert-user-service-user", order = "0007", author = "dmytro.buryak")
-public class M_0007_InsertUserServiceUser {
-    static final String USERNAME = "user-service";
-    static final UUID USER_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000002");
+@ChangeUnit(id = "0010-insert-email-service-user", order = "0010", author = "dmytro.buryak")
+public class M_0010_InsertEmailServiceUser {
+    static final String USERNAME = "email-service";
+    static final UUID EMAIL_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000005");
 
     @Execution
     public void execute(MongoDatabase mongo) {
@@ -37,7 +37,7 @@ public class M_0007_InsertUserServiceUser {
         var now = Instant.now();
         LinkedHashMap<String, Object> userMap = new LinkedHashMap<>();
         userMap.put(FIELD_TENANT_UUID, SERVICE_TENANT_UUID);
-        userMap.put(FIELD_UUID, USER_SERVICE_USER_UUID);
+        userMap.put(FIELD_UUID, EMAIL_SERVICE_USER_UUID);
         userMap.put(FIELD_USERNAME, USERNAME);
         userMap.put(FIELD_PASSWORD, null); // no password for service user
         userMap.put(FIELD_ROLES, Set.of(ROLE_SERVICE));
@@ -53,7 +53,7 @@ public class M_0007_InsertUserServiceUser {
         var collection = mongo.getCollection(COLLECTION_USERS);
         collection.deleteOne(new Document(Map.of(
                 FIELD_TENANT_UUID, SERVICE_TENANT_UUID,
-                FIELD_UUID, USER_SERVICE_USER_UUID
+                FIELD_UUID, EMAIL_SERVICE_USER_UUID
         )));
     }
 }

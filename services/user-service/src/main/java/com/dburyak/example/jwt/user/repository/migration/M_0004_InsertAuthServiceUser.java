@@ -26,7 +26,7 @@ import static com.dburyak.example.jwt.user.repository.migration.M_0003_InsertSup
 public class M_0004_InsertAuthServiceUser {
     static final UUID SERVICE_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
     static final UUID AUTH_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
-    static final String DISPLAY_NAME = "Auth Service User";
+    static final String DISPLAY_NAME = "auth-service user";
     static final String EMAIL = "auth.service@jwt.example.dburyak.com";
     static final String PROFILE_ICON = "service";
 

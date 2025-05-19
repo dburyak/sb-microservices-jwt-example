@@ -8,10 +8,10 @@ import com.dburyak.example.jwt.api.internal.email.cfg.EmailMsgProperties;
 import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForAnonymousUserMsg;
 import com.dburyak.example.jwt.api.internal.otp.CreateOTPForRegisteredUserMsg;
 import com.dburyak.example.jwt.api.internal.user.UserServiceClient;
-import com.dburyak.example.jwt.lib.err.NotFoundException;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.otp.domain.OTP;
 import com.dburyak.example.jwt.otp.domain.OTPType;
+import com.dburyak.example.jwt.otp.err.OTPNotFoundException;
 import com.dburyak.example.jwt.otp.repository.OTPRepository;
 import com.dburyak.example.jwt.otp.service.converter.OTPConverter;
 import lombok.extern.log4j.Log4j2;
@@ -93,13 +93,32 @@ public class OTPService {
         var typeDomain = otpConverter.toDomain(type);
         var otp = otpRepository.findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndExpiresAtBefore(
                 tenantUuid, userUuid, deviceId, typeDomain, Instant.now());
-        if (otp == null) {
-            throw new NotFoundException("OTP(tenantUuid=%s, userUuid=%s, deviceId=%s, type=%s)".formatted(
-                    tenantUuid, userUuid, deviceId, type));
+        if (otp == null || isExpired(otp)) {
+            throw new OTPNotFoundException(userUuid, deviceId, type);
         }
-        if (isExpired(otp)) {
-            throw new NotFoundException("OTP(tenantUuid=%s, userUuid=%s, deviceId=%s, type=%s)".formatted(
-                    tenantUuid, userUuid, deviceId, type));
+        return otpConverter.toApiModel(otp);
+    }
+
+    public com.dburyak.example.jwt.api.internal.otp.OTP findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCode(
+            UUID tenantUuid, UUID userUuid, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type,
+            String otpCode) {
+        var typeDomain = otpConverter.toDomain(type);
+        var otp = otpRepository.findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(
+                tenantUuid, userUuid, deviceId, typeDomain, otpCode, Instant.now());
+        if (otp == null || isExpired(otp)) {
+            throw new OTPNotFoundException(userUuid, deviceId, type, otpCode);
+        }
+        return otpConverter.toApiModel(otp);
+    }
+
+    public com.dburyak.example.jwt.api.internal.otp.OTP claimByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCode(
+            UUID tenantUuid, UUID userUuid, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type,
+            String otpCode) {
+        var typeDomain = otpConverter.toDomain(type);
+        var otp = otpRepository.findAndDeleteByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(
+                tenantUuid, userUuid, deviceId, typeDomain, otpCode, Instant.now());
+        if (otp == null || isExpired(otp)) {
+            throw new OTPNotFoundException(userUuid, deviceId, type, otpCode);
         }
         return otpConverter.toApiModel(otp);
     }

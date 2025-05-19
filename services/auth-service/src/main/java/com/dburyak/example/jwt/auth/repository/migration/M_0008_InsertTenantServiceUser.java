@@ -39,7 +39,7 @@ public class M_0008_InsertTenantServiceUser {
         userMap.put(FIELD_TENANT_UUID, SERVICE_TENANT_UUID);
         userMap.put(FIELD_UUID, TENANT_SERVICE_USER_UUID);
         userMap.put(FIELD_USERNAME, USERNAME);
-        userMap.put(FIELD_PASSWORD, null); // no initial password for service user
+        userMap.put(FIELD_PASSWORD, null); // no password for service user
         userMap.put(FIELD_ROLES, Set.of(ROLE_SERVICE));
         userMap.put(FIELD_CREATED_BY, AUTH_SERVICE_USER_UUID);
         userMap.put(FIELD_CREATED_DATE, now);

@@ -27,6 +27,7 @@ public class UserController {
     private final UserService userService;
 
     /**
+     * Internal endpoint, not exposed to the public.
      * Only regular users can be created via this endpoint.
      * Part of the user creation flow by {@link Role#USER_MANAGER}.
      */

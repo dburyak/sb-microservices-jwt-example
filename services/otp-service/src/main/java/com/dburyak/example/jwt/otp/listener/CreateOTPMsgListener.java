@@ -7,6 +7,7 @@ import com.dburyak.example.jwt.lib.msg.Msg;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.lib.req.RequestUtil;
 import com.dburyak.example.jwt.otp.service.OTPService;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,11 +22,16 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 @Log4j2
 public class CreateOTPMsgListener {
-    private final CreateOTPMsgListener self;
+    private CreateOTPMsgListener self;
     private final OTPMsgProperties props;
     private final PointToPointMsgQueue msgQueue;
     private final OTPService otpService;
     private final RequestUtil requestUtil;
+
+    @PostConstruct
+    public void injectSelf() {
+        self = this;
+    }
 
     @EventListener(ApplicationReadyEvent.class)
     public void startMsgProcessing() {

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import static com.dburyak.example.jwt.lib.msg.cfg.MsgProperties.ExecType.VIRTUAL;
 
 @AutoConfiguration(after = PropsAutoConfiguration.class)
-@ConditionalOnProperty(prefix = "msg", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "msg", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class MsgAutoConfiguration {
 
     @Bean
