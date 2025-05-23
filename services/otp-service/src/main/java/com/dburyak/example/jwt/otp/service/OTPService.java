@@ -11,6 +11,7 @@ import com.dburyak.example.jwt.api.internal.user.UserServiceClient;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.otp.domain.OTP;
 import com.dburyak.example.jwt.otp.domain.OTPType;
+import com.dburyak.example.jwt.otp.err.AnonymousOTPNotFoundException;
 import com.dburyak.example.jwt.otp.err.OTPNotFoundException;
 import com.dburyak.example.jwt.otp.repository.OTPRepository;
 import com.dburyak.example.jwt.otp.service.converter.OTPConverter;
@@ -76,15 +77,21 @@ public class OTPService {
 
     public void createForAnonymousUser(CreateEmailOTPForAnonymousUserMsg req) {
         var otpType = otpConverter.toDomain(req.getType());
+        var email = otpConverter.toDomainEmail(req.getEmail());
         var code = otpGenerator.generate(req.getTenantUuid(), otpType, req.getLocale());
         var otp = OTP.builder()
                 .tenantUuid(req.getTenantUuid())
                 .uuid(UUID.randomUUID())
                 .deviceId(req.getDeviceId())
+                .externalId(email)
                 .type(otpType)
                 .code(code)
                 .expiresAt(Instant.now().plus(OTP_TTL))
                 .build();
+        var oldOtp = otpRepository.insertOrReplaceByTenantUuidAndExternalIdAndDeviceIdAndType(otp);
+        if (oldOtp != null && !isExpired(oldOtp)) {
+            log.debug("replaced valid anonymous otp: oldOtp={}, newOtp={}", oldOtp, otp);
+        }
         sendEmail(otp);
     }
 
@@ -111,6 +118,18 @@ public class OTPService {
         return otpConverter.toApiModel(otp);
     }
 
+    public com.dburyak.example.jwt.api.internal.otp.OTP findByTenantUuidAndEmailAndDeviceIdAndType(
+            UUID tenantUuid, String email, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type) {
+        var typeDomain = otpConverter.toDomain(type);
+        var emailDomain = otpConverter.toDomainEmail(email);
+        var otp = otpRepository.findByTenantUuidAndExternalIdAndDeviceIdAndTypeAndExpiresAtBefore(tenantUuid,
+                emailDomain, deviceId, typeDomain, Instant.now());
+        if (otp == null || isExpired(otp)) {
+            throw new AnonymousOTPNotFoundException(deviceId, type);
+        }
+        return otpConverter.toApiModel(otp);
+    }
+
     public com.dburyak.example.jwt.api.internal.otp.OTP claimByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCode(
             UUID tenantUuid, UUID userUuid, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type,
             String otpCode) {
@@ -119,6 +138,19 @@ public class OTPService {
                 tenantUuid, userUuid, deviceId, typeDomain, otpCode, Instant.now());
         if (otp == null || isExpired(otp)) {
             throw new OTPNotFoundException(userUuid, deviceId, type, otpCode);
+        }
+        return otpConverter.toApiModel(otp);
+    }
+
+    public com.dburyak.example.jwt.api.internal.otp.OTP claimByTenantUuidAndEmailAndDeviceIdAndTypeAndCode(
+            UUID tenantUuid, String email, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type,
+            String otpCode) {
+        var typeDomain = otpConverter.toDomain(type);
+        var emailDomain = otpConverter.toDomainEmail(email);
+        var otp = otpRepository.findAndDeleteByTenantUuidAndExternalIdAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(
+                tenantUuid, emailDomain, deviceId, typeDomain, otpCode, Instant.now());
+        if (otp == null || isExpired(otp)) {
+            throw new AnonymousOTPNotFoundException(deviceId, type, otpCode);
         }
         return otpConverter.toApiModel(otp);
     }

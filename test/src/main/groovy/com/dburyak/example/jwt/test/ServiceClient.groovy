@@ -30,10 +30,10 @@ abstract class ServiceClient<T extends ServiceClient<T>> {
                 .build()
     }
 
-    protected abstract T create(UUID tenantUuid = null, String jwtToken = null)
+    protected abstract T createWith(UUID tenantUuid = null, String jwtToken = null)
 
     T with(Map<String, ?> args) {
-        create(args.tenantUuid ?: tenantUuid, args.jwtToken ?: jwtToken)
+        createWith(args.tenantUuid ?: tenantUuid, args.jwtToken ?: jwtToken)
     }
 
 }

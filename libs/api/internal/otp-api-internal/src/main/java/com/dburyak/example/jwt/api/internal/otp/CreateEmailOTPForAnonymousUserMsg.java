@@ -25,7 +25,8 @@ public class CreateEmailOTPForAnonymousUserMsg extends CreateOTPBaseMsg {
 
     /**
      * Optional, used for cases when the caller is registered but not authenticated (no auth token with all the info).
-     * Otherwise, the userUuid is not known and external identifier should be used instead (email, phone number, etc.).
+     * Otherwise, the userUuid is not known, and external identifier (email, phone number, etc.) should be used to
+     * identify the user.
      */
     UUID userUuid;
 

@@ -6,7 +6,6 @@ import com.dburyak.example.jwt.lib.auth.apikey.ApiKeyAuthProvider;
 import com.dburyak.example.jwt.lib.auth.jwt.JwtAuthProvider;
 import com.dburyak.example.jwt.lib.req.TenantUuidExtractionFilter;
 import com.dburyak.example.jwt.lib.req.TenantVerificationFilter;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -74,7 +73,8 @@ public class SecurityAutoConfiguration {
                 throw new IllegalStateException("no security configurers provided, we can't run with auth disabled");
             }
             if (isEmpty(authConfigurers)) {
-                log.warn("no authZ configurers provided, most likely this is a misconfiguration");
+                log.warn("no authZ configurers provided, most likely this is a misconfiguration unless this service " +
+                        "does not expose a rest api");
             }
             var configuredHttp = http.csrf(csrf -> csrf.disable())
                     .authorizeHttpRequests(auth -> {

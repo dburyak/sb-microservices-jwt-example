@@ -10,4 +10,5 @@ dependencies {
   implementation project(':libs:api:internal:user-api-internal')
   implementation project(':libs:api:internal:auth-api-internal')
   implementation project(':libs:api:internal:tenant-api-internal')
+  implementation project(':libs:api:internal:otp-api-internal')
 }

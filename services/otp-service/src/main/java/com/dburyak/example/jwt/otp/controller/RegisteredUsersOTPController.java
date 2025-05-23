@@ -26,17 +26,17 @@ import static com.dburyak.example.jwt.api.internal.otp.Paths.OTP_BY_TYPE;
 import static com.dburyak.example.jwt.api.internal.otp.Paths.PATH_OTPS;
 import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
 
-/**
- * IMPORTANT: in a real application, we would not expose OTPs directly like this. We are making it
- * accessible only because we won't be sending real emails with OTPs in this example app. This is a clumsy way
- * to substitute actual email delivery.
- */
 @RestController
 @RequestMapping(PATH_OTPS)
 @RequiredArgsConstructor
-public class OTPController {
+public class RegisteredUsersOTPController {
     private final OTPService otpService;
 
+    /**
+     * IMPORTANT: in a real application, we would not expose OTPs directly like this. We are making it
+     * accessible only because we won't be sending real emails with OTPs in this example app. This is a clumsy way
+     * to substitute actual email delivery. Only the "claim" endpoint is valid for real applications.
+     */
     @GetMapping(OTP_BY_TYPE)
     public ResponseEntity<OTP> getByUserUuidAndDeviceIdAndType(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
@@ -46,21 +46,6 @@ public class OTPController {
         var otp = otpService.findByTenantUuidAndUserUuidAndDeviceIdAndType(tenantUuid, userUuid, deviceId, type);
         if (otp == null) {
             throw new OTPNotFoundException(userUuid, deviceId, type);
-        }
-        return ResponseEntity.ok(otp);
-    }
-
-    @GetMapping(OTP_BY_TYPE + OTP_BY_CODE)
-    public ResponseEntity<OTP> getByUserUuidAndDeviceIdAndTypeAndCode(
-            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
-            @PathVariable(USER_UUID) @NotNull UUID userUuid,
-            @PathVariable(DEVICE_ID) @NotBlank String deviceId,
-            @PathVariable(OTP_TYPE) @NotNull OTPType type,
-            @PathVariable(OTP_CODE) @NotBlank String otpCode) {
-        var otp = otpService.findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCode(tenantUuid, userUuid, deviceId, type,
-                otpCode);
-        if (otp == null) {
-            throw new OTPNotFoundException(userUuid, deviceId, type, otpCode);
         }
         return ResponseEntity.ok(otp);
     }

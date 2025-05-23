@@ -39,12 +39,12 @@ public class CreateOTPMsgListener {
     }
 
     public void createOTPForRegisteredUser(UUID tenantUuid, UUID userUuid, String deviceId,
-            @Valid Msg<CreateOTPForRegisteredUserMsg> msg) {
-        otpService.createForRegisteredUser(tenantUuid, userUuid, deviceId, msg.getData());
+            @Valid CreateOTPForRegisteredUserMsg req) {
+        otpService.createForRegisteredUser(tenantUuid, userUuid, deviceId, req);
     }
 
-    public void createOTPForAnonymousUser(@Valid Msg<CreateEmailOTPForAnonymousUserMsg> msg) {
-        otpService.createForAnonymousUser(msg.getData());
+    public void createOTPForAnonymousUser(@Valid CreateEmailOTPForAnonymousUserMsg req) {
+        otpService.createForAnonymousUser(req);
     }
 
     private void subscribeToCreateOTPForRegisteredUserMessages() {
@@ -59,7 +59,7 @@ public class CreateOTPMsgListener {
             var tenandUuid = requestUtil.getTenantUuid();
             var userUuid = requestUtil.getUserUuid();
             var deviceId = requestUtil.getDeviceId();
-            self.createOTPForRegisteredUser(tenandUuid, userUuid, deviceId, msg);
+            self.createOTPForRegisteredUser(tenandUuid, userUuid, deviceId, msg.getData());
         });
     }
 
@@ -71,6 +71,7 @@ public class CreateOTPMsgListener {
             log.warn("auth check is not implemented, skipping: msg={}", msg);
             return true;
         };
-        msgQueue.subscribe(topic, consumerGroup, accessCheck, self::createOTPForAnonymousUser);
+        msgQueue.subscribe(topic, consumerGroup, accessCheck,
+                msg -> self.createOTPForAnonymousUser(msg.getData()));
     }
 }

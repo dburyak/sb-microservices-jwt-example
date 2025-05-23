@@ -26,13 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 import static com.dburyak.example.jwt.api.auth.Paths.AUTH_JWT_REFRESH;
-import static com.dburyak.example.jwt.api.auth.Paths.AUTH_JWT_ROOT;
+import static com.dburyak.example.jwt.api.auth.Paths.AUTH_JWT;
 import static com.dburyak.example.jwt.api.auth.Paths.AUTH_JWT_TOKEN;
 import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestController
-@RequestMapping(AUTH_JWT_ROOT)
+@RequestMapping(AUTH_JWT)
 @RequiredArgsConstructor
 public class JwtTokenController {
     private static final String ERR_INVALID_CREDENTIALS = "Invalid credentials";

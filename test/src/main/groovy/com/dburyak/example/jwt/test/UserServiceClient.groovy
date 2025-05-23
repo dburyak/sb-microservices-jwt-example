@@ -2,7 +2,7 @@ package com.dburyak.example.jwt.test
 
 import com.dburyak.example.jwt.api.user.User
 
-import static com.dburyak.example.jwt.api.user.Paths.USERS_ROOT
+import static com.dburyak.example.jwt.api.user.Paths.USERS
 import static BaseSpec.USER_SERVICE_URL
 import static org.springframework.http.MediaType.APPLICATION_JSON
 
@@ -13,13 +13,13 @@ class UserServiceClient extends ServiceClient {
     }
 
     @Override
-    protected UserServiceClient create(UUID tenantUuid = null, String jwtToken = null) {
+    protected UserServiceClient createWith(UUID tenantUuid = null, String jwtToken = null) {
         new UserServiceClient(tenantUuid, jwtToken)
     }
 
     User register(User req) {
         rest.post()
-                .uri { it.path(USERS_ROOT) }
+                .uri { it.path(USERS) }
                 .contentType(APPLICATION_JSON)
                 .body(req)
                 .retrieve()

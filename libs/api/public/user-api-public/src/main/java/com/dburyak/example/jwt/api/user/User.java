@@ -17,8 +17,8 @@ import lombok.experimental.SuperBuilder;
 //@Jacksonized
 public class User extends AuditedApiModel {
 
-    @NotBlank(groups = {CREATE.class})
-    @JsonView({CREATE.class})
+    @NotBlank(groups = {CREATE.class, UPDATE.class})
+    @JsonView({READ.class, CREATE.class, UPDATE.class})
     String username;
 
     @NotBlank(groups = {CREATE.class})
@@ -34,5 +34,6 @@ public class User extends AuditedApiModel {
     String profileIcon;
 
     @NotNull(groups = {CREATE.class, UPDATE.class})
+    @JsonView({READ.class, CREATE.class, UPDATE.class})
     ContactInfo contactInfo;
 }

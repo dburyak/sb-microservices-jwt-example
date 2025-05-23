@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.dburyak.example.jwt.user.repository.migration.M_0001_CreateUsersCollection.COLLECTION_USERS;
-import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_EMAIL;
+import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_CONTACT_INFO_EMAIL;
 import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_TENANT_UUID;
 import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_UUID;
 import static com.dburyak.example.jwt.user.repository.migration.M_0003_InsertSuperAdminUser.FIELD_CREATED_BY;
@@ -38,7 +38,7 @@ public class M_0004_InsertAuthServiceUser {
                 FIELD_TENANT_UUID, SERVICE_TENANT_UUID,
                 FIELD_UUID, AUTH_SERVICE_USER_UUID,
                 FIELD_DISPLAY_NAME, DISPLAY_NAME,
-                FIELD_EMAIL, EMAIL,
+                FIELD_CONTACT_INFO_EMAIL, EMAIL,
                 FIELD_PROFILE_ICON, PROFILE_ICON,
                 FIELD_CREATED_BY, USER_SERVICE_USER_UUID,
                 FIELD_CREATED_DATE, now,

@@ -1,13 +1,15 @@
 package com.dburyak.example.jwt.api.user;
 
-import com.dburyak.example.jwt.api.common.PathParams;
 import lombok.experimental.UtilityClass;
+
+import static com.dburyak.example.jwt.api.common.Paths.PATH_USER_BY_UUID;
 
 @UtilityClass
 public class Paths {
-    public static final String USERS_ROOT = "/users";
-    public static final String USER_BY_UUID = "/{" + PathParams.USER_UUID + "}";
+    // path components
     public static final String CONTACT_INFO = "/contact-info";
-    public static final String DEVICES_ROOT = "/devices";
-    public static final String DEVICE_BY_ID = "/{" + PathParams.DEVICE_ID + "}";
+    public static final String REGISTRATION_OTP = "/registration-otp";
+
+    // full paths
+    public static final String PATH_CONTACT_INFO = PATH_USER_BY_UUID + CONTACT_INFO;
 }

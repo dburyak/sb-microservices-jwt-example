@@ -9,7 +9,7 @@ import org.springframework.web.client.RestClient;
 import java.util.UUID;
 
 import static com.dburyak.example.jwt.api.user.Paths.CONTACT_INFO;
-import static com.dburyak.example.jwt.api.user.Paths.USERS_ROOT;
+import static com.dburyak.example.jwt.api.user.Paths.USERS;
 import static com.dburyak.example.jwt.api.user.Paths.USER_BY_UUID;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -27,7 +27,7 @@ public class UserServiceClient {
     public ContactInfo getContactInfo(UUID userUuid) {
         return requestUtil.withPropagatedAuth(rest.get()
                         .uri(u -> u
-                                .path(USERS_ROOT + USER_BY_UUID + CONTACT_INFO)
+                                .path(USERS + USER_BY_UUID + CONTACT_INFO)
                                 .build(userUuid))
                         .accept(APPLICATION_JSON)
                 )
@@ -38,7 +38,7 @@ public class UserServiceClient {
     public ContactInfo getContactInfo(UUID tenantUuid, UUID userUuid) {
         return requestUtil.withPropagatedAuth(rest.get()
                         .uri(u -> u
-                                .path(USERS_ROOT + USER_BY_UUID + CONTACT_INFO)
+                                .path(USERS + USER_BY_UUID + CONTACT_INFO)
                                 .queryParam(QueryParams.TENANT_UUID, tenantUuid) // in case if it's a service request
                                 .build(userUuid))
                         .accept(APPLICATION_JSON)

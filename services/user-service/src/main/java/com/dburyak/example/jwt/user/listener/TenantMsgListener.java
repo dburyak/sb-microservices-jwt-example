@@ -55,7 +55,7 @@ public class TenantMsgListener {
             // create tenant admin user
             var tenantUuid = msg.getData().getUuid();
             var adminEmail = msg.getData().getAdminEmail();
-            var createdUser = userService.create(tenantUuid, User.builder()
+            var createdUser = userService.createViaRegistration(tenantUuid, User.builder()
                     .username(adminEmail)
                     .displayName("admin")
                     .email(adminEmail)

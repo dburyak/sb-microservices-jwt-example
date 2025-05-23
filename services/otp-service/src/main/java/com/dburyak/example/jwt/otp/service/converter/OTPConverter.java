@@ -11,6 +11,10 @@ public class OTPConverter {
         return OTPType.valueOf(type.name());
     }
 
+    public String toDomainEmail(String reqEmail) {
+        return reqEmail != null ? reqEmail.strip().toLowerCase() : null;
+    }
+
     public com.dburyak.example.jwt.api.internal.otp.OTPType toApiModel(OTPType type) {
         return com.dburyak.example.jwt.api.internal.otp.OTPType.valueOf(type.name());
     }

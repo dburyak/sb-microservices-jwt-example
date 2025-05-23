@@ -9,6 +9,11 @@ import java.util.UUID;
 public interface OTPRepositoryCustom {
     OTP insertOrReplaceByTenantUuidAndUserUuidAndDeviceIdAndType(OTP otp);
 
+    OTP insertOrReplaceByTenantUuidAndExternalIdAndDeviceIdAndType(OTP otp);
+
     OTP findAndDeleteByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(UUID tenantUuid, UUID userUuid,
             String deviceId, OTPType type, String code, Instant expiresAtBefore);
+
+    OTP findAndDeleteByTenantUuidAndExternalIdAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(UUID tenantUuid,
+            String externalId, String deviceId, OTPType type, String code, Instant expiresAtBefore);
 }

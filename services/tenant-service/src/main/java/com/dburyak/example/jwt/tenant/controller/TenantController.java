@@ -23,12 +23,12 @@ import java.util.UUID;
 import static com.dburyak.example.jwt.api.internal.tenant.Paths.TENANT_EXISTS;
 import static com.dburyak.example.jwt.api.tenant.PathParams.TENANT_NAME;
 import static com.dburyak.example.jwt.api.tenant.PathParams.TENANT_UUID;
-import static com.dburyak.example.jwt.api.tenant.Paths.TENANTS_ROOT;
+import static com.dburyak.example.jwt.api.tenant.Paths.TENANTS;
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANT_BY_NAME;
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANT_BY_UUID;
 
 @RestController
-@RequestMapping(TENANTS_ROOT)
+@RequestMapping(TENANTS)
 @RequiredArgsConstructor
 public class TenantController {
     private final TenantService tenantService;
@@ -38,6 +38,12 @@ public class TenantController {
     public ResponseEntity<Tenant> create(@Validated(CREATE.class) @JsonView(CREATE.class) @RequestBody Tenant req) {
         var tenant = tenantService.create(req);
         return ResponseEntity.ok(tenant);
+    }
+
+    @DeleteMapping(TENANT_BY_UUID)
+    public ResponseEntity<Void> delete(@PathVariable(name = TENANT_UUID) @NotNull UUID tenantUuid) {
+        tenantService.delete(tenantUuid);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(TENANT_BY_UUID)
@@ -52,12 +58,6 @@ public class TenantController {
     public ResponseEntity<Tenant> getByName(@PathVariable(name = TENANT_NAME) @NotBlank String tenantName) {
         var tenant = tenantService.get(tenantName);
         return tenant != null ? ResponseEntity.ok(tenant) : ResponseEntity.notFound().build();
-    }
-
-    @DeleteMapping(TENANT_BY_UUID)
-    public ResponseEntity<Void> delete(@PathVariable(name = TENANT_UUID) @NotNull UUID tenantUuid) {
-        tenantService.delete(tenantUuid);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(TENANT_BY_UUID + TENANT_EXISTS)
