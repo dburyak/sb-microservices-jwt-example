@@ -7,6 +7,7 @@ import com.dburyak.example.jwt.api.internal.email.StandardTemplate;
 import com.dburyak.example.jwt.api.internal.email.cfg.EmailMsgProperties;
 import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForAnonymousUserMsg;
 import com.dburyak.example.jwt.api.internal.otp.CreateOTPForRegisteredUserMsg;
+import com.dburyak.example.jwt.api.internal.otp.RegisteredUserOTP;
 import com.dburyak.example.jwt.api.internal.user.UserServiceClient;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.otp.err.AnonymousOTPNotFoundException;
@@ -25,11 +26,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Service
 @Log4j2
 public class OTPService {
-    /// this should come from config, part of the same config used in OTPGenerator
+    /// this should come from config, part of the same config used in RegisteredUserOTPGenerator
     private static final Duration OTP_TTL = Duration.ofHours(1);
     private final OTPConverter otpConverter;
     private final OTPRepository otpRepository;
-    private final OTPGenerator otpGenerator;
+    private final RegisteredUserOTPGenerator otpGenerator;
     private final UserServiceClient userServiceClient;
     private final PointToPointMsgQueue msgQueue;
     private final String emailTopic;
@@ -40,7 +41,7 @@ public class OTPService {
 
     public OTPService(OTPConverter otpConverter,
             OTPRepository otpRepository,
-            OTPGenerator otpGenerator,
+            RegisteredUserOTPGenerator otpGenerator,
             UserServiceClient userServiceClient,
             PointToPointMsgQueue msgQueue,
             EmailMsgProperties emailMsgProps) {
@@ -92,7 +93,7 @@ public class OTPService {
         sendEmail(otp);
     }
 
-    public com.dburyak.example.jwt.api.internal.otp.OTP findByTenantUuidAndUserUuidAndDeviceIdAndType(
+    public RegisteredUserOTP findByTenantUuidAndUserUuidAndDeviceIdAndType(
             UUID tenantUuid, UUID userUuid, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type) {
         var typeDomain = otpConverter.toDomain(type);
         var otp = otpRepository.findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndExpiresAtBefore(
@@ -103,7 +104,7 @@ public class OTPService {
         return otpConverter.toApiModel(otp);
     }
 
-    public com.dburyak.example.jwt.api.internal.otp.OTP findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCode(
+    public RegisteredUserOTP findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCode(
             UUID tenantUuid, UUID userUuid, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type,
             String otpCode) {
         var typeDomain = otpConverter.toDomain(type);
@@ -115,7 +116,7 @@ public class OTPService {
         return otpConverter.toApiModel(otp);
     }
 
-    public com.dburyak.example.jwt.api.internal.otp.OTP findByTenantUuidAndEmailAndDeviceIdAndType(
+    public RegisteredUserOTP findByTenantUuidAndEmailAndDeviceIdAndType(
             UUID tenantUuid, String email, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type) {
         var typeDomain = otpConverter.toDomain(type);
         var emailDomain = otpConverter.toDomainEmail(email);
@@ -127,7 +128,7 @@ public class OTPService {
         return otpConverter.toApiModel(otp);
     }
 
-    public com.dburyak.example.jwt.api.internal.otp.OTP claimByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCode(
+    public RegisteredUserOTP claimByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCode(
             UUID tenantUuid, UUID userUuid, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type,
             String otpCode) {
         var typeDomain = otpConverter.toDomain(type);
@@ -139,7 +140,7 @@ public class OTPService {
         return otpConverter.toApiModel(otp);
     }
 
-    public com.dburyak.example.jwt.api.internal.otp.OTP claimByTenantUuidAndEmailAndDeviceIdAndTypeAndCode(
+    public RegisteredUserOTP claimByTenantUuidAndEmailAndDeviceIdAndTypeAndCode(
             UUID tenantUuid, String email, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type,
             String otpCode) {
         var typeDomain = otpConverter.toDomain(type);

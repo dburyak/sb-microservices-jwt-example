@@ -1,5 +1,6 @@
 package com.dburyak.example.jwt.otp.service.converter;
 
+import com.dburyak.example.jwt.api.internal.otp.RegisteredUserOTP;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,8 +18,8 @@ public class OTPConverter {
         return com.dburyak.example.jwt.api.internal.otp.OTPType.valueOf(type.name());
     }
 
-    public com.dburyak.example.jwt.api.internal.otp.OTP toApiModel(OTP otp) {
-        return com.dburyak.example.jwt.api.internal.otp.OTP.builder()
+    public RegisteredUserOTP toApiModel(OTP otp) {
+        return RegisteredUserOTP.builder()
                 .uuid(otp.getUuid())
                 .createdBy(otp.getCreatedBy())
                 .createdDate(otp.getCreatedDate())

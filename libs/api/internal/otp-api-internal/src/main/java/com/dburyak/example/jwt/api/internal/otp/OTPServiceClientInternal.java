@@ -21,17 +21,17 @@ public class OTPServiceClientInternal {
                 .build();
     }
 
-    public OTP getOTPByType(UUID userUuid, String deviceId, OTPType type) {
+    public RegisteredUserOTP getOTPByType(UUID userUuid, String deviceId, OTPType type) {
         return requestUtil.withPropagatedAuth(rest.get()
                         .uri(u -> u
                                 .path(PATH_OTP_BY_TYPE)
                                 .build(userUuid, deviceId, type))
                 )
                 .retrieve()
-                .body(OTP.class);
+                .body(RegisteredUserOTP.class);
     }
 
-    public OTP getOTPByType(UUID tenantUuid, UUID userUuid, String deviceId, OTPType type) {
+    public RegisteredUserOTP getOTPByType(UUID tenantUuid, UUID userUuid, String deviceId, OTPType type) {
         return requestUtil.withPropagatedAuth(rest.get()
                         .uri(u -> u
                                 .path(PATH_OTP_BY_TYPE)
@@ -39,20 +39,20 @@ public class OTPServiceClientInternal {
                                 .build(userUuid, deviceId, type))
                 )
                 .retrieve()
-                .body(OTP.class);
+                .body(RegisteredUserOTP.class);
     }
 
-    public OTP getOTPByTypeAndCode(UUID userUuid, String deviceId, OTPType type, String code) {
+    public RegisteredUserOTP getOTPByTypeAndCode(UUID userUuid, String deviceId, OTPType type, String code) {
         return requestUtil.withPropagatedAuth(rest.get()
                         .uri(u -> u
                                 .path(PATH_OTP_BY_CODE)
                                 .build(userUuid, deviceId, type, code))
                 )
                 .retrieve()
-                .body(OTP.class);
+                .body(RegisteredUserOTP.class);
     }
 
-    public OTP getOTPByTypeAndCode(UUID tenantUuid, UUID userUuid, String deviceId, OTPType type, String code) {
+    public RegisteredUserOTP getOTPByTypeAndCode(UUID tenantUuid, UUID userUuid, String deviceId, OTPType type, String code) {
         return requestUtil.withPropagatedAuth(rest.get()
                         .uri(u -> u
                                 .path(PATH_OTP_BY_CODE)
@@ -60,20 +60,20 @@ public class OTPServiceClientInternal {
                                 .build(userUuid, deviceId, type, code))
                 )
                 .retrieve()
-                .body(OTP.class);
+                .body(RegisteredUserOTP.class);
     }
 
-    public OTP claimOTPByTypeAndCode(UUID userUuid, String deviceId, OTPType type, String code) {
+    public RegisteredUserOTP claimOTPByTypeAndCode(UUID userUuid, String deviceId, OTPType type, String code) {
         return requestUtil.withPropagatedAuth(rest.delete()
                         .uri(u -> u
                                 .path(PATH_OTP_BY_CODE)
                                 .build(userUuid, deviceId, type, code))
                 )
                 .retrieve()
-                .body(OTP.class);
+                .body(RegisteredUserOTP.class);
     }
 
-    public OTP claimOTPByTypeAndCode(UUID tenantUuid, UUID userUuid, String deviceId, OTPType type, String code) {
+    public RegisteredUserOTP claimOTPByTypeAndCode(UUID tenantUuid, UUID userUuid, String deviceId, OTPType type, String code) {
         return requestUtil.withPropagatedAuth(rest.delete()
                         .uri(u -> u
                                 .path(PATH_OTP_BY_CODE)
@@ -81,6 +81,6 @@ public class OTPServiceClientInternal {
                                 .build(userUuid, deviceId, type, code))
                 )
                 .retrieve()
-                .body(OTP.class);
+                .body(RegisteredUserOTP.class);
     }
 }

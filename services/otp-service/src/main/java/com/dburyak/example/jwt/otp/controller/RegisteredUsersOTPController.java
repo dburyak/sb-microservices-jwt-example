@@ -1,6 +1,6 @@
 package com.dburyak.example.jwt.otp.controller;
 
-import com.dburyak.example.jwt.api.internal.otp.OTP;
+import com.dburyak.example.jwt.api.internal.otp.RegisteredUserOTP;
 import com.dburyak.example.jwt.api.internal.otp.OTPType;
 import com.dburyak.example.jwt.otp.err.OTPNotFoundException;
 import com.dburyak.example.jwt.otp.service.OTPService;
@@ -38,7 +38,7 @@ public class RegisteredUsersOTPController {
      * to substitute actual email delivery. Only the "claim" endpoint is valid for real applications.
      */
     @GetMapping(OTP_BY_TYPE)
-    public ResponseEntity<OTP> getByUserUuidAndDeviceIdAndType(
+    public ResponseEntity<RegisteredUserOTP> getByUserUuidAndDeviceIdAndType(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @PathVariable(USER_UUID) @NotNull UUID userUuid,
             @PathVariable(DEVICE_ID) @NotBlank String deviceId,

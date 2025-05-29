@@ -3,7 +3,7 @@ package com.dburyak.example.jwt.otp.controller;
 import com.dburyak.example.jwt.api.common.ApiView.READ;
 import com.dburyak.example.jwt.api.common.ApiView.UPDATE;
 import com.dburyak.example.jwt.api.common.ExternalId;
-import com.dburyak.example.jwt.api.internal.otp.OTP;
+import com.dburyak.example.jwt.api.internal.otp.RegisteredUserOTP;
 import com.dburyak.example.jwt.api.internal.otp.OTPType;
 import com.dburyak.example.jwt.otp.err.AnonymousOTPNotFoundException;
 import com.dburyak.example.jwt.otp.service.OTPService;
@@ -48,7 +48,7 @@ public class AnonymousUsersOTPController {
      */
     @PostMapping(OTP_BY_TYPE + GET_RESOURCE)
     @JsonView(READ.class)
-    public ResponseEntity<OTP> getByEmailAndDeviceIdAndType(
+    public ResponseEntity<RegisteredUserOTP> getByEmailAndDeviceIdAndType(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @PathVariable(DEVICE_ID) @NotBlank String deviceId,
             @PathVariable(OTP_TYPE) @NotNull OTPType type,

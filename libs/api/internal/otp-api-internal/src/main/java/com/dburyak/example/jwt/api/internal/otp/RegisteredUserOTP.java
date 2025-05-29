@@ -11,10 +11,9 @@ import java.util.UUID;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(toBuilder = true)
-public class OTP extends AuditedApiModel {
+public class RegisteredUserOTP extends AuditedApiModel {
     UUID userUuid;
     String deviceId;
-    String externalId; // email, phone number, etc., when userUuid is not known (anonymous user)
     OTPType type;
 
     /**
@@ -25,4 +24,11 @@ public class OTP extends AuditedApiModel {
     String code;
 
     Instant expiresAt;
+
+    public enum Type {
+        /**
+         * OTP for resetting password in case when the user is logged in (change password flow).
+         */
+        PASSWORD_RESET
+    }
 }
