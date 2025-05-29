@@ -7,11 +7,11 @@ import spock.lang.Specification
  * Base spec with constants only, no any setup/cleanup.
  */
 abstract class BaseSpec extends Specification {
-    static final String SA_PASSWORD = System.getenv('SA_PASSWORD')
+    static final String SA_PASSWORD = System.getenv('JWT_EXAMPLE_SA_PASSWORD')
 
     static {
         if (!SA_PASSWORD) {
-            throw new IllegalStateException('SA_PASSWORD environment variable must be set')
+            throw new IllegalStateException('JWT_EXAMPLE_SA_PASSWORD environment variable must be set')
         }
     }
 

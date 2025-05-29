@@ -9,11 +9,8 @@ import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForAnonymousUserMs
 import com.dburyak.example.jwt.api.internal.otp.CreateOTPForRegisteredUserMsg;
 import com.dburyak.example.jwt.api.internal.user.UserServiceClient;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
-import com.dburyak.example.jwt.otp.domain.OTP;
-import com.dburyak.example.jwt.otp.domain.OTPType;
 import com.dburyak.example.jwt.otp.err.AnonymousOTPNotFoundException;
 import com.dburyak.example.jwt.otp.err.OTPNotFoundException;
-import com.dburyak.example.jwt.otp.repository.OTPRepository;
 import com.dburyak.example.jwt.otp.service.converter.OTPConverter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -88,7 +85,7 @@ public class OTPService {
                 .code(code)
                 .expiresAt(Instant.now().plus(OTP_TTL))
                 .build();
-        var oldOtp = otpRepository.insertOrReplaceByTenantUuidAndExternalIdAndDeviceIdAndType(otp);
+        var oldOtp = otpRepository.insertOrReplaceByTenantUuidAndEmailAndDeviceIdAndType(otp);
         if (oldOtp != null && !isExpired(oldOtp)) {
             log.debug("replaced valid anonymous otp: oldOtp={}, newOtp={}", oldOtp, otp);
         }
@@ -122,7 +119,7 @@ public class OTPService {
             UUID tenantUuid, String email, String deviceId, com.dburyak.example.jwt.api.internal.otp.OTPType type) {
         var typeDomain = otpConverter.toDomain(type);
         var emailDomain = otpConverter.toDomainEmail(email);
-        var otp = otpRepository.findByTenantUuidAndExternalIdAndDeviceIdAndTypeAndExpiresAtBefore(tenantUuid,
+        var otp = otpRepository.findByTenantUuidAndEmailAndDeviceIdAndTypeAndExpiresAtBefore(tenantUuid,
                 emailDomain, deviceId, typeDomain, Instant.now());
         if (otp == null || isExpired(otp)) {
             throw new AnonymousOTPNotFoundException(deviceId, type);
@@ -147,7 +144,7 @@ public class OTPService {
             String otpCode) {
         var typeDomain = otpConverter.toDomain(type);
         var emailDomain = otpConverter.toDomainEmail(email);
-        var otp = otpRepository.findAndDeleteByTenantUuidAndExternalIdAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(
+        var otp = otpRepository.findAndDeleteByTenantUuidAndEmailAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(
                 tenantUuid, emailDomain, deviceId, typeDomain, otpCode, Instant.now());
         if (otp == null || isExpired(otp)) {
             throw new AnonymousOTPNotFoundException(deviceId, type, otpCode);

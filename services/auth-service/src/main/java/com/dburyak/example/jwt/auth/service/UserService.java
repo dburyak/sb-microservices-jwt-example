@@ -1,5 +1,6 @@
 package com.dburyak.example.jwt.auth.service;
 
+import com.dburyak.example.jwt.api.common.ExternalId;
 import com.dburyak.example.jwt.api.internal.auth.User;
 import com.dburyak.example.jwt.auth.repository.UserRepository;
 import com.dburyak.example.jwt.auth.service.converter.UserConverter;
@@ -26,6 +27,10 @@ public class UserService {
         user.setRoles(roles.stream().map(Role::getName).collect(toSet()));
         var savedUser = repository.save(user);
         return converter.toApiModel(savedUser);
+    }
+
+    public void createPasswordResetOTP(UUID tenantUuid, String deviceId, ExternalId externalId) {
+        // Implementation for creating password reset OTP
     }
 
     public void deleteAllByTenantUuid(UUID tenantUuid) {

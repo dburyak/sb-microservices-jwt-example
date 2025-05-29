@@ -2,7 +2,7 @@ package com.dburyak.example.jwt.otp.controller;
 
 import com.dburyak.example.jwt.api.common.ApiView.READ;
 import com.dburyak.example.jwt.api.common.ApiView.UPDATE;
-import com.dburyak.example.jwt.api.internal.otp.ExternalId;
+import com.dburyak.example.jwt.api.common.ExternalId;
 import com.dburyak.example.jwt.api.internal.otp.OTP;
 import com.dburyak.example.jwt.api.internal.otp.OTPType;
 import com.dburyak.example.jwt.otp.err.AnonymousOTPNotFoundException;

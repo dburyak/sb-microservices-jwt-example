@@ -1,6 +1,5 @@
 package com.dburyak.example.jwt.otp.service;
 
-import com.dburyak.example.jwt.otp.domain.OTPType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 

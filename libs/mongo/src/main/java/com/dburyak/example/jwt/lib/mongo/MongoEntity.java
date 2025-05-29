@@ -24,6 +24,14 @@ import java.util.UUID;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 public abstract class MongoEntity {
+    // field names for queries
+    public static final String FIELD_TENANT_UUID = "tenantUuid";
+    public static final String FIELD_UUID = "uuid";
+    public static final String FIELD_CREATED_BY = "createdBy";
+    public static final String FIELD_CREATED_DATE = "createdDate";
+    public static final String FIELD_LAST_MODIFIED_BY = "lastModifiedBy";
+    public static final String FIELD_LAST_MODIFIED_DATE = "lastModifiedDate";
+    public static final String FIELD_VERSION = "version";
 
     @Id
     private String id;

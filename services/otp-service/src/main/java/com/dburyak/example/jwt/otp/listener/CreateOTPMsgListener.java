@@ -30,12 +30,13 @@ public class CreateOTPMsgListener {
 
     @PostConstruct
     public void injectSelf() {
-        self = this;
+        self = this; // trick to use annotation-based validations right in this class
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void startMsgProcessing() {
         subscribeToCreateOTPForRegisteredUserMessages();
+        subscribeToCreateOTPForAnonymousUserMessages();
     }
 
     public void createOTPForRegisteredUser(UUID tenantUuid, UUID userUuid, String deviceId,
@@ -52,7 +53,7 @@ public class CreateOTPMsgListener {
         var consumerGroup = props.getConsumerGroup();
         Predicate<Msg<CreateOTPForRegisteredUserMsg>> accessCheck = msg -> {
             // TODO: add security check
-            log.warn("auth check is not implemented, skipping: msg={}", msg);
+            log.warn("auth check is not implemented, processing without check: msg={}", msg);
             return true;
         };
         msgQueue.subscribe(topic, consumerGroup, accessCheck, msg -> {
@@ -68,7 +69,7 @@ public class CreateOTPMsgListener {
         var consumerGroup = props.getConsumerGroup();
         Predicate<Msg<CreateEmailOTPForAnonymousUserMsg>> accessCheck = msg -> {
             // TODO: add security check
-            log.warn("auth check is not implemented, skipping: msg={}", msg);
+            log.warn("auth check is not implemented, processing without check: msg={}", msg);
             return true;
         };
         msgQueue.subscribe(topic, consumerGroup, accessCheck,

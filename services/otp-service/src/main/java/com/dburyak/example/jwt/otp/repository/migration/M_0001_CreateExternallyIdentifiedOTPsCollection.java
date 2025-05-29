@@ -7,18 +7,18 @@ import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackBeforeExecution;
 import io.mongock.api.annotations.RollbackExecution;
 
-@ChangeUnit(id = "0001-create-otps-collection", order = "0001", author = "dmytro.buryak")
-public class M_0001_CreateOTPsCollection {
-    static final String COLLECTION_OTPS = "otps";
+@ChangeUnit(id = "0001-create-externally-identified-otps-collection", order = "0001", author = "dmytro.buryak")
+public class M_0001_CreateExternallyIdentifiedOTPsCollection {
+    static final String COLLECTION_EXTERNALLY_IDENTIFIED_OTPS = "externallyIdentifiedOtps";
 
     @BeforeExecution
     public void executeBeforeWithoutTx(MongoDatabase mongo) {
-        mongo.createCollection(COLLECTION_OTPS);
+        mongo.createCollection(COLLECTION_EXTERNALLY_IDENTIFIED_OTPS);
     }
 
     @RollbackBeforeExecution
     public void rollbackBeforeExecution(MongoDatabase mongo) {
-        mongo.getCollection(COLLECTION_OTPS).drop();
+        mongo.getCollection(COLLECTION_EXTERNALLY_IDENTIFIED_OTPS).drop();
     }
 
     @Execution

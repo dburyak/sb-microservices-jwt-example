@@ -27,6 +27,7 @@ io.mongock:mongock-bom:5.5.0=integrationTestAnnotationProcessor,integrationTestC
 io.mongock:mongock-bom:5.5.1=annotationProcessor,compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 jakarta.activation:jakarta.activation-api:2.1.3=integrationTestCompileClasspath,integrationTestRuntimeClasspath
 jakarta.annotation:jakarta.annotation-api:2.1.1=integrationTestCompileClasspath,integrationTestRuntimeClasspath
+jakarta.validation:jakarta.validation-api:3.0.2=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 jakarta.xml.bind:jakarta.xml.bind-api:4.0.2=integrationTestCompileClasspath,integrationTestRuntimeClasspath
 jline:jline:2.14.6=integrationTestRuntimeClasspath
 junit:junit:4.13.2=integrationTestCompileClasspath,integrationTestRuntimeClasspath

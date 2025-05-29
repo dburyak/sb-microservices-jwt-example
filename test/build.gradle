@@ -18,6 +18,12 @@ dependencies {
     implementation project(':libs:api:public:auth-api-public')
     implementation project(':libs:api:public:tenant-api-public')
     implementation project(':libs:api:public:user-api-public')
+
+    // the only internal api we use in tests to avoid real email delivery, this is rather a hack, in real app
+    // private apis are not exposed, and end-to-end tests should rather use URLs of the api-gateway instead of
+    // talking to services directly, and email sending should NOT be mocked (use dedicated test mailboxes and real
+    // email delivery)
+    implementation project(':libs:api:internal:otp-api-internal')
 }
 
 java {

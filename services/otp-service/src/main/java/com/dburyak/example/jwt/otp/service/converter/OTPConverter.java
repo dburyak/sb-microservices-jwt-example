@@ -1,7 +1,5 @@
 package com.dburyak.example.jwt.otp.service.converter;
 
-import com.dburyak.example.jwt.otp.domain.OTP;
-import com.dburyak.example.jwt.otp.domain.OTPType;
 import org.springframework.stereotype.Component;
 
 @Component
