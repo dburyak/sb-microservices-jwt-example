@@ -1,9 +1,8 @@
 package com.dburyak.example.jwt.otp.controller;
 
 import com.dburyak.example.jwt.api.internal.otp.RegisteredUserOTP;
-import com.dburyak.example.jwt.api.internal.otp.OTPType;
-import com.dburyak.example.jwt.otp.err.OTPNotFoundException;
-import com.dburyak.example.jwt.otp.service.OTPService;
+import com.dburyak.example.jwt.otp.err.RegistereUserOTPNotFoundException;
+import com.dburyak.example.jwt.otp.service.RegisteredUserOTPService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +22,14 @@ import static com.dburyak.example.jwt.api.internal.otp.PathParams.OTP_CODE;
 import static com.dburyak.example.jwt.api.internal.otp.PathParams.OTP_TYPE;
 import static com.dburyak.example.jwt.api.internal.otp.Paths.OTP_BY_CODE;
 import static com.dburyak.example.jwt.api.internal.otp.Paths.OTP_BY_TYPE;
-import static com.dburyak.example.jwt.api.internal.otp.Paths.PATH_OTPS;
+import static com.dburyak.example.jwt.api.internal.otp.Paths.PATH_REGISTERED_OTPS;
 import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
 
 @RestController
-@RequestMapping(PATH_OTPS)
+@RequestMapping(PATH_REGISTERED_OTPS)
 @RequiredArgsConstructor
 public class RegisteredUsersOTPController {
-    private final OTPService otpService;
+    private final RegisteredUserOTPService otpService;
 
     /**
      * IMPORTANT: in a real application, we would not expose OTPs directly like this. We are making it
@@ -42,10 +41,10 @@ public class RegisteredUsersOTPController {
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @PathVariable(USER_UUID) @NotNull UUID userUuid,
             @PathVariable(DEVICE_ID) @NotBlank String deviceId,
-            @PathVariable(OTP_TYPE) @NotNull OTPType type) {
+            @PathVariable(OTP_TYPE) @NotNull RegisteredUserOTP.Type type) {
         var otp = otpService.findByTenantUuidAndUserUuidAndDeviceIdAndType(tenantUuid, userUuid, deviceId, type);
         if (otp == null) {
-            throw new OTPNotFoundException(userUuid, deviceId, type);
+            throw new RegistereUserOTPNotFoundException(userUuid, deviceId, type);
         }
         return ResponseEntity.ok(otp);
     }
@@ -55,12 +54,12 @@ public class RegisteredUsersOTPController {
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @PathVariable(USER_UUID) @NotNull UUID userUuid,
             @PathVariable(DEVICE_ID) @NotBlank String deviceId,
-            @PathVariable(OTP_TYPE) @NotNull OTPType type,
+            @PathVariable(OTP_TYPE) @NotNull RegisteredUserOTP.Type type,
             @PathVariable(OTP_CODE) @NotBlank String otpCode) {
         var otp = otpService.claimByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCode(tenantUuid, userUuid, deviceId, type,
                 otpCode);
         if (otp == null) {
-            throw new OTPNotFoundException(userUuid, deviceId, type, otpCode);
+            throw new RegistereUserOTPNotFoundException(userUuid, deviceId, type, otpCode);
         }
         return ResponseEntity.noContent().build();
     }

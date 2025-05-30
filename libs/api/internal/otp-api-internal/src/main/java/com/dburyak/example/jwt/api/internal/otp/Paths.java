@@ -13,9 +13,9 @@ public class Paths {
     public static final String OTP_BY_CODE = "/{" + PathParams.OTP_CODE + "}";
 
     // full paths
-    public static final String PATH_OTPS = PATH_DEVICE_BY_ID + OTPS;
-    public static final String PATH_OTP_BY_TYPE = PATH_OTPS + OTP_BY_TYPE;
-    public static final String PATH_OTP_BY_CODE = PATH_OTP_BY_TYPE + OTP_BY_CODE;
+    public static final String PATH_REGISTERED_OTPS = PATH_DEVICE_BY_ID + OTPS;
+    public static final String PATH_REGISTERED_OTP_BY_TYPE = PATH_REGISTERED_OTPS + OTP_BY_TYPE;
+    public static final String PATH_REGISTERED_OTP_BY_CODE = PATH_REGISTERED_OTP_BY_TYPE + OTP_BY_CODE;
     public static final String PATH_ANONYMOUS_OTPS = PATH_ANONYMOUS_DEVICE_BY_ID + OTPS;
     public static final String PATH_ANONYMOUS_OTP_BY_TYPE = PATH_ANONYMOUS_OTPS + OTP_BY_TYPE;
     public static final String PATH_ANONYMOUS_OTP_BY_CODE = PATH_ANONYMOUS_OTP_BY_TYPE + OTP_BY_CODE;

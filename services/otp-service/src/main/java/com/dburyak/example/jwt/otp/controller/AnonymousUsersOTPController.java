@@ -4,8 +4,8 @@ import com.dburyak.example.jwt.api.common.ApiView.READ;
 import com.dburyak.example.jwt.api.common.ApiView.UPDATE;
 import com.dburyak.example.jwt.api.common.ExternalId;
 import com.dburyak.example.jwt.api.internal.otp.RegisteredUserOTP;
-import com.dburyak.example.jwt.api.internal.otp.OTPType;
-import com.dburyak.example.jwt.otp.err.AnonymousOTPNotFoundException;
+import com.dburyak.example.jwt.otp.err.ExternallyIdentifiedOTPNotFoundException;
+import com.dburyak.example.jwt.otp.service.ExternallyIdentifiedOTPService;
 import com.dburyak.example.jwt.otp.service.OTPService;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.NotBlank;
@@ -36,7 +36,7 @@ import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
 @RequestMapping(PATH_ANONYMOUS_OTPS)
 @RequiredArgsConstructor
 public class AnonymousUsersOTPController {
-    private final OTPService otpService;
+    private final ExternallyIdentifiedOTPService otpService;
 
     /**
      * IMPORTANT: in a real application, we would not expose OTPs directly like this. We are making it
@@ -51,12 +51,12 @@ public class AnonymousUsersOTPController {
     public ResponseEntity<RegisteredUserOTP> getByEmailAndDeviceIdAndType(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @PathVariable(DEVICE_ID) @NotBlank String deviceId,
-            @PathVariable(OTP_TYPE) @NotNull OTPType type,
+            @PathVariable(OTP_TYPE) @NotNull RegisteredUserOTP.Type type,
             @RequestBody @Validated(READ.class) @NotNull ExternalId externalId) {
         var otp = otpService.findByTenantUuidAndEmailAndDeviceIdAndType(tenantUuid, externalId.getEmail(), deviceId,
                 type);
         if (otp == null) {
-            throw new AnonymousOTPNotFoundException(deviceId, type);
+            throw new ExternallyIdentifiedOTPNotFoundException(deviceId, type);
         }
         return ResponseEntity.ok(otp);
     }
@@ -65,13 +65,13 @@ public class AnonymousUsersOTPController {
     public ResponseEntity<Void> claimByEmailAndDeviceIdAndTypeAndCode(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @PathVariable(DEVICE_ID) @NotBlank String deviceId,
-            @PathVariable(OTP_TYPE) @NotNull OTPType type,
+            @PathVariable(OTP_TYPE) @NotNull RegisteredUserOTP.Type type,
             @PathVariable(OTP_CODE) @NotBlank String otpCode,
             @RequestBody @Validated(UPDATE.class) @NotNull ExternalId externalId) {
         var otp = otpService.claimByTenantUuidAndEmailAndDeviceIdAndTypeAndCode(tenantUuid, externalId.getEmail(),
                 deviceId, type, otpCode);
         if (otp == null) {
-            throw new AnonymousOTPNotFoundException(deviceId, type, otpCode);
+            throw new ExternallyIdentifiedOTPNotFoundException(deviceId, type, otpCode);
         }
         return ResponseEntity.noContent().build();
     }
