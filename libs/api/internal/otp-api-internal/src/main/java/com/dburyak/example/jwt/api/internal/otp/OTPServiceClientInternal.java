@@ -26,20 +26,14 @@ public class OTPServiceClientInternal {
                 .build();
     }
 
-    public RegisteredUserOTP getRegisteredUserOTP(UUID userUuid, String deviceId, RegisteredUserOTP.Type type) {
+    public RegisteredUserOTP getRegisteredUserOTP(RegisteredUserOTP.Type type) {
         return requestUtil.withPropagatedAuth(rest.get()
                         .uri(u -> u
                                 .path(PATH_REGISTERED_OTP_BY_TYPE)
-                                .build(userUuid, deviceId, type))
+                                .build(type))
                 )
                 .retrieve()
                 .body(RegisteredUserOTP.class);
-    }
-
-    public RegisteredUserOTP getRegisteredUserOTP(RegisteredUserOTP.Type type) {
-        var userUuid = requestUtil.getUserUuid();
-        var deviceId = requestUtil.getDeviceId();
-        return getRegisteredUserOTP(userUuid, deviceId, type);
     }
 
     public RegisteredUserOTP getExternallyIdentifiedOTP(UUID tenantUuid, String deviceId, RegisteredUserOTP.Type type,
@@ -48,38 +42,34 @@ public class OTPServiceClientInternal {
                         .uri(u -> u
                                 .path(PATH_ANONYMOUS_OTP_BY_TYPE + GET_RESOURCE)
                                 .queryParam(QueryParams.TENANT_UUID, tenantUuid)
-                                .build(deviceId, type))
+                                .queryParam(QueryParams.DEVICE_ID, deviceId)
+                                .build(type))
                         .body(externalId)
                 )
                 .retrieve()
                 .body(RegisteredUserOTP.class);
     }
 
-    public boolean claimRegisteredUserOTP(UUID userUuid, String deviceId, RegisteredUserOTP.Type type,
-            String code) {
+    public boolean claimRegisteredUserOTP(RegisteredUserOTP.Type type, String code) {
         var resp = requestUtil.withPropagatedAuth(rest.delete()
                         .uri(u -> u
                                 .path(PATH_REGISTERED_OTP_BY_CODE)
-                                .build(userUuid, deviceId, type, code))
+                                .build(type, code))
                 )
                 .retrieve()
                 .toBodilessEntity();
         return resp.getStatusCode().is2xxSuccessful();
     }
 
-    public boolean claimRegisteredUserOTP(RegisteredUserOTP.Type type, String code) {
-        var userUuid = requestUtil.getUserUuid();
-        var deviceId = requestUtil.getDeviceId();
-        return claimRegisteredUserOTP(userUuid, deviceId, type, code);
-    }
-
-    public boolean claimExternallyIdentifiedOTP(UUID tenantUuid, UUID userUuid, String deviceId,
-            ExternallyIdentifiedOTP.Type type, String code) {
+    public boolean claimExternallyIdentifiedOTP(UUID tenantUuid, String deviceId, ExternallyIdentifiedOTP.Type type,
+            String code, ExternalId externalId) {
         var resp = requestUtil.withPropagatedAuth(rest.post()
                         .uri(u -> u
                                 .path(PATH_ANONYMOUS_OTP_BY_CODE + DELETE_RESOURCE)
                                 .queryParam(QueryParams.TENANT_UUID, tenantUuid)
-                                .build(deviceId, type, code))
+                                .queryParam(QueryParams.DEVICE_ID, deviceId)
+                                .build(type, code))
+                        .body(externalId)
                 )
                 .retrieve()
                 .toBodilessEntity();
