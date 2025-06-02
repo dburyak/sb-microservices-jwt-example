@@ -18,16 +18,16 @@ import java.time.Duration;
 @Value
 public class AllOTPProperties {
     DefaultOTPProperties defaultCfg;
-    EmailRegistrationOTPProperties emailRegistration;
+    RegistrationWithEmailOTPProperties registrationWithEmail;
     PasswordResetOTPProperties passwordReset;
 
     @ConstructorBinding
     public AllOTPProperties(
             @DefaultValue DefaultOTPProperties defaultCfg,
-            @DefaultValue EmailRegistrationOTPProperties emailRegistration,
+            @DefaultValue RegistrationWithEmailOTPProperties registrationWithEmail,
             @DefaultValue PasswordResetOTPProperties passwordReset) {
         this.defaultCfg = defaultCfg;
-        this.emailRegistration = emailRegistration;
+        this.registrationWithEmail = registrationWithEmail;
         this.passwordReset = passwordReset;
     }
 
@@ -48,10 +48,10 @@ public class AllOTPProperties {
     @Value
     @NonFinal
     @EqualsAndHashCode(callSuper = true)
-    public static class EmailRegistrationOTPProperties extends OTPProperties {
+    public static class RegistrationWithEmailOTPProperties extends OTPProperties {
 
         @ConstructorBinding
-        public EmailRegistrationOTPProperties(
+        public RegistrationWithEmailOTPProperties(
                 @DurationMin(seconds = 1) Duration ttl,
                 @Min(4) int length,
                 String symbols) {

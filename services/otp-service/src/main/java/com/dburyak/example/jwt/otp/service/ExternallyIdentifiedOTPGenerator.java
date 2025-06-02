@@ -15,8 +15,8 @@ public class ExternallyIdentifiedOTPGenerator {
     private final int defaultLength;
     private final String passwordResetSymbols;
     private final int passwordResetLength;
-    private final String emailRegistrationSymbols;
-    private final int emailRegistrationLength;
+    private final String registrationWithEmailSymbols;
+    private final int registrationWithEmailLength;
 
     private final RandomStringUtils rndUtils = RandomStringUtils.secure();
 
@@ -29,11 +29,11 @@ public class ExternallyIdentifiedOTPGenerator {
         passwordResetLength = props.getPasswordReset().getLength() > 0
                 ? props.getPasswordReset().getLength()
                 : defaultLength;
-        emailRegistrationSymbols = props.getEmailRegistration().getSymbols() != null
-                ? props.getEmailRegistration().getSymbols()
+        registrationWithEmailSymbols = props.getRegistrationWithEmail().getSymbols() != null
+                ? props.getRegistrationWithEmail().getSymbols()
                 : defaultSymbols;
-        emailRegistrationLength = props.getEmailRegistration().getLength() > 0
-                ? props.getEmailRegistration().getLength()
+        registrationWithEmailLength = props.getRegistrationWithEmail().getLength() > 0
+                ? props.getRegistrationWithEmail().getLength()
                 : defaultLength;
     }
 
@@ -43,7 +43,7 @@ public class ExternallyIdentifiedOTPGenerator {
         // For simplicity, we use only static configuration here.
         return switch (type) {
             case PASSWORD_RESET -> rndUtils.next(passwordResetLength, passwordResetSymbols);
-            case EMAIL_REGISTRATION -> rndUtils.next(emailRegistrationLength, emailRegistrationSymbols);
+            case REGISTRATION_WITH_EMAIL -> rndUtils.next(registrationWithEmailLength, registrationWithEmailSymbols);
             // Add more cases for other OTP types if needed
             default -> {
                 log.warn("unknown OTP type, using default configuration: type={}", type);

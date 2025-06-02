@@ -1,16 +1,15 @@
 package com.dburyak.example.jwt.otp.listener;
 
-import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForAnonymousUserMsg;
 import com.dburyak.example.jwt.api.internal.otp.CreateOTPForRegisteredUserMsg;
 import com.dburyak.example.jwt.api.internal.otp.cfg.OTPMsgProperties;
 import com.dburyak.example.jwt.lib.msg.Msg;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.lib.req.RequestUtil;
-import com.dburyak.example.jwt.otp.service.OTPService;
+import com.dburyak.example.jwt.otp.service.RegisteredUserOTPService;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -18,15 +17,30 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import static org.apache.commons.lang3.StringUtils.firstNonBlank;
+
 @Component
-@RequiredArgsConstructor
 @Log4j2
-public class CreateOTPMsgListener {
-    private CreateOTPMsgListener self;
+public class RegisteredUserOTPMsgListener {
+    private RegisteredUserOTPMsgListener self;
+    private final String serviceName;
     private final OTPMsgProperties props;
     private final PointToPointMsgQueue msgQueue;
-    private final OTPService otpService;
+    private final RegisteredUserOTPService otpService;
     private final RequestUtil requestUtil;
+
+    public RegisteredUserOTPMsgListener(
+            @Value("${spring.application.name}") String serviceName,
+            OTPMsgProperties props,
+            PointToPointMsgQueue msgQueue,
+            RegisteredUserOTPService otpService,
+            RequestUtil requestUtil) {
+        this.serviceName = serviceName;
+        this.props = props;
+        this.msgQueue = msgQueue;
+        this.otpService = otpService;
+        this.requestUtil = requestUtil;
+    }
 
     @PostConstruct
     public void injectSelf() {
@@ -35,22 +49,22 @@ public class CreateOTPMsgListener {
 
     @EventListener(ApplicationReadyEvent.class)
     public void startMsgProcessing() {
-        subscribeToCreateOTPForRegisteredUserMessages();
-        subscribeToCreateOTPForAnonymousUserMessages();
+        subscribeToCreateOTPMessages();
     }
 
     public void createOTPForRegisteredUser(UUID tenantUuid, UUID userUuid, String deviceId,
             @Valid CreateOTPForRegisteredUserMsg req) {
-        otpService.createForRegisteredUser(tenantUuid, userUuid, deviceId, req);
+        otpService.createOTP(tenantUuid, userUuid, deviceId, req);
     }
 
-    public void createOTPForAnonymousUser(@Valid CreateEmailOTPForAnonymousUserMsg req) {
-        otpService.createForAnonymousUser(req);
-    }
-
-    private void subscribeToCreateOTPForRegisteredUserMessages() {
-        var topic = props.getTopics().getCreateOTPForRegisteredUser().getTopicName();
-        var consumerGroup = props.getConsumerGroup();
+    private void subscribeToCreateOTPMessages() {
+        var topic = firstNonBlank(
+                props.getTopics().getCreateOTPForRegisteredUser().getSubscriptionName(),
+                props.getTopics().getCreateOTPForRegisteredUser().getTopicName());
+        var consumerGroup = firstNonBlank(
+                props.getTopics().getCreateOTPForRegisteredUser().getConsumerGroup(),
+                props.getConsumerGroup(),
+                serviceName);
         Predicate<Msg<CreateOTPForRegisteredUserMsg>> accessCheck = msg -> {
             // TODO: add security check
             log.warn("auth check is not implemented, processing without check: msg={}", msg);
@@ -62,17 +76,5 @@ public class CreateOTPMsgListener {
             var deviceId = requestUtil.getDeviceId();
             self.createOTPForRegisteredUser(tenandUuid, userUuid, deviceId, msg.getData());
         });
-    }
-
-    private void subscribeToCreateOTPForAnonymousUserMessages() {
-        var topic = props.getTopics().getCreateOTPForAnonymousUser().getTopicName();
-        var consumerGroup = props.getConsumerGroup();
-        Predicate<Msg<CreateEmailOTPForAnonymousUserMsg>> accessCheck = msg -> {
-            // TODO: add security check
-            log.warn("auth check is not implemented, processing without check: msg={}", msg);
-            return true;
-        };
-        msgQueue.subscribe(topic, consumerGroup, accessCheck,
-                msg -> self.createOTPForAnonymousUser(msg.getData()));
     }
 }

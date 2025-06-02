@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-import static com.dburyak.example.jwt.api.common.PathParams.DEVICE_ID;
-import static com.dburyak.example.jwt.api.common.PathParams.USER_UUID;
 import static com.dburyak.example.jwt.api.internal.otp.PathParams.OTP_CODE;
 import static com.dburyak.example.jwt.api.internal.otp.PathParams.OTP_TYPE;
 import static com.dburyak.example.jwt.api.internal.otp.Paths.OTP_BY_CODE;
 import static com.dburyak.example.jwt.api.internal.otp.Paths.OTP_BY_TYPE;
 import static com.dburyak.example.jwt.api.internal.otp.Paths.PATH_REGISTERED_OTPS;
+import static com.dburyak.example.jwt.lib.req.Attributes.DEVICE_ID;
 import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
+import static com.dburyak.example.jwt.lib.req.Attributes.USER_UUID;
 
 @RestController
 @RequestMapping(PATH_REGISTERED_OTPS)
@@ -39,10 +39,10 @@ public class RegisteredUsersOTPController {
     @GetMapping(OTP_BY_TYPE)
     public ResponseEntity<RegisteredUserOTP> getByUserUuidAndDeviceIdAndType(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
-            @PathVariable(USER_UUID) @NotNull UUID userUuid,
-            @PathVariable(DEVICE_ID) @NotBlank String deviceId,
+            @RequestAttribute(USER_UUID) @NotNull UUID userUuid,
+            @RequestAttribute(DEVICE_ID) @NotBlank String deviceId,
             @PathVariable(OTP_TYPE) @NotNull RegisteredUserOTP.Type type) {
-        var otp = otpService.findByTenantUuidAndUserUuidAndDeviceIdAndType(tenantUuid, userUuid, deviceId, type);
+        var otp = otpService.findOTP(tenantUuid, userUuid, deviceId, type);
         if (otp == null) {
             throw new RegistereUserOTPNotFoundException(userUuid, deviceId, type);
         }
@@ -52,12 +52,11 @@ public class RegisteredUsersOTPController {
     @DeleteMapping(OTP_BY_TYPE + OTP_BY_CODE)
     public ResponseEntity<Void> claimByUserUuidAndDeviceIdAndTypeAndCode(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
-            @PathVariable(USER_UUID) @NotNull UUID userUuid,
-            @PathVariable(DEVICE_ID) @NotBlank String deviceId,
+            @RequestAttribute(USER_UUID) @NotNull UUID userUuid,
+            @RequestAttribute(DEVICE_ID) @NotBlank String deviceId,
             @PathVariable(OTP_TYPE) @NotNull RegisteredUserOTP.Type type,
             @PathVariable(OTP_CODE) @NotBlank String otpCode) {
-        var otp = otpService.claimByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCode(tenantUuid, userUuid, deviceId, type,
-                otpCode);
+        var otp = otpService.claimOTP(tenantUuid, userUuid, deviceId, type, otpCode);
         if (otp == null) {
             throw new RegistereUserOTPNotFoundException(userUuid, deviceId, type, otpCode);
         }

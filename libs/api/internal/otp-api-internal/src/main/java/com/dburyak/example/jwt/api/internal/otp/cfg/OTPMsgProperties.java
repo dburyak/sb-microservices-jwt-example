@@ -3,6 +3,7 @@ package com.dburyak.example.jwt.api.internal.otp.cfg;
 import com.dburyak.example.jwt.api.internal.common.msg.MsgProperties;
 import com.dburyak.example.jwt.api.internal.common.msg.TopicCfgProps;
 import com.dburyak.example.jwt.api.internal.common.msg.Transport;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -51,7 +52,7 @@ public class OTPMsgProperties extends MsgProperties {
 
             @ConstructorBinding
             public CreateOTPForAnonymousUserTopic(
-                    @DefaultValue("otp.create-for-anonymous-user") String topicName,
+                    @DefaultValue("otp.create-for-anonymous-user") @NotBlank String topicName,
                     String subscriptionName,
                     String consumerGroup,
                     @DefaultValue("redis") @NotNull Transport transport) {
@@ -66,7 +67,7 @@ public class OTPMsgProperties extends MsgProperties {
 
             @ConstructorBinding
             public CreateOTPForRegisteredUserTopic(
-                    @DefaultValue("otp.create-for-registered-user") String topicName,
+                    @DefaultValue("otp.create-for-registered-user") @NotBlank String topicName,
                     String subscriptionName,
                     String consumerGroup,
                     @DefaultValue("redis") @NotNull Transport transport) {

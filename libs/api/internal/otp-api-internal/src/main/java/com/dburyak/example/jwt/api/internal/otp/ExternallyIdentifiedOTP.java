@@ -21,7 +21,7 @@ public class ExternallyIdentifiedOTP extends OTPBase {
     Type type;
 
     public enum Type {
-        EMAIL_REGISTRATION,
+        REGISTRATION_WITH_EMAIL,
 
         /**
          * OTP for resetting password in case when the user is not logged in (forgot password flow).

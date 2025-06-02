@@ -1,7 +1,10 @@
 package com.dburyak.example.jwt.user.service;
 
+import com.dburyak.example.jwt.api.common.ExternalId;
 import com.dburyak.example.jwt.api.internal.auth.AuthServiceClientInternal;
 import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForAnonymousUserMsg;
+import com.dburyak.example.jwt.api.internal.otp.ExternallyIdentifiedOTP;
+import com.dburyak.example.jwt.api.internal.otp.ExternallyIdentifiedOTP.Type;
 import com.dburyak.example.jwt.api.internal.otp.OTPServiceClientInternal;
 import com.dburyak.example.jwt.api.internal.otp.cfg.OTPMsgProperties;
 import com.dburyak.example.jwt.api.user.ContactInfo;
@@ -15,8 +18,6 @@ import com.dburyak.example.jwt.user.service.converter.UserConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-
-import static com.dburyak.example.jwt.api.internal.otp.OTPType.EMAIL_REGISTRATION;
 
 @Service
 public class UserService {
@@ -46,11 +47,11 @@ public class UserService {
             throw new UserAlreadyExistsException(req.getEmail());
         }
         var otpReqMsg = CreateEmailOTPForAnonymousUserMsg.builder()
-                .type(EMAIL_REGISTRATION)
+                .type(ExternallyIdentifiedOTP.Type.REGISTRATION_WITH_EMAIL)
                 .locale(req.getLocale())
                 .tenantUuid(tenantUuid)
                 .deviceId(req.getDeviceId())
-                .email(req.getEmail())
+                .externalId(new ExternalId(req.getEmail()))
                 .build();
         msgQueue.publish(anonymousEmailOtpTopic, otpReqMsg);
     }

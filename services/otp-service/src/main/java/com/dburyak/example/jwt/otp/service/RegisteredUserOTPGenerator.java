@@ -37,7 +37,7 @@ public class RegisteredUserOTPGenerator {
         // In a real app this config would be stored in DB so each tenant can tweak it independently.
         // For simplicity, we use only static configuration here.
         return switch (type) {
-            case PASSWORD_RESET -> rndUtils.next(passwordResetLength, passwordResetSymbols);
+            case CHANGE_PASSWORD -> rndUtils.next(passwordResetLength, passwordResetSymbols);
             // Add more cases for other OTP types if needed
             default -> {
                 log.warn("unknown OTP type, using default configuration: type={}", type);

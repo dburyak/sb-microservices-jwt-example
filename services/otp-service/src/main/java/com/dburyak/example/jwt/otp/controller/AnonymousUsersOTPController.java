@@ -3,10 +3,9 @@ package com.dburyak.example.jwt.otp.controller;
 import com.dburyak.example.jwt.api.common.ApiView.READ;
 import com.dburyak.example.jwt.api.common.ApiView.UPDATE;
 import com.dburyak.example.jwt.api.common.ExternalId;
-import com.dburyak.example.jwt.api.internal.otp.RegisteredUserOTP;
+import com.dburyak.example.jwt.api.internal.otp.ExternallyIdentifiedOTP;
 import com.dburyak.example.jwt.otp.err.ExternallyIdentifiedOTPNotFoundException;
 import com.dburyak.example.jwt.otp.service.ExternallyIdentifiedOTPService;
-import com.dburyak.example.jwt.otp.service.OTPService;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,13 +17,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-import static com.dburyak.example.jwt.api.common.PathParams.DEVICE_ID;
 import static com.dburyak.example.jwt.api.common.Paths.DELETE_RESOURCE;
 import static com.dburyak.example.jwt.api.common.Paths.GET_RESOURCE;
+import static com.dburyak.example.jwt.api.common.QueryParams.DEVICE_ID;
 import static com.dburyak.example.jwt.api.internal.otp.PathParams.OTP_CODE;
 import static com.dburyak.example.jwt.api.internal.otp.PathParams.OTP_TYPE;
 import static com.dburyak.example.jwt.api.internal.otp.Paths.OTP_BY_CODE;
@@ -48,13 +48,12 @@ public class AnonymousUsersOTPController {
      */
     @PostMapping(OTP_BY_TYPE + GET_RESOURCE)
     @JsonView(READ.class)
-    public ResponseEntity<RegisteredUserOTP> getByEmailAndDeviceIdAndType(
+    public ResponseEntity<ExternallyIdentifiedOTP> getByExternalIdAndDeviceIdAndType(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
-            @PathVariable(DEVICE_ID) @NotBlank String deviceId,
-            @PathVariable(OTP_TYPE) @NotNull RegisteredUserOTP.Type type,
+            @RequestParam(DEVICE_ID) @NotBlank String deviceId,
+            @PathVariable(OTP_TYPE) @NotNull ExternallyIdentifiedOTP.Type type,
             @RequestBody @Validated(READ.class) @NotNull ExternalId externalId) {
-        var otp = otpService.findByTenantUuidAndEmailAndDeviceIdAndType(tenantUuid, externalId.getEmail(), deviceId,
-                type);
+        var otp = otpService.findOTP(tenantUuid, externalId, deviceId, type);
         if (otp == null) {
             throw new ExternallyIdentifiedOTPNotFoundException(deviceId, type);
         }
@@ -62,14 +61,13 @@ public class AnonymousUsersOTPController {
     }
 
     @PostMapping(OTP_BY_TYPE + OTP_BY_CODE + DELETE_RESOURCE)
-    public ResponseEntity<Void> claimByEmailAndDeviceIdAndTypeAndCode(
+    public ResponseEntity<Void> claimByExternalIdAndDeviceIdAndTypeAndCode(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
-            @PathVariable(DEVICE_ID) @NotBlank String deviceId,
-            @PathVariable(OTP_TYPE) @NotNull RegisteredUserOTP.Type type,
+            @RequestParam(DEVICE_ID) @NotBlank String deviceId,
+            @PathVariable(OTP_TYPE) @NotNull ExternallyIdentifiedOTP.Type type,
             @PathVariable(OTP_CODE) @NotBlank String otpCode,
             @RequestBody @Validated(UPDATE.class) @NotNull ExternalId externalId) {
-        var otp = otpService.claimByTenantUuidAndEmailAndDeviceIdAndTypeAndCode(tenantUuid, externalId.getEmail(),
-                deviceId, type, otpCode);
+        var otp = otpService.claimOTP(tenantUuid, externalId, deviceId, type, otpCode);
         if (otp == null) {
             throw new ExternallyIdentifiedOTPNotFoundException(deviceId, type, otpCode);
         }

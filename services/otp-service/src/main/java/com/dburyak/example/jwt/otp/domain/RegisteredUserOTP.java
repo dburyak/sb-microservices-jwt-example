@@ -33,6 +33,6 @@ public class RegisteredUserOTP extends MongoEntity {
         /**
          * OTP for resetting password in case when the user is logged in (change password flow).
          */
-        PASSWORD_RESET
+        CHANGE_PASSWORD
     }
 }
