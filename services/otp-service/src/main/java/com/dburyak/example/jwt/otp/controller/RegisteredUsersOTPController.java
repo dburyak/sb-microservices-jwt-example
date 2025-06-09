@@ -1,7 +1,7 @@
 package com.dburyak.example.jwt.otp.controller;
 
 import com.dburyak.example.jwt.api.internal.otp.RegisteredUserOTP;
-import com.dburyak.example.jwt.otp.err.RegistereUserOTPNotFoundException;
+import com.dburyak.example.jwt.otp.err.RegisteredUserOTPNotFoundException;
 import com.dburyak.example.jwt.otp.service.RegisteredUserOTPService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -44,7 +44,7 @@ public class RegisteredUsersOTPController {
             @PathVariable(OTP_TYPE) @NotNull RegisteredUserOTP.Type type) {
         var otp = otpService.findOTP(tenantUuid, userUuid, deviceId, type);
         if (otp == null) {
-            throw new RegistereUserOTPNotFoundException(userUuid, deviceId, type);
+            throw new RegisteredUserOTPNotFoundException(userUuid, deviceId, type);
         }
         return ResponseEntity.ok(otp);
     }
@@ -58,7 +58,7 @@ public class RegisteredUsersOTPController {
             @PathVariable(OTP_CODE) @NotBlank String otpCode) {
         var otp = otpService.claimOTP(tenantUuid, userUuid, deviceId, type, otpCode);
         if (otp == null) {
-            throw new RegistereUserOTPNotFoundException(userUuid, deviceId, type, otpCode);
+            throw new RegisteredUserOTPNotFoundException(userUuid, deviceId, type, otpCode);
         }
         return ResponseEntity.noContent().build();
     }

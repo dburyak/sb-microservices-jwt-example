@@ -1,5 +1,7 @@
 package com.dburyak.example.jwt.api.internal.otp;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
@@ -12,13 +14,16 @@ import lombok.Value;
  */
 @Value
 @Builder
-public class CreateOTPForRegisteredUserMsg {
+public class CreateEmailOTPForRegisteredUserMsg {
 
     String locale;
 
     @NotNull
     RegisteredUserOTP.Type type;
 
-    // User identifiers (tenantUuid+userUuid) are in the request credentials. And otp delivery address can be fetched
-    // from user-service.
+    @NotBlank
+    @Email
+    String email;
+
+    // User identifiers (tenantUuid+userUuid) are in the request credentials.
 }

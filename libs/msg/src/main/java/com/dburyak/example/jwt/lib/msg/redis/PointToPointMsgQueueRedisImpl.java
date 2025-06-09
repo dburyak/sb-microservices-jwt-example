@@ -7,6 +7,7 @@ import com.dburyak.example.jwt.lib.auth.apikey.ApiKeyAuth;
 import com.dburyak.example.jwt.lib.auth.jwt.JwtAuth;
 import com.dburyak.example.jwt.lib.msg.Msg;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
+import com.dburyak.example.jwt.lib.req.Headers;
 import com.dburyak.example.jwt.lib.req.RequestUtil;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.SerializerFactory;
@@ -32,12 +33,14 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static com.dburyak.example.jwt.lib.req.Headers.API_KEY;
+import static com.dburyak.example.jwt.lib.req.Headers.AUTHORIZATION;
 import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_DEVICE_ID;
 import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SERVICE_TENANT_UUID;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
+import static org.apache.commons.collections4.MapUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isAllBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static redis.clients.jedis.params.SetParams.setParams;
 
 /**
@@ -93,9 +96,13 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
     }
 
     @Override
-    public <T> void publish(String topic, T msg) {
+    public <T> void publish(String topic, T msg, Map<String, String> metadata) {
         var msgId = UUID.randomUUID();
         var headers = buildHeaders();
+        if (isNotEmpty(metadata)) {
+            headers.putAll(metadata);
+        }
+        validateHeaders(headers);
         var msgBytes = serialize(msgId, headers, msg);
         try (var jedis = jedisPool.getResource()) {
             jedis.publish(topic.getBytes(UTF_8), msgBytes);
@@ -191,21 +198,41 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
         }
     }
 
-    private Map<String, String> buildHeaders() {
+    private HashMap<String, String> buildHeaders() {
         var headers = new HashMap<String, String>();
         var authToken = requestUtil.getAuthToken();
         if (isNotBlank(authToken)) {
-            headers.put(AUTHORIZATION, "Bearer " + authToken);
+            headers.put(AUTHORIZATION.getHeader(), "Bearer " + authToken);
         } else {
             var apiKey = requestUtil.getApiKey();
             if (isNotBlank(apiKey)) {
                 headers.put(API_KEY.getHeader(), apiKey);
             } else if (serviceTokenManager != null) {
-                return Map.of(AUTHORIZATION, "Bearer " + serviceTokenManager.getServiceToken());
+                headers.put(AUTHORIZATION.getHeader(), "Bearer " + serviceTokenManager.getServiceToken());
             }
         }
-        // it's safer to forbid unauthenticated messages, there are no realistic use cases for this anyway
-        throw new IllegalArgumentException("auth information is not found");
+        var tenantUuid = requestUtil.getTenantUuid();
+        if (tenantUuid != null) {
+            headers.put(Headers.TENANT_UUID.getHeader(), tenantUuid.toString());
+        }
+        return headers;
+    }
+
+    private void validateHeaders(Map<String, String> headers) {
+        if (isAllBlank(headers.get(AUTHORIZATION.getHeader()), headers.get(API_KEY.getHeader()))) {
+            // it's safer to forbid unauthenticated messages, there are no realistic use cases for this anyway
+            throw new IllegalStateException("auth information is not found");
+        }
+        if (!headers.containsKey(Headers.TENANT_UUID.getHeader())) {
+            // This should never happen for incoming requests:
+            // requests without tenant UUID are dropped early on by the filter.
+            // But for activities initiated by the service itself (periodic tasks, etc.), where it is impossible to
+            // deduce tenant UUID, we require the caller to provide it explicitly. Example: archive-service archives
+            // old data tenant by tenant user by user, and it notifies watch-service to move watch items for specific
+            // tenant+user to the archive. In this case, it is mandatory for the archive-service to provide tenant UUID
+            // in the request headers.
+            throw new IllegalArgumentException("tenant UUID header is required");
+        }
     }
 
     private <T> MsgRedisImpl<T> authenticate(MsgRedisImpl<T> unauthenticatedMsg) {

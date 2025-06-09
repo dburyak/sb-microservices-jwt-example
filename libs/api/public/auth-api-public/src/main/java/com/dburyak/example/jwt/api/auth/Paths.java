@@ -10,7 +10,8 @@ public class Paths {
     public static final String AUTH_JWT_REFRESH = "/refresh";
     public static final String USER_PASSWORD = "/password";
     public static final String USER_PASSWORD_RESET = "/reset";
-    public static final String USER_PASSWORD_RESET_OTP = "/otp";
+    public static final String USER_PASSWORD_CHANGE = "/change";
+    public static final String OTP = "/otp";
 
     // full paths
     public static final String PATH_AUTH_JWT_TOKEN = AUTH_JWT + AUTH_JWT_TOKEN;

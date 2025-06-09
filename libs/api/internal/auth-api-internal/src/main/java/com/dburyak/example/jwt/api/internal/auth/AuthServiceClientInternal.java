@@ -30,7 +30,7 @@ public class AuthServiceClientInternal {
                         .queryParam(QueryParams.TENANT_UUID, tenantUuid)
                         .build())
                 .contentType(APPLICATION_JSON)
-                .header(AUTHORIZATION, BEARER.getHeader() + tokenManager.getServiceToken())
+                .header(AUTHORIZATION, BEARER + tokenManager.getServiceToken())
                 .body(user)
                 .retrieve()
                 .body(User.class);

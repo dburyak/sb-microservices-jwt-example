@@ -21,7 +21,7 @@ public class JwtAuthExtractor implements AuthExtractor {
         if (isBlank(authHeader)) {
             authHeader = headers.get(AUTHORIZATION.toLowerCase());
         }
-        if (authHeader != null && authHeader.startsWith(BEARER.getHeader())) {
+        if (authHeader != null && authHeader.startsWith(BEARER)) {
             var jwtTokenStr = authHeader.substring(7);
             return jwtParser.parse(jwtTokenStr);
         }

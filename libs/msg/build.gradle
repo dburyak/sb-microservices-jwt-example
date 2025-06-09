@@ -13,4 +13,5 @@ dependencies {
     api 'org.springframework.data:spring-data-redis'
     implementation 'com.esotericsoftware:kryo'
     implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.apache.commons:commons-collections4'
 }

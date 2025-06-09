@@ -1,5 +1,6 @@
 package com.dburyak.example.jwt.auth.domain;
 
+import com.dburyak.example.jwt.lib.mongo.ExternalId;
 import com.dburyak.example.jwt.lib.mongo.MongoEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,6 +19,8 @@ import static com.dburyak.example.jwt.auth.domain.User.COLLECTION;
 @EqualsAndHashCode(callSuper = true)
 public class User extends MongoEntity {
     public static final String COLLECTION = "users";
+
+    private ExternalId externalId;
 
     /**
      * Human friendly name that user can use to log in. Should be unique within tenant.

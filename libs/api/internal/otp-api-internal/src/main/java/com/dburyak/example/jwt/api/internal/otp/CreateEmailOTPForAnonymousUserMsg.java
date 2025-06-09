@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.UUID;
-
 /**
  * Create email OTP request message originating from an anonymous user (not registered or not authenticated). In this
  * case, it is identified by the externalId (email, phone, google-id, etc.). And the credentials passed in the
@@ -20,9 +18,6 @@ import java.util.UUID;
 public class CreateEmailOTPForAnonymousUserMsg {
 
     String locale;
-
-    @NotNull
-    UUID tenantUuid;
 
     @NotNull
     ExternalId externalId;

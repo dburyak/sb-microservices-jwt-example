@@ -5,12 +5,12 @@ import com.dburyak.example.jwt.api.internal.email.PasswordChangeEmailParam;
 import com.dburyak.example.jwt.api.internal.email.SendEmailMsg;
 import com.dburyak.example.jwt.api.internal.email.StandardTemplate;
 import com.dburyak.example.jwt.api.internal.email.cfg.EmailMsgProperties;
-import com.dburyak.example.jwt.api.internal.otp.CreateOTPForRegisteredUserMsg;
+import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForRegisteredUserMsg;
 import com.dburyak.example.jwt.api.internal.user.UserServiceClient;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.otp.cfg.AllOTPProperties;
 import com.dburyak.example.jwt.otp.domain.RegisteredUserOTP;
-import com.dburyak.example.jwt.otp.err.RegistereUserOTPNotFoundException;
+import com.dburyak.example.jwt.otp.err.RegisteredUserOTPNotFoundException;
 import com.dburyak.example.jwt.otp.repository.RegisteredUserOTPRepository;
 import com.dburyak.example.jwt.otp.service.converter.OTPConverter;
 import lombok.extern.log4j.Log4j2;
@@ -58,7 +58,7 @@ public class RegisteredUserOTPService {
         this.emailTopic = emailMsgProps.getTopics().getSendEmail().getTopicName();
     }
 
-    public void createOTP(UUID tenantUuid, UUID userUuid, String deviceId, CreateOTPForRegisteredUserMsg req) {
+    public void createOTP(UUID tenantUuid, UUID userUuid, String deviceId, CreateEmailOTPForRegisteredUserMsg req) {
         var now = Instant.now();
         var otpType = converter.toDomain(req.getType());
         var ttl = determineOtpTtl(otpType);
@@ -86,7 +86,7 @@ public class RegisteredUserOTPService {
         var otp = otpRepository.findAndDeleteByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(
                 tenantUuid, userUuid, deviceId, typeDomain, otpCode, now);
         if (otp == null || isExpired(otp, now)) {
-            throw new RegistereUserOTPNotFoundException(userUuid, deviceId, type);
+            throw new RegisteredUserOTPNotFoundException(userUuid, deviceId, type);
         }
         return converter.toApiModel(otp);
     }
@@ -98,7 +98,7 @@ public class RegisteredUserOTPService {
         var otp = otpRepository.findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndExpiresAtBefore(
                 tenantUuid, userUuid, deviceId, typeDomain, now);
         if (otp == null || isExpired(otp, now)) {
-            throw new RegistereUserOTPNotFoundException(userUuid, deviceId, type);
+            throw new RegisteredUserOTPNotFoundException(userUuid, deviceId, type);
         }
         return converter.toApiModel(otp);
     }

@@ -5,13 +5,13 @@ import com.dburyak.example.jwt.lib.err.NotFoundException;
 
 import java.util.UUID;
 
-public class RegistereUserOTPNotFoundException extends NotFoundException {
+public class RegisteredUserOTPNotFoundException extends NotFoundException {
 
-    public RegistereUserOTPNotFoundException(UUID userUuid, String deviceId, RegisteredUserOTP.Type type) {
+    public RegisteredUserOTPNotFoundException(UUID userUuid, String deviceId, RegisteredUserOTP.Type type) {
         super(resourceName(userUuid, deviceId, type));
     }
 
-    public RegistereUserOTPNotFoundException(UUID userUuid, String deviceId, RegisteredUserOTP.Type type, String code) {
+    public RegisteredUserOTPNotFoundException(UUID userUuid, String deviceId, RegisteredUserOTP.Type type, String code) {
         super(resourceName(userUuid, deviceId, type, code));
     }
 

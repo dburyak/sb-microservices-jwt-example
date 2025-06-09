@@ -1,6 +1,6 @@
 package com.dburyak.example.jwt.otp.listener;
 
-import com.dburyak.example.jwt.api.internal.otp.CreateOTPForRegisteredUserMsg;
+import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForRegisteredUserMsg;
 import com.dburyak.example.jwt.api.internal.otp.cfg.OTPMsgProperties;
 import com.dburyak.example.jwt.lib.msg.Msg;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
@@ -53,7 +53,7 @@ public class RegisteredUserOTPMsgListener {
     }
 
     public void createOTPForRegisteredUser(UUID tenantUuid, UUID userUuid, String deviceId,
-            @Valid CreateOTPForRegisteredUserMsg req) {
+            @Valid CreateEmailOTPForRegisteredUserMsg req) {
         otpService.createOTP(tenantUuid, userUuid, deviceId, req);
     }
 
@@ -65,7 +65,7 @@ public class RegisteredUserOTPMsgListener {
                 props.getTopics().getCreateOTPForRegisteredUser().getConsumerGroup(),
                 props.getConsumerGroup(),
                 serviceName);
-        Predicate<Msg<CreateOTPForRegisteredUserMsg>> accessCheck = msg -> {
+        Predicate<Msg<CreateEmailOTPForRegisteredUserMsg>> accessCheck = msg -> {
             // TODO: add security check
             log.warn("auth check is not implemented, processing without check: msg={}", msg);
             return true;

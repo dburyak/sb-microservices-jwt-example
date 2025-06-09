@@ -8,17 +8,13 @@ import lombok.Value;
 
 @Value
 @Builder(toBuilder = true)
-public class PasswordResetRequest {
+public class CreatePasswordResetOTPRequest {
 
-    @NotBlank
-    String deviceId;
+    String locale;
 
     @NotNull
     ExternalId externalId;
 
     @NotBlank
-    String otp;
-
-    @NotBlank
-    String newPassword;
+    String deviceId;
 }

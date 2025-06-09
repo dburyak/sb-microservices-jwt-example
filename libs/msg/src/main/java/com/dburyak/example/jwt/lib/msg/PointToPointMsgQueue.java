@@ -1,5 +1,6 @@
 package com.dburyak.example.jwt.lib.msg;
 
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -14,7 +15,11 @@ import java.util.function.Predicate;
 public interface PointToPointMsgQueue {
     String DEFAULT_CONSUMER_GROUP = "default";
 
-    <T> void publish(String topic, T msg);
+    default <T> void publish(String topic, T msg) {
+        publish(topic, msg, Map.of());
+    }
+
+    <T> void publish(String topic, T msg, Map<String, String> metadata);
 
     <T> void subscribe(String topic, String consumerGroup, Predicate<Msg<T>> access,
             Consumer<Msg<T>> handler);
