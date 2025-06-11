@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.UUID;
 
 import static com.dburyak.example.jwt.lib.mongo.MongoEntity.FIELD_TENANT_UUID;
+import static com.dburyak.example.jwt.lib.mongo.MongoEntity.FIELD_UUID;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -23,6 +24,15 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     public boolean updatePasswordByExternalIdEmail(UUID tenantUuid, String email, String newPassword) {
         var q = query(where(FIELD_TENANT_UUID).is(tenantUuid)
                 .and(FIELD_EXTERNAL_ID_EMAIL).is(email));
+        var upd = new Update().set(FIELD_PASSWORD, newPassword);
+        var updRes = mongo.updateFirst(q, upd, User.class);
+        return updRes.getModifiedCount() > 0;
+    }
+
+    @Override
+    public boolean updatePasswordByUuid(UUID tenantUuid, UUID uuid, String newPassword) {
+        var q = query(where(FIELD_TENANT_UUID).is(tenantUuid)
+                .and(FIELD_UUID).is(uuid));
         var upd = new Update().set(FIELD_PASSWORD, newPassword);
         var updRes = mongo.updateFirst(q, upd, User.class);
         return updRes.getModifiedCount() > 0;

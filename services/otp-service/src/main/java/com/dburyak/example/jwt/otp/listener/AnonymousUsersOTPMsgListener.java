@@ -14,6 +14,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import static org.apache.commons.lang3.StringUtils.firstNonBlank;
@@ -51,8 +52,8 @@ public class AnonymousUsersOTPMsgListener {
         subscribeToCreateOTPMessages();
     }
 
-    public void createOTPForAnonymousUser(@Valid CreateEmailOTPForAnonymousUserMsg req) {
-        otpService.createOTP(req);
+    public void createOTPForAnonymousUser(UUID tenantUuid, @Valid CreateEmailOTPForAnonymousUserMsg req) {
+        otpService.createOTP(tenantUuid, req);
     }
 
     private void subscribeToCreateOTPMessages() {
@@ -68,7 +69,9 @@ public class AnonymousUsersOTPMsgListener {
             log.warn("auth check is not implemented, processing without check: msg={}", msg);
             return true;
         };
-        msgQueue.subscribe(topic, consumerGroup, accessCheck,
-                msg -> self.createOTPForAnonymousUser(msg.getData()));
+        msgQueue.subscribe(topic, consumerGroup, accessCheck, msg -> {
+            var tenantUuid = requestUtil.getTenantUuid();
+            self.createOTPForAnonymousUser(msg.getData());
+        });
     }
 }

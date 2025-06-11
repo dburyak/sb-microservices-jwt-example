@@ -128,11 +128,6 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
                             log.warn("received msg with bad auth: topic={}, msg={}", topic, unauthenticatedMsg);
                             return;
                         }
-                        var isAllowed = access.test(msg);
-                        if (!isAllowed) {
-                            log.warn("received msg with not enough privileges: topic={}, msg={}", topic, msg);
-                            return;
-                        }
                         var dupKey = DUP_PREFIX + consumerGroup + msg.getMsgId();
                         var ifNotExistsAndWithTtl = setParams().nx().ex(DUP_LOCK_TTL.toSeconds());
                         var dupKeyBytes = dupKey.getBytes(UTF_8);
@@ -143,12 +138,18 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
                         if (!isDup) {
                             subscriberExecutor.execute(() -> {
                                 try {
-                                    populateRequestCtx(msg.getAuth());
+                                    populateRequestCtx(msg);
+                                    var isAllowed = access.test(msg);
+                                    if (!isAllowed) {
+                                        log.warn("received msg with not enough privileges: topic={}, msg={}",
+                                                topic, msg);
+                                        return;
+                                    }
                                     handler.accept(msg);
-                                    clearRequestCtx(msg.getAuth());
+                                    clearRequestCtx();
                                     msg.ack();
                                 } catch (Throwable anyErr) {
-                                    clearRequestCtx(msg.getAuth());
+                                    clearRequestCtx();
                                     if (isRetryable(anyErr)) {
                                         try (var jedisForCmd = jedisPool.getResource()) {
                                             jedisForCmd.del(dupKeyBytes);
@@ -249,7 +250,8 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
         }
     }
 
-    private void populateRequestCtx(AppAuthentication auth) {
+    private <T> void populateRequestCtx(MsgRedisImpl<T> msg) {
+        var auth = msg.getAuth();
         SecurityContextHolder.getContext().setAuthentication(auth);
         HttpServletRequest noReq = null;
         // ugly, but it's not worth the effort to redesign
@@ -258,7 +260,13 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
         } else if (auth instanceof ApiKeyAuth apiKeyAuth) {
             requestUtil.setApiKey(noReq, apiKeyAuth.getApiKey());
         }
-        requestUtil.setTenantUuid(noReq, auth.getTenantUuid());
+        requestUtil.setCallersTenantUuid(noReq, auth.getTenantUuid());
+        var headers = msg.getHeaders();
+        var requestedTenantUuidHeaderStr = headers.get(Headers.TENANT_UUID.getHeader());
+        var requestedTenantUuid = isNotBlank(requestedTenantUuidHeaderStr)
+                ? UUID.fromString(requestedTenantUuidHeaderStr.strip())
+                : null;
+        requestUtil.setTenantUuid(noReq, requestedTenantUuid != null ? requestedTenantUuid : auth.getTenantUuid());
         requestUtil.setUserUuid(noReq, auth.getUserUuid());
         requestUtil.setDeviceId(noReq, auth.getDeviceId());
         var isServiceRequest = SERVICE_TENANT_UUID.equals(auth.getTenantUuid()) &&
@@ -266,13 +274,11 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
         requestUtil.setServiceRequest(noReq, isServiceRequest);
     }
 
-    private void clearRequestCtx(AppAuthentication auth) {
+    private void clearRequestCtx() {
         HttpServletRequest noReq = null;
-        if (auth instanceof JwtAuth) {
-            requestUtil.clearAuthToken(noReq);
-        } else if (auth instanceof ApiKeyAuth) {
-            requestUtil.clearApiKey(noReq);
-        }
+        requestUtil.clearAuthToken(noReq);
+        requestUtil.clearApiKey(noReq);
+        requestUtil.clearCallersTenantUuid(noReq);
         requestUtil.clearTenantUuid(noReq);
         requestUtil.clearUserUuid(noReq);
         requestUtil.clearDeviceId(noReq);

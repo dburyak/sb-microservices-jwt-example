@@ -82,9 +82,7 @@ public class UserService {
                 .deviceId(req.getDeviceId())
                 .type(ExternallyIdentifiedOTP.Type.PASSWORD_RESET)
                 .build();
-        msgQueue.publish(anonymousUserCreateOtpTopic, createOtpMsg, Map.of(
-                TENANT_UUID.getHeader(), tenantUuid.toString()
-        ));
+        msgQueue.publish(anonymousUserCreateOtpTopic, createOtpMsg, tenantUuid);
     }
 
     public void resetPassword(UUID tenantUuid, PasswordResetRequest req) {
@@ -110,12 +108,14 @@ public class UserService {
         }
     }
 
-    public void createPasswordChangeOTP(UUID tenantUuid, UUID userUuid, String deviceId) {
+    public void createPasswordChangeOTP(UUID tenantUuid, UUID userUuid) {
         var user = repository.findByTenantUuidAndUuid(tenantUuid, userUuid);
         if (user == null) {
             throw new UserNotFoundException(userUuid);
         }
         var contactDetails = userServiceClient.getContactInfo(tenantUuid, userUuid);
+        // tenantUuid, userUuid and deviceId are in the auth token and will be passed along with the
+        // message in headers, so that's why the request DTO does not contain them
         var createOtpMsg = CreateEmailOTPForRegisteredUserMsg.builder()
                 .locale("en") // TODO: fetch locale from user profile/preferences (probably in user-service)
                 .type(RegisteredUserOTP.Type.PASSWORD_RESET)
@@ -130,11 +130,37 @@ public class UserService {
             // in a real app, we would elaborate on the specifics of the password validation failure
             throw new BadPasswordException("password does not meet security requirements");
         }
+        // (1)
+        var user = repository.findByTenantUuidAndUuid(tenantUuid, userUuid);
+        if (user == null) {
+            throw new UserNotFoundException(userUuid);
+        }
+        var oldPasswordDomain = converter.toDomainPassword(req.getOldPassword());
+        if (!passwordEncoder.matches(oldPasswordDomain, user.getPassword())) {
+            throw new BadPasswordException("old password does not match");
+        }
         var otpMatched = otpServiceClient.claimRegisteredUserOTP(RegisteredUserOTP.Type.PASSWORD_RESET, req.getOtp());
         if (!otpMatched) {
-            throw new NotFoundException("OTP(deviceId=%s)".formatted(deviceId));
+            throw new NotFoundException("OTP(userUuid=%s, deviceId=%s)".formatted(userUuid, deviceId));
         }
-        var oldPassword // TODO: here ......................................
+        var newPasswordEncoded = passwordEncoder.encode(newPasswordDomain);
+        // (2)
+        // Mongo is not transactional, so in general case, there may be interleaving operations between (1) and (2).
+        // And in general case, we would tackle it with optimistic locking or other more precise query that includes
+        // previuos state (old password for example) in the query condition.
+        // BUT in this specific case, interleaving operations will not have any negative effect, so we don't care.
+        // Specifically, this is because:
+        //  - update query updates password only and new password is not calculated based on the old password, no any
+        //  possible data loss or inconsistency is possible due to interleaving operations
+        //  - from business logic perspective, if there are two interleaving requests to change password, the sane
+        //   expected behavior would be that the last request wins, which is exactly what will happen here - last update
+        //   query will always overwrite password, and if we got here then the request passed both checks - old password
+        //   matched and OTP was valid
+        var updated = repository.updatePasswordByUuid(tenantUuid, userUuid, newPasswordEncoded);
+        if (!updated) {
+            // in a real app we would do optimistic lock retry in this case
+            log.warn("failed to update password for user: tenantUuid={}, userUuid={}", tenantUuid, userUuid);
+        }
     }
 
     public void deleteAllByTenantUuid(UUID tenantUuid) {

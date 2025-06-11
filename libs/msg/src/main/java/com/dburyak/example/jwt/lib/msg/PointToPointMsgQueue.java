@@ -1,6 +1,9 @@
 package com.dburyak.example.jwt.lib.msg;
 
+import com.dburyak.example.jwt.lib.req.Headers;
+
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -17,6 +20,10 @@ public interface PointToPointMsgQueue {
 
     default <T> void publish(String topic, T msg) {
         publish(topic, msg, Map.of());
+    }
+
+    default <T> void publish(String topic, T msg, UUID tenantUuid) {
+        publish(topic, msg, Map.of(Headers.TENANT_UUID.getHeader(), tenantUuid.toString()));
     }
 
     <T> void publish(String topic, T msg, Map<String, String> metadata);

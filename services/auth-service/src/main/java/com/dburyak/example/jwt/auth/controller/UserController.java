@@ -6,7 +6,6 @@ import com.dburyak.example.jwt.api.auth.PasswordResetRequest;
 import com.dburyak.example.jwt.api.common.ApiView.CREATE;
 import com.dburyak.example.jwt.api.common.ApiView.READ;
 import com.dburyak.example.jwt.api.common.ApiView.UPDATE;
-import com.dburyak.example.jwt.api.common.QueryParams;
 import com.dburyak.example.jwt.api.internal.auth.User;
 import com.dburyak.example.jwt.auth.service.UserService;
 import com.dburyak.example.jwt.lib.auth.Role;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Set;
@@ -81,9 +79,8 @@ public class UserController {
     @PostMapping(USER_PASSWORD + USER_PASSWORD_CHANGE + OTP)
     public ResponseEntity<Void> createPasswordChangeOTP(
             @RequestAttribute(TENANT_UUID) @NotBlank UUID tenantUuid,
-            @RequestAttribute(USER_UUID) @NotBlank UUID userUuid,
-            @RequestAttribute(Attributes.DEVICE_ID) @NotBlank String deviceId) {
-        userService.createPasswordChangeOTP(tenantUuid, userUuid, deviceId);
+            @RequestAttribute(USER_UUID) @NotBlank UUID userUuid) {
+        userService.createPasswordChangeOTP(tenantUuid, userUuid);
         return ResponseEntity.ok().build();
     }
 
