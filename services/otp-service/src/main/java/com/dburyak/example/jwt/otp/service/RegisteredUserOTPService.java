@@ -123,7 +123,6 @@ public class RegisteredUserOTPService {
         var userUuid = otp.getUserUuid();
         var email = userServiceClient.getContactInfo(tenantUuid, userUuid).getEmail();
         var emailMsg = SendEmailMsg.builder()
-                .tenantUuid(otp.getTenantUuid())
                 .template(emailTemplate)
                 .to(email)
                 .params(buildEmailParams(otp))

@@ -17,10 +17,14 @@ import static com.dburyak.example.jwt.auth.repository.migration.M_0001_CreateUse
 public class M_0002_CreateUserIndexes {
     static final String IDX_UUID_1_TENANT_UUID_1 = "uuid_1_tenantUuid_1";
     static final String IDX_USERNAME_1_TENANT_ID_1 = "username_1_tenantUuid_1";
+    static final String IDX_EXTERNAL_ID_EMAIL_1_TENANT_ID_1 = "externalId_email_1_tenantUuid_1";
 
     static final String FIELD_UUID = "uuid";
     static final String FIELD_TENANT_UUID = "tenantUuid";
     static final String FIELD_USERNAME = "username";
+    static final String FIELD_EXTERNAL_ID = "externalId";
+    static final String FIELD_EMAIL = "email";
+    static final String FIELD_EXTERNAL_ID_EMAIL = FIELD_EXTERNAL_ID + "." + FIELD_EMAIL;
 
     @BeforeExecution
     public void executeBeforeWithoutTx(MongoDatabase mongo) {
@@ -29,6 +33,8 @@ public class M_0002_CreateUserIndexes {
                 new IndexOptions().name(IDX_UUID_1_TENANT_UUID_1).unique(true));
         collection.createIndex(new Document(Map.of(FIELD_USERNAME, 1, FIELD_TENANT_UUID, 1)),
                 new IndexOptions().name(IDX_USERNAME_1_TENANT_ID_1).unique(true));
+        collection.createIndex(new Document(Map.of(FIELD_EXTERNAL_ID_EMAIL, 1, FIELD_TENANT_UUID, 1)),
+                new IndexOptions().name(IDX_EXTERNAL_ID_EMAIL_1_TENANT_ID_1).unique(true).sparse(true));
     }
 
     @RollbackBeforeExecution
@@ -36,6 +42,7 @@ public class M_0002_CreateUserIndexes {
         var collection = mongo.getCollection(COLLECTION_USERS);
         collection.dropIndex(IDX_UUID_1_TENANT_UUID_1);
         collection.dropIndex(IDX_USERNAME_1_TENANT_ID_1);
+        collection.dropIndex(IDX_EXTERNAL_ID_EMAIL_1_TENANT_ID_1);
     }
 
     @Execution

@@ -59,14 +59,14 @@ public class ExternallyIdentifiedOTPService {
         this.emailTopic = emailMsgProps.getTopics().getSendEmail().getTopicName();
     }
 
-    public void createOTP(CreateEmailOTPForAnonymousUserMsg req) {
+    public void createOTP(UUID tenantUuid, CreateEmailOTPForAnonymousUserMsg req) {
         var now = Instant.now();
         var externalId = converter.toDomain(req.getExternalId());
         var otpType = converter.toDomain(req.getType());
         var ttl = determineOtpTtl(otpType);
-        var code = otpGenerator.generate(req.getTenantUuid(), otpType, req.getLocale());
+        var code = otpGenerator.generate(tenantUuid, otpType, req.getLocale());
         var otp = ExternallyIdentifiedOTP.builder()
-                .tenantUuid(req.getTenantUuid())
+                .tenantUuid(tenantUuid)
                 .uuid(UUID.randomUUID())
                 .externalId(externalId)
                 .deviceId(req.getDeviceId())
@@ -128,12 +128,11 @@ public class ExternallyIdentifiedOTPService {
             throw new IllegalArgumentException("no email template for otp type: " + otp.getType());
         }
         var emailMsg = SendEmailMsg.builder()
-                .tenantUuid(otp.getTenantUuid())
                 .template(emailTemplate)
                 .to(otp.getExternalId().getEmail())
                 .params(buildEmailParams(otp))
                 .build();
-        msgQueue.publish(emailTopic, emailMsg);
+        msgQueue.publish(emailTopic, emailMsg, otp.getTenantUuid());
     }
 
     private Map<String, String> buildEmailParams(ExternallyIdentifiedOTP otp) {

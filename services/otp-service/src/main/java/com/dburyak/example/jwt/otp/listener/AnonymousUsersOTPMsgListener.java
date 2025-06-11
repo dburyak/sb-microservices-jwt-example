@@ -71,7 +71,7 @@ public class AnonymousUsersOTPMsgListener {
         };
         msgQueue.subscribe(topic, consumerGroup, accessCheck, msg -> {
             var tenantUuid = requestUtil.getTenantUuid();
-            self.createOTPForAnonymousUser(msg.getData());
+            self.createOTPForAnonymousUser(tenantUuid, msg.getData());
         });
     }
 }

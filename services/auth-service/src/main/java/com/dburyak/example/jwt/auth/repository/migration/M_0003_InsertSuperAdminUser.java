@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.dburyak.example.jwt.auth.repository.migration.M_0001_CreateUsersCollection.COLLECTION_USERS;
+import static com.dburyak.example.jwt.auth.repository.migration.M_0002_CreateUserIndexes.FIELD_EMAIL;
+import static com.dburyak.example.jwt.auth.repository.migration.M_0002_CreateUserIndexes.FIELD_EXTERNAL_ID;
 import static com.dburyak.example.jwt.auth.repository.migration.M_0002_CreateUserIndexes.FIELD_TENANT_UUID;
 import static com.dburyak.example.jwt.auth.repository.migration.M_0002_CreateUserIndexes.FIELD_USERNAME;
 import static com.dburyak.example.jwt.auth.repository.migration.M_0002_CreateUserIndexes.FIELD_UUID;
@@ -23,6 +25,7 @@ public class M_0003_InsertSuperAdminUser {
     static final String ROLE_SA = "sa";
     static final UUID SA_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     static final UUID SA_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    static final String SA_EMAIL = "super.admin@jwt.example.dburyak.com";
     static final UUID AUTH_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     static final String FIELD_PASSWORD = "password";
@@ -36,9 +39,13 @@ public class M_0003_InsertSuperAdminUser {
     public void execute(MongoDatabase mongo) {
         var collection = mongo.getCollection(COLLECTION_USERS);
         var now = Instant.now();
+        LinkedHashMap<String, Object> saUserExternalIdMap = new LinkedHashMap<>();
+        saUserExternalIdMap.put(FIELD_EMAIL, SA_EMAIL);
+        var saUserExternalId = new Document(saUserExternalIdMap);
         LinkedHashMap<String, Object> saUserMap = new LinkedHashMap<>();
         saUserMap.put(FIELD_TENANT_UUID, SA_TENANT_UUID);
         saUserMap.put(FIELD_UUID, SA_USER_UUID);
+        saUserMap.put(FIELD_EXTERNAL_ID, saUserExternalId);
         saUserMap.put(FIELD_USERNAME, SA_USERNAME);
         saUserMap.put(FIELD_PASSWORD, null); // no initial password for SA
         saUserMap.put(FIELD_ROLES, Set.of(ROLE_SA));

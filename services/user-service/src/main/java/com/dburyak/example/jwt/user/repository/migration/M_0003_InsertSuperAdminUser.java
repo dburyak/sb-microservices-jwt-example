@@ -20,7 +20,7 @@ public class M_0003_InsertSuperAdminUser {
     static final UUID SA_TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     static final UUID SA_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     static final String SA_DISPLAY_NAME = "Super Admin with full access to all tenants";
-    static final String SA_EMAIL = "change.me@jwt.example.dburyak.com";
+    static final String SA_EMAIL = "super.admin@jwt.example.dburyak.com";
     static final String SA_PROFILE_ICON = "super-admin";
     static final UUID USER_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000002");
 
