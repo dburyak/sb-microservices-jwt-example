@@ -44,7 +44,12 @@ public class ApiKeyFilter extends OncePerRequestFilter implements Ordered {
                 SecurityContextHolder.getContext().setAuthentication(authenticatedApiKey);
                 requestUtil.setApiKey(request, authenticatedApiKey.getApiKey());
                 // if tenantUuid is set in header, tenantUuid that apiKey belongs to always overrides it
-                requestUtil.setTenantUuid(request, authenticatedApiKey.getTenantUuid());
+                requestUtil.setCallersTenantUuid(request, authenticatedApiKey.getTenantUuid());
+                if (requestUtil.getTenantUuid() == null) {
+                    // if no "requested tenantUuid" is specified explicitly, assume that the requested resource
+                    // belongs to the caller's tenant
+                    requestUtil.setTenantUuid(request, authenticatedApiKey.getTenantUuid());
+                }
                 requestUtil.setUserUuid(request, authenticatedApiKey.getUserUuid());
                 requestUtil.setDeviceId(request, authenticatedApiKey.getDeviceId());
                 // service-to-service communications never use api-keys, only jwt service tokens

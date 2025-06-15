@@ -121,7 +121,7 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
             try (var jedis = jedisPool.getResource()) {
                 var subscriber = new BinaryJedisPubSub() {
                     @Override
-                    public void onMessage(byte[] topic, byte[] msgBytes) {
+                    public void onMessage(byte[] topicBytes, byte[] msgBytes) {
                         MsgRedisImpl<T> unauthenticatedMsg = deserialize(msgBytes);
                         var msg = authenticate(unauthenticatedMsg);
                         if (msg == null) {

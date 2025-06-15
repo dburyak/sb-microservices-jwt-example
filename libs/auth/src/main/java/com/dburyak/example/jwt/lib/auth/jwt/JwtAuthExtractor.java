@@ -6,9 +6,9 @@ import org.springframework.core.annotation.Order;
 
 import java.util.Map;
 
+import static com.dburyak.example.jwt.lib.req.Headers.AUTHORIZATION;
 import static com.dburyak.example.jwt.lib.req.Headers.BEARER;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Order(0)
 @RequiredArgsConstructor
@@ -17,9 +17,9 @@ public class JwtAuthExtractor implements AuthExtractor {
 
     @Override
     public JwtAuth extract(Map<String, String> headers) {
-        var authHeader = headers.get(AUTHORIZATION);
+        var authHeader = headers.get(AUTHORIZATION.getHeader());
         if (isBlank(authHeader)) {
-            authHeader = headers.get(AUTHORIZATION.toLowerCase());
+            authHeader = headers.get(AUTHORIZATION.getHeader().toLowerCase());
         }
         if (authHeader != null && authHeader.startsWith(BEARER)) {
             var jwtTokenStr = authHeader.substring(7);

@@ -34,7 +34,12 @@ public class M_0002_CreateUserIndexes {
         collection.createIndex(new Document(Map.of(FIELD_USERNAME, 1, FIELD_TENANT_UUID, 1)),
                 new IndexOptions().name(IDX_USERNAME_1_TENANT_ID_1).unique(true));
         collection.createIndex(new Document(Map.of(FIELD_EXTERNAL_ID_EMAIL, 1, FIELD_TENANT_UUID, 1)),
-                new IndexOptions().name(IDX_EXTERNAL_ID_EMAIL_1_TENANT_ID_1).unique(true).sparse(true));
+                new IndexOptions()
+                        .name(IDX_EXTERNAL_ID_EMAIL_1_TENANT_ID_1)
+                        .unique(true)
+                        .partialFilterExpression(new Document(Map.of(
+                                FIELD_EXTERNAL_ID_EMAIL, new Document("$exists", true)
+                        ))));
     }
 
     @RollbackBeforeExecution

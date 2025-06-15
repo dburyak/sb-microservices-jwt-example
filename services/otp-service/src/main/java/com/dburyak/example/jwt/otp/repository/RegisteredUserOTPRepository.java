@@ -9,6 +9,6 @@ import java.util.UUID;
 public interface RegisteredUserOTPRepository
         extends MongoRepository<RegisteredUserOTP, String>, RegisteredUserOTPRepositoryCustom {
 
-    RegisteredUserOTP findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndExpiresAtBefore(UUID tenantUuid, UUID userUuid,
-            String deviceId, RegisteredUserOTP.Type type, Instant expiresAtBefore);
+    RegisteredUserOTP findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndExpiresAtAfter(UUID tenantUuid, UUID userUuid,
+            String deviceId, RegisteredUserOTP.Type type, Instant expiresAtAfter);
 }

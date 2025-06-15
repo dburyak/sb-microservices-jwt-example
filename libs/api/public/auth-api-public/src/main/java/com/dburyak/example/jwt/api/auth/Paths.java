@@ -2,6 +2,8 @@ package com.dburyak.example.jwt.api.auth;
 
 import lombok.experimental.UtilityClass;
 
+import static com.dburyak.example.jwt.api.common.Paths.PATH_USER_ANONYMOUS;
+
 @UtilityClass
 public class Paths {
     // path components
@@ -16,4 +18,6 @@ public class Paths {
     // full paths
     public static final String PATH_AUTH_JWT_TOKEN = AUTH_JWT + AUTH_JWT_TOKEN;
     public static final String PATH_AUTH_JWT_REFRESH = AUTH_JWT + AUTH_JWT_REFRESH;
+    public static final String PATH_USER_PASSWORD_RESET = PATH_USER_ANONYMOUS + USER_PASSWORD + USER_PASSWORD_RESET;
+    public static final String PATH_USER_PASSWORD_RESET_OTP = PATH_USER_PASSWORD_RESET + OTP;
 }

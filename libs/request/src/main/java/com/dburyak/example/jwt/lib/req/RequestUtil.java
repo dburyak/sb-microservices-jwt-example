@@ -8,6 +8,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static com.dburyak.example.jwt.lib.req.Attributes.AUTH_TOKEN;
 import static com.dburyak.example.jwt.lib.req.Attributes.IS_SERVICE_REQ;
@@ -228,6 +229,43 @@ public class RequestUtil {
     }
 
     public <T extends RequestHeadersSpec<T>> RequestHeadersSpec<T> withPropagatedAuth(RequestHeadersSpec<T> spec) {
+        var withAuth = withPropagatedAuthInternal(spec);
+        if (withAuth == null) {
+            throw new IllegalStateException("no auth info found in request ctx");
+        }
+        return withAuth;
+    }
+
+    public <T extends RequestHeadersSpec<T>> RequestHeadersSpec<T> withPropagatedAuthOrToken(
+            Supplier<String> tokenProvider, RequestHeadersSpec<T> spec) {
+        var withAuth = withPropagatedAuthInternal(spec);
+        if (withAuth != null) {
+            return withAuth;
+        }
+        var authToken = tokenProvider.get();
+        if (isNotBlank(authToken)) {
+            return spec.header(AUTHORIZATION, BEARER + authToken);
+        } else {
+            throw new IllegalStateException("no auth info found in request ctx and no token provided");
+        }
+    }
+
+    public <T extends RequestHeadersSpec<T>> RequestHeadersSpec<T> withPropagatedAuthOrApiKey(
+            Supplier<String> apiKeyProvider, RequestHeadersSpec<T> spec) {
+        var withAuth = withPropagatedAuthInternal(spec);
+        if (withAuth != null) {
+            return withAuth;
+        }
+        var key = apiKeyProvider.get();
+        if (isNotBlank(key)) {
+            return spec.header(API_KEY.getHeader(), key);
+        } else {
+            throw new IllegalStateException("no auth info found in request ctx and no API key provided");
+        }
+    }
+
+    private <T extends RequestHeadersSpec<T>> RequestHeadersSpec<T> withPropagatedAuthInternal(
+            RequestHeadersSpec<T> spec) {
         var authToken = getAuthToken();
         if (isNotBlank(authToken)) {
             return spec.header(AUTHORIZATION, BEARER + authToken);
@@ -236,6 +274,6 @@ public class RequestUtil {
         if (isNotBlank(apiKey)) {
             return spec.header(API_KEY.getHeader(), apiKey);
         }
-        throw new IllegalStateException("no auth info found in request ctx");
+        return null;
     }
 }

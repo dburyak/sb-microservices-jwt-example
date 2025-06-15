@@ -30,3 +30,6 @@ build/
 
 # idea
 .idea/
+
+# python
+__pycache__/

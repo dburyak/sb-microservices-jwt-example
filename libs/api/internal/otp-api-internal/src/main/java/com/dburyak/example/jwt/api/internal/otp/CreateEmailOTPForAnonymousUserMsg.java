@@ -4,7 +4,11 @@ import com.dburyak.example.jwt.api.common.ExternalId;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
+
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Create email OTP request message originating from an anonymous user (not registered or not authenticated). In this
@@ -15,6 +19,8 @@ import lombok.Value;
  */
 @Value
 @Builder(toBuilder = true)
+@RequiredArgsConstructor
+@NoArgsConstructor(force = true, access = PRIVATE)
 public class CreateEmailOTPForAnonymousUserMsg {
 
     String locale;

@@ -9,7 +9,7 @@ public interface ExternallyIdentifiedOTPRepositoryCustom {
 
     ExternallyIdentifiedOTP insertOrReplaceByTenantUuidAndEmailAndDeviceIdAndType(ExternallyIdentifiedOTP otp);
 
-    ExternallyIdentifiedOTP findAndDeleteByTenantUuidAndEmailAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(
+    ExternallyIdentifiedOTP findAndDeleteByTenantUuidAndEmailAndDeviceIdAndTypeAndCodeAndExpiresAtAfter(
             UUID tenantUuid, String email, String deviceId, ExternallyIdentifiedOTP.Type type, String code,
-            Instant expiresAtBefore);
+            Instant expiresAtAfter);
 }

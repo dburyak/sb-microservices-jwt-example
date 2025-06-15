@@ -88,7 +88,7 @@ public class ExternallyIdentifiedOTPService {
         var now = Instant.now();
         var typeDomain = converter.toDomain(type);
         var externalIdDomain = converter.toDomain(externalId);
-        var otp = otpRepository.findAndDeleteByTenantUuidAndEmailAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(
+        var otp = otpRepository.findAndDeleteByTenantUuidAndEmailAndDeviceIdAndTypeAndCodeAndExpiresAtAfter(
                 tenantUuid, externalIdDomain.getEmail(), deviceId, typeDomain, code, now);
         if (otp == null || isExpired(otp, now)) {
             throw new ExternallyIdentifiedOTPNotFoundException(deviceId, type);
@@ -102,7 +102,7 @@ public class ExternallyIdentifiedOTPService {
         var now = Instant.now();
         var externalIdDomain = converter.toDomain(externalId);
         var typeDomain = converter.toDomain(type);
-        var otp = otpRepository.findByTenantUuidAndEmailAndDeviceIdAndTypeAndExpiresAtBefore(tenantUuid,
+        var otp = otpRepository.findByTenantUuidAndEmailAndDeviceIdAndTypeAndExpiresAtAfter(tenantUuid,
                 externalIdDomain.getEmail(), deviceId, typeDomain, now);
         if (otp == null || isExpired(otp, now)) {
             throw new ExternallyIdentifiedOTPNotFoundException(deviceId, type);

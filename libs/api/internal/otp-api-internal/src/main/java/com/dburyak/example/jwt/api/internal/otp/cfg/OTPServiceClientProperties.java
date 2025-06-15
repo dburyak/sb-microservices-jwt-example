@@ -19,7 +19,7 @@ public class OTPServiceClientProperties {
     @ConstructorBinding
     public OTPServiceClientProperties(
             @DefaultValue("true") boolean enabled,
-            @DefaultValue("http://localhost:8080") @NotBlank String url) {
+            @DefaultValue("http://localhost:8084") @NotBlank String url) {
         this.enabled = enabled;
         this.url = url;
     }

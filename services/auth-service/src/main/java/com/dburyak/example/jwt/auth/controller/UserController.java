@@ -12,6 +12,7 @@ import com.dburyak.example.jwt.lib.auth.Role;
 import com.dburyak.example.jwt.lib.req.Attributes;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -48,7 +49,7 @@ public class UserController {
     @PostMapping
     @JsonView(READ.class)
     public ResponseEntity<User> create(
-            @RequestAttribute(TENANT_UUID) @NotBlank UUID tenantUuid,
+            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @Validated(CREATE.class) @RequestBody User req) {
         var user = userService.create(tenantUuid, req, Set.of(Role.USER));
         return ResponseEntity.ok(user);
@@ -59,7 +60,7 @@ public class UserController {
      */
     @PostMapping(ANONYMOUS + USER_PASSWORD + USER_PASSWORD_RESET + OTP)
     public ResponseEntity<Void> createPasswordResetOTP(
-            @RequestAttribute(TENANT_UUID) @NotBlank UUID tenantUuid,
+            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @Validated(CREATE.class) @RequestBody CreatePasswordResetOTPRequest req) {
         userService.createPasswordResetOTP(tenantUuid, req);
         return ResponseEntity.ok().build();
@@ -67,7 +68,7 @@ public class UserController {
 
     @PutMapping(ANONYMOUS + USER_PASSWORD + USER_PASSWORD_RESET)
     public ResponseEntity<Void> resetPassword(
-            @RequestAttribute(TENANT_UUID) @NotBlank UUID tenantUuid,
+            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @Validated(UPDATE.class) @RequestBody PasswordResetRequest req) {
         userService.resetPassword(tenantUuid, req);
         return ResponseEntity.ok().build();
@@ -78,16 +79,16 @@ public class UserController {
      */
     @PostMapping(USER_PASSWORD + USER_PASSWORD_CHANGE + OTP)
     public ResponseEntity<Void> createPasswordChangeOTP(
-            @RequestAttribute(TENANT_UUID) @NotBlank UUID tenantUuid,
-            @RequestAttribute(USER_UUID) @NotBlank UUID userUuid) {
+            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
+            @RequestAttribute(USER_UUID) @NotNull UUID userUuid) {
         userService.createPasswordChangeOTP(tenantUuid, userUuid);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping(USER_PASSWORD + USER_PASSWORD_CHANGE)
     public ResponseEntity<Void> changePassword(
-            @RequestAttribute(TENANT_UUID) @NotBlank UUID tenantUuid,
-            @RequestAttribute(USER_UUID) @NotBlank UUID userUuid,
+            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
+            @RequestAttribute(USER_UUID) @NotNull UUID userUuid,
             @RequestAttribute(Attributes.DEVICE_ID) @NotBlank String deviceId,
             @Validated(UPDATE.class) @RequestBody PasswordChangeRequest req) {
         userService.changePassword(tenantUuid, userUuid, deviceId, req);

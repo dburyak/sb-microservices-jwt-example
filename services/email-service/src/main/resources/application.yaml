@@ -10,7 +10,8 @@ mongock:
   migration-scan-package: com.dburyak.example.jwt.email.repository.migration
 auth:
   jwt:
-    keys: ${JWT_KNOWN_KEYS:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
+    keys: ${JWT_KNOWN_KEYS:7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ}
     trusted-issuers:
       - local.jwt.example.dburyak.com
       - user.local.jwt.example.dburyak.com
+      - auth.local.jwt.example.dburyak.com

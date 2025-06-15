@@ -9,6 +9,6 @@ public interface RegisteredUserOTPRepositoryCustom {
 
     RegisteredUserOTP insertOrReplaceByTenantUuidAndUserUuidAndDeviceIdAndType(RegisteredUserOTP otp);
 
-    RegisteredUserOTP findAndDeleteByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(UUID tenantUuid,
-            UUID userUuid, String deviceId, RegisteredUserOTP.Type type, String code, Instant expiresAtBefore);
+    RegisteredUserOTP findAndDeleteByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCodeAndExpiresAtAfter(UUID tenantUuid,
+            UUID userUuid, String deviceId, RegisteredUserOTP.Type type, String code, Instant expiresAtAfter);
 }

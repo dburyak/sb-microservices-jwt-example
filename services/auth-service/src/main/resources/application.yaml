@@ -12,7 +12,7 @@ auth:
   jwt:
     # can be a comma-separated list of keys in the format <keyId>:<alg>:<key>
     # this is useful for rotating keys
-    keys: ${JWT_KNOWN_KEYS:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
+    keys: ${JWT_KNOWN_KEYS:7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ}
     trusted-issuers:
       - local.jwt.example.dburyak.com
       - auth.local.jwt.example.dburyak.com
@@ -23,7 +23,7 @@ auth:
     generator:
       enabled: true
       issuer: ${JWT_ISSUER:local.jwt.example.dburyak.com}
-      key: ${JWT_SIGN_KEY:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
+      key: ${JWT_SIGN_KEY:7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ}
       ttl: ${JWT_TTL:1h}
 service-client:
   auth:

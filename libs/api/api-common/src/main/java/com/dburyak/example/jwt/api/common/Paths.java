@@ -19,6 +19,6 @@ public class Paths {
     // full paths
     public static final String PATH_USER_BY_UUID = USERS + USER_BY_UUID;
     public static final String PATH_DEVICE_BY_ID = PATH_USER_BY_UUID + DEVICES + DEVICE_BY_ID;
-    public static final String PATH_ANONYMOUS_DEVICE_BY_ID =
-            USERS + ANONYMOUS + DEVICES + DEVICE_BY_ID;
+    public static final String PATH_USER_ANONYMOUS = USERS + ANONYMOUS;
+    public static final String PATH_ANONYMOUS_DEVICE_BY_ID = PATH_USER_ANONYMOUS + DEVICES + DEVICE_BY_ID;
 }

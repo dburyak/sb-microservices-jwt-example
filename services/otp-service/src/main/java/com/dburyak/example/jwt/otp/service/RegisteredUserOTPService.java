@@ -83,7 +83,7 @@ public class RegisteredUserOTPService {
             String deviceId, com.dburyak.example.jwt.api.internal.otp.RegisteredUserOTP.Type type, String otpCode) {
         var now = Instant.now();
         var typeDomain = converter.toDomain(type);
-        var otp = otpRepository.findAndDeleteByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(
+        var otp = otpRepository.findAndDeleteByTenantUuidAndUserUuidAndDeviceIdAndTypeAndCodeAndExpiresAtAfter(
                 tenantUuid, userUuid, deviceId, typeDomain, otpCode, now);
         if (otp == null || isExpired(otp, now)) {
             throw new RegisteredUserOTPNotFoundException(userUuid, deviceId, type);
@@ -95,7 +95,7 @@ public class RegisteredUserOTPService {
             String deviceId, com.dburyak.example.jwt.api.internal.otp.RegisteredUserOTP.Type type) {
         var now = Instant.now();
         var typeDomain = converter.toDomain(type);
-        var otp = otpRepository.findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndExpiresAtBefore(
+        var otp = otpRepository.findByTenantUuidAndUserUuidAndDeviceIdAndTypeAndExpiresAtAfter(
                 tenantUuid, userUuid, deviceId, typeDomain, now);
         if (otp == null || isExpired(otp, now)) {
             throw new RegisteredUserOTPNotFoundException(userUuid, deviceId, type);

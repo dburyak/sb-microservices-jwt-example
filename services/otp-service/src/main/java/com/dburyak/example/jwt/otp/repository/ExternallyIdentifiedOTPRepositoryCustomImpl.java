@@ -38,14 +38,14 @@ public class ExternallyIdentifiedOTPRepositoryCustomImpl implements ExternallyId
     }
 
     @Override
-    public ExternallyIdentifiedOTP findAndDeleteByTenantUuidAndEmailAndDeviceIdAndTypeAndCodeAndExpiresAtBefore(
-            UUID tenantUuid, String email, String deviceId, Type type, String code, Instant expiresAtBefore) {
+    public ExternallyIdentifiedOTP findAndDeleteByTenantUuidAndEmailAndDeviceIdAndTypeAndCodeAndExpiresAtAfter(
+            UUID tenantUuid, String email, String deviceId, Type type, String code, Instant expiresAtAfter) {
         var q = query(where(FIELD_EXTERNAL_ID_EMAIL).is(email)
                 .and(FIELD_DEVICE_ID).is(deviceId)
                 .and(FIELD_TYPE).is(type)
                 .and(FIELD_TENANT_UUID).is(tenantUuid)
                 .and(FIELD_CODE).is(code)
-                .and(FIELD_EXPIRES_AT).lt(expiresAtBefore));
+                .and(FIELD_EXPIRES_AT).gt(expiresAtAfter));
         return mongo.findAndRemove(q, ExternallyIdentifiedOTP.class, COLLECTION);
     }
 }
