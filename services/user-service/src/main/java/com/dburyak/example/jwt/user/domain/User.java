@@ -1,5 +1,6 @@
 package com.dburyak.example.jwt.user.domain;
 
+import com.dburyak.example.jwt.lib.mongo.ExternalId;
 import com.dburyak.example.jwt.lib.mongo.MongoEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,6 +21,7 @@ import static com.dburyak.example.jwt.user.domain.User.COLLECTION;
 public class User extends MongoEntity {
     public static final String COLLECTION = "users";
 
+    private ExternalId externalId;
     private String displayName;
     private String profileIcon;
     private ContactInfo contactInfo;

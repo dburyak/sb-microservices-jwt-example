@@ -16,26 +16,32 @@ import static com.dburyak.example.jwt.user.repository.migration.M_0001_CreateUse
 @ChangeUnit(id = "0002-create-user-indexes", order = "0002", author = "dmytro.buryak")
 public class M_0002_CreateUserIndexes {
     static final String IDX_UUID_1_TENANT_UUID_1 = "uuid_1_tenantUuid_1";
-    static final String IDX_CONTACT_INFO_EMAIL_1_TENANT_UUID_1 = "contactInfo_email_1_tenantUuid_1";
+    static final String IDX_EXTERNAL_ID_EMAIL_1_TENANT_UUID_1 = "externalId_email_1_tenantUuid_1";
 
     static final String FIELD_UUID = "uuid";
     static final String FIELD_TENANT_UUID = "tenantUuid";
-    static final String FIELD_CONTACT_INFO_EMAIL = "contactInfo.email";
+    static final String FIELD_EXTERNAL_ID = "externalId";
+    static final String FIELD_EXTERNAL_ID_EMAIL = FIELD_EXTERNAL_ID + ".email";
 
     @BeforeExecution
     public void executeBeforeWithoutTx(MongoDatabase mongo) {
         var collection = mongo.getCollection(COLLECTION_USERS);
         collection.createIndex(new Document(Map.of(FIELD_UUID, 1, FIELD_TENANT_UUID, 1)),
                 new IndexOptions().name(IDX_UUID_1_TENANT_UUID_1).unique(true));
-        collection.createIndex(new Document(Map.of(FIELD_CONTACT_INFO_EMAIL, 1, FIELD_TENANT_UUID, 1)),
-                new IndexOptions().name(IDX_CONTACT_INFO_EMAIL_1_TENANT_UUID_1).unique(true));
+        collection.createIndex(new Document(Map.of(FIELD_EXTERNAL_ID_EMAIL, 1, FIELD_TENANT_UUID, 1)),
+                new IndexOptions()
+                        .name(IDX_EXTERNAL_ID_EMAIL_1_TENANT_UUID_1)
+                        .unique(true)
+                        .partialFilterExpression(new Document(Map.of(
+                                FIELD_EXTERNAL_ID_EMAIL, new Document("$exists", true)
+                        ))));
     }
 
     @RollbackBeforeExecution
     public void rollbackBeforeExecution(MongoDatabase mongo) {
         var collection = mongo.getCollection(COLLECTION_USERS);
         collection.dropIndex(IDX_UUID_1_TENANT_UUID_1);
-        collection.dropIndex(IDX_CONTACT_INFO_EMAIL_1_TENANT_UUID_1);
+        collection.dropIndex(IDX_EXTERNAL_ID_EMAIL_1_TENANT_UUID_1);
     }
 
     @Execution

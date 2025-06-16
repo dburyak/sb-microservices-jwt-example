@@ -27,6 +27,7 @@ import java.util.UUID;
 import static com.dburyak.example.jwt.api.common.PathParams.USER_UUID;
 import static com.dburyak.example.jwt.api.common.Paths.USERS;
 import static com.dburyak.example.jwt.api.common.Paths.USER_BY_UUID;
+import static com.dburyak.example.jwt.api.common.QueryParams.DEVICE_ID;
 import static com.dburyak.example.jwt.api.user.Paths.CONTACT_INFO;
 import static com.dburyak.example.jwt.api.user.Paths.REGISTRATION_OTP;
 import static com.dburyak.example.jwt.api.user.QueryParams.REGISTRATION_CODE;
@@ -50,9 +51,10 @@ public class UserController {
     @JsonView(READ.class)
     public ResponseEntity<User> create(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
+            @RequestParam(DEVICE_ID) @NotBlank String deviceId,
             @RequestParam(REGISTRATION_CODE) @NotBlank String registrationCode,
             @Validated(CREATE.class) @RequestBody @NotNull User req) {
-        var user = userService.createViaRegistration(tenantUuid, req, registrationCode);
+        var user = userService.createViaRegistration(tenantUuid, deviceId, req, registrationCode);
         return ResponseEntity.ok(user);
     }
 

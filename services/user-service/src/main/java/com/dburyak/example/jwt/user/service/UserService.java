@@ -4,7 +4,6 @@ import com.dburyak.example.jwt.api.common.ExternalId;
 import com.dburyak.example.jwt.api.internal.auth.AuthServiceClientInternal;
 import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForAnonymousUserMsg;
 import com.dburyak.example.jwt.api.internal.otp.ExternallyIdentifiedOTP;
-import com.dburyak.example.jwt.api.internal.otp.ExternallyIdentifiedOTP.Type;
 import com.dburyak.example.jwt.api.internal.otp.OTPServiceClientInternal;
 import com.dburyak.example.jwt.api.internal.otp.cfg.OTPMsgProperties;
 import com.dburyak.example.jwt.api.user.ContactInfo;
@@ -43,26 +42,31 @@ public class UserService {
     }
 
     public void createRegistrationOtp(UUID tenantUuid, CreateRegistrationOtpViaEmail req) {
-        if (userRepository.existsByContactInfoEmail(tenantUuid, req.getEmail())) {
+        if (userRepository.existsByExternalIdEmail(tenantUuid, req.getEmail())) {
             throw new UserAlreadyExistsException(req.getEmail());
         }
         var otpReqMsg = CreateEmailOTPForAnonymousUserMsg.builder()
                 .type(ExternallyIdentifiedOTP.Type.REGISTRATION_WITH_EMAIL)
                 .locale(req.getLocale())
-                .tenantUuid(tenantUuid)
                 .deviceId(req.getDeviceId())
                 .externalId(new ExternalId(req.getEmail()))
                 .build();
-        msgQueue.publish(anonymousEmailOtpTopic, otpReqMsg);
+        msgQueue.publish(anonymousEmailOtpTopic, otpReqMsg, tenantUuid);
     }
 
-    public User createViaRegistration(UUID tenantUuid, User req, String registrationCode) {
-        otpServiceClient.claimOTPByTypeAndCode(tenantUuid, req.)
+    public User createViaRegistration(UUID tenantUuid, String deviceId, User req, String registrationCode) {
+        otpServiceClient.claimExternallyIdentifiedOTP(tenantUuid, deviceId,
+                ExternallyIdentifiedOTP.Type.REGISTRATION_WITH_EMAIL, registrationCode, req.getExternalId());
         var savedUser = createUser(tenantUuid, req);
         return userConverter.toApiModel(savedUser);
     }
 
     public User createByManager(UUID tenantUuid, User req) {
+        var savedUser = createUser(tenantUuid, req);
+        return userConverter.toApiModel(savedUser);
+    }
+
+    public User createBySystem(UUID tenantUuid, User req) {
         var savedUser = createUser(tenantUuid, req);
         return userConverter.toApiModel(savedUser);
     }

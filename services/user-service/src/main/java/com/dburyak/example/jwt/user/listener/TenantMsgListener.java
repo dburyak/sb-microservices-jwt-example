@@ -1,12 +1,14 @@
 package com.dburyak.example.jwt.user.listener;
 
+import com.dburyak.example.jwt.api.common.ExternalId;
 import com.dburyak.example.jwt.api.internal.tenant.TenantCreatedMsg;
 import com.dburyak.example.jwt.api.internal.tenant.TenantDeletedMsg;
-import com.dburyak.example.jwt.api.internal.user.UserCreatedMsg;
 import com.dburyak.example.jwt.api.internal.tenant.cfg.TenantMsgProperties;
+import com.dburyak.example.jwt.api.internal.user.UserCreatedMsg;
 import com.dburyak.example.jwt.api.internal.user.cfg.UserMsgProperties;
+import com.dburyak.example.jwt.api.user.ContactInfo;
 import com.dburyak.example.jwt.api.user.User;
-import com.dburyak.example.jwt.lib.auth.AppAuthentication;
+import com.dburyak.example.jwt.lib.msg.Msg;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.user.service.UserService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -49,17 +51,20 @@ public class TenantMsgListener {
         var consumerGroup = firstNonBlank(
                 tenantMsgProps.getTopics().getTenantCreated().getConsumerGroup(),
                 tenantMsgProps.getConsumerGroup());
-        Predicate<AppAuthentication> accessCheck = (auth) ->
-                auth.isAuthenticated() && auth.getAuthorityNames().contains(SA);
-        msgQueue.<TenantCreatedMsg>subscribe(topic, consumerGroup, accessCheck, msg -> {
+        Predicate<Msg<TenantCreatedMsg>> accessCheck = msg -> {
+            var auth = msg.getAuth();
+            return auth.isAuthenticated() && auth.getAuthorityNames().contains(SA);
+        };
+        msgQueue.subscribe(topic, consumerGroup, accessCheck, msg -> {
             // create tenant admin user
             var tenantUuid = msg.getData().getUuid();
             var adminEmail = msg.getData().getAdminEmail();
-            var createdUser = userService.createViaRegistration(tenantUuid, User.builder()
-                    .username(adminEmail)
+            var createdUser = userService.createBySystem(tenantUuid, User.builder()
+                    .externalId(new ExternalId(adminEmail))
+                    .username("admin")
                     .displayName("admin")
-                    .email(adminEmail)
                     .profileIcon("admin")
+                    .contactInfo(new ContactInfo(adminEmail))
                     .build());
 
             // publish user created event
@@ -79,9 +84,11 @@ public class TenantMsgListener {
         var consumerGroup = firstNonBlank(
                 tenantMsgProps.getTopics().getTenantCreated().getConsumerGroup(),
                 tenantMsgProps.getConsumerGroup());
-        Predicate<AppAuthentication> accessCheck = (auth) ->
-                auth.isAuthenticated() && auth.getAuthorityNames().contains(SA);
-        msgQueue.<TenantDeletedMsg>subscribe(topic, consumerGroup, accessCheck, msg -> {
+        Predicate<Msg<TenantDeletedMsg>> accessCheck = msg -> {
+            var auth = msg.getAuth();
+            return auth.isAuthenticated() && auth.getAuthorityNames().contains(SA);
+        };
+        msgQueue.subscribe(topic, consumerGroup, accessCheck, msg -> {
             var deletedTenantUuid = msg.getData().getUuid();
             userService.deleteAllByTenantUuid(deletedTenantUuid);
         });

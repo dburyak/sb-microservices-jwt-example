@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.dburyak.example.jwt.user.repository.migration.M_0001_CreateUsersCollection.COLLECTION_USERS;
-import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_CONTACT_INFO_EMAIL;
+import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_EXTERNAL_ID_EMAIL;
 import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_TENANT_UUID;
 import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_UUID;
 
@@ -26,6 +26,8 @@ public class M_0003_InsertSuperAdminUser {
 
     static final String FIELD_DISPLAY_NAME = "displayName";
     static final String FIELD_PROFILE_ICON = "profileIcon";
+    static final String FIELD_CONTACT_INFO = "contactInfo";
+    static final String FIELD_CONTACT_INFO_EMAIL = FIELD_CONTACT_INFO + ".email";
     static final String FIELD_CREATED_BY = "createdBy";
     static final String FIELD_CREATED_DATE = "createdDate";
     static final String FIELD_LAST_MODIFIED_BY = "lastModifiedBy";
@@ -38,9 +40,10 @@ public class M_0003_InsertSuperAdminUser {
         collection.insertOne(new Document(Map.of(
                 FIELD_TENANT_UUID, SA_TENANT_UUID,
                 FIELD_UUID, SA_USER_UUID,
+                FIELD_EXTERNAL_ID_EMAIL, SA_EMAIL,
                 FIELD_DISPLAY_NAME, SA_DISPLAY_NAME,
-                FIELD_CONTACT_INFO_EMAIL, SA_EMAIL,
                 FIELD_PROFILE_ICON, SA_PROFILE_ICON,
+                FIELD_CONTACT_INFO_EMAIL, SA_EMAIL,
                 FIELD_CREATED_BY, USER_SERVICE_USER_UUID,
                 FIELD_CREATED_DATE, now,
                 FIELD_LAST_MODIFIED_BY, USER_SERVICE_USER_UUID,

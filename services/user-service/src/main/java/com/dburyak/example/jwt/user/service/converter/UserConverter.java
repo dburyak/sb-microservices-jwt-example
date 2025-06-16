@@ -1,5 +1,6 @@
 package com.dburyak.example.jwt.user.service.converter;
 
+import com.dburyak.example.jwt.api.common.ExternalId;
 import com.dburyak.example.jwt.api.user.ContactInfo;
 import com.dburyak.example.jwt.api.user.User;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ public class UserConverter {
         return com.dburyak.example.jwt.user.domain.User.builder()
                 .tenantUuid(tenantUuid)
                 .uuid(user.getUuid())
+                .externalId(toDomain(user.getExternalId()))
                 .displayName(user.getDisplayName())
                 .contactInfo(toDomain(user.getContactInfo()))
                 .profileIcon(user.getProfileIcon())
@@ -22,6 +24,7 @@ public class UserConverter {
     public User toApiModel(com.dburyak.example.jwt.user.domain.User user) {
         return User.builder()
                 .uuid(user.getUuid())
+                .externalId(toApiModel(user.getExternalId()))
                 .displayName(user.getDisplayName())
                 .contactInfo(toApiModel(user.getContactInfo()))
                 .profileIcon(user.getProfileIcon())
@@ -42,6 +45,22 @@ public class UserConverter {
         return ContactInfo.builder()
                 .email(contactInfo.getEmail())
                 .build();
+    }
+
+    public com.dburyak.example.jwt.lib.mongo.ExternalId toDomain(ExternalId externalId) {
+        return com.dburyak.example.jwt.lib.mongo.ExternalId.builder()
+                .email(toDomainEmail(externalId.getEmail()))
+                .build();
+    }
+
+    public ExternalId toApiModel(com.dburyak.example.jwt.lib.mongo.ExternalId externalId) {
+        return ExternalId.builder()
+                .email(externalId.getEmail())
+                .build();
+    }
+
+    public String toDomainEmail(String email) {
+        return email != null ? email.toLowerCase() : null;
     }
 
     public com.dburyak.example.jwt.api.internal.auth.User toApiModelAuth(User reqUser,
