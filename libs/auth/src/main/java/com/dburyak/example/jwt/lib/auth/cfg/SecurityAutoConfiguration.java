@@ -1,9 +1,11 @@
 package com.dburyak.example.jwt.lib.auth.cfg;
 
+import com.dburyak.example.jwt.lib.auth.AuthZFactory;
 import com.dburyak.example.jwt.lib.auth.SecurityFilterChainAuthorizationConfigurer;
 import com.dburyak.example.jwt.lib.auth.SecurityFilterChainHttpConfigurer;
 import com.dburyak.example.jwt.lib.auth.apikey.ApiKeyAuthProvider;
 import com.dburyak.example.jwt.lib.auth.jwt.JwtAuthProvider;
+import com.dburyak.example.jwt.lib.req.RequestUtil;
 import com.dburyak.example.jwt.lib.req.TenantUuidExtractionFilter;
 import com.dburyak.example.jwt.lib.req.TenantVerificationFilter;
 import lombok.extern.slf4j.Slf4j;
@@ -98,5 +100,10 @@ public class SecurityAutoConfiguration {
             }
             return configuredHttp.build();
         }
+    }
+
+    @Bean
+    public AuthZFactory authZFactory(RequestUtil requestUtil) {
+        return new AuthZFactory(requestUtil);
     }
 }

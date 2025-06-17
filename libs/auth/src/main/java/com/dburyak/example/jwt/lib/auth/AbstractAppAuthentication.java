@@ -40,6 +40,11 @@ public abstract class AbstractAppAuthentication implements AppAuthentication {
     }
 
     @Override
+    public Set<GrantedAuthority> getGrantedAuthorities() {
+        return authorities != null ? authorities : emptySet();
+    }
+
+    @Override
     public Object getCredentials() {
         throw new UnsupportedOperationException("is not supposed to be called");
     }
