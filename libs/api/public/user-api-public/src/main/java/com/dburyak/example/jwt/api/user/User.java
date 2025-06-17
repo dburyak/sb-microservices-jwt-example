@@ -11,11 +11,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(toBuilder = true)
-//@Jacksonized
+@Jacksonized
 public class User extends AuditedApiModel {
 
     @NotNull(groups = {CREATE.class, UPDATE.class})

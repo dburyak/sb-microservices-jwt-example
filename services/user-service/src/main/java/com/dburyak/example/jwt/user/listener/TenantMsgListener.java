@@ -4,7 +4,6 @@ import com.dburyak.example.jwt.api.common.ExternalId;
 import com.dburyak.example.jwt.api.internal.tenant.TenantCreatedMsg;
 import com.dburyak.example.jwt.api.internal.tenant.TenantDeletedMsg;
 import com.dburyak.example.jwt.api.internal.tenant.cfg.TenantMsgProperties;
-import com.dburyak.example.jwt.api.internal.user.UserCreatedMsg;
 import com.dburyak.example.jwt.api.internal.user.cfg.UserMsgProperties;
 import com.dburyak.example.jwt.api.user.ContactInfo;
 import com.dburyak.example.jwt.api.user.User;
@@ -19,7 +18,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.dburyak.example.jwt.lib.auth.Role.ADMIN;
-import static com.dburyak.example.jwt.user.cfg.Authorities.SA;
+import static com.dburyak.example.jwt.lib.auth.StandardAuthorities.SA;
 import static org.apache.commons.lang3.StringUtils.firstNonBlank;
 
 @Component
@@ -59,23 +58,14 @@ public class TenantMsgListener {
             // create tenant admin user
             var tenantUuid = msg.getData().getUuid();
             var adminEmail = msg.getData().getAdminEmail();
-            var createdUser = userService.createBySystem(tenantUuid, User.builder()
+            var roles = Set.of(ADMIN.getName());
+            userService.createBySystem(tenantUuid, roles, User.builder()
                     .externalId(new ExternalId(adminEmail))
                     .username("admin")
                     .displayName("admin")
                     .profileIcon("admin")
                     .contactInfo(new ContactInfo(adminEmail))
                     .build());
-
-            // publish user created event
-            var topicName = userMsgProps.getTopics().getUserCreated().getTopicName();
-            var userCreatedMsg = UserCreatedMsg.builder()
-                    .tenantUuid(tenantUuid)
-                    .userUuid(createdUser.getUuid())
-                    .username(adminEmail)
-                    .roles(Set.of(ADMIN.getName()))
-                    .build();
-            msgQueue.publish(topicName, userCreatedMsg);
         });
     }
 

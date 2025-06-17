@@ -23,11 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.dburyak.example.jwt.lib.req.Headers.TENANT_UUID;
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -63,8 +61,14 @@ public class UserService {
     }
 
     public User create(UUID tenantUUid, User req, Set<Role> roles) {
+        if (req.getPassword() != null && !passwordValidator.isValid(req.getPassword())) {
+            // in a real app, we would elaborate on the specifics of the password validation failure
+            throw new BadPasswordException("password does not meet security requirements");
+        }
         var user = converter.toDomain(req, tenantUUid);
-        user.setPassword(passwordEncoder.encode(req.getPassword()));
+        if (req.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(req.getPassword()));
+        }
         user.setRoles(roles.stream().map(Role::getName).collect(toSet()));
         var savedUser = repository.save(user);
         return converter.toApiModel(savedUser);

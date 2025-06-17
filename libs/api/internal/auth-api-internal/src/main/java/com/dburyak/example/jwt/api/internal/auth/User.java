@@ -9,20 +9,20 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.Set;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(toBuilder = true)
+@Jacksonized
 public class User extends AuditedApiModel {
 
     @NotBlank(groups = {CREATE.class, UPDATE.class})
     @JsonView({READ.class, CREATE.class, UPDATE.class})
     String username;
 
-    // of course, there should be a dedicated password validator with annotation used here, skipped for brevity
-    @NotBlank(groups = {CREATE.class, UPDATE.class})
     @JsonView({CREATE.class, UPDATE.class})
     String password;
 

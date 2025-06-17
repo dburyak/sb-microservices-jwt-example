@@ -12,6 +12,7 @@ import static com.dburyak.example.jwt.api.tenant.Paths.PATH_TENANT_BY_UUID;
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANTS;
 import static com.dburyak.example.jwt.tenant.cfg.Authorities.TENANT_EXISTS;
 import static com.dburyak.example.jwt.tenant.cfg.Authorities.TENANT_MANAGE;
+import static com.dburyak.example.jwt.tenant.cfg.Authorities.TENANT_READ;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
@@ -25,8 +26,10 @@ public class SecurityCfg {
         return auth -> auth
                 .requestMatchers(POST, TENANTS).access(requires.authority(TENANT_MANAGE))
                 .requestMatchers(DELETE, PATH_TENANT_BY_UUID, PATH_TENANT_BY_NAME).access(requires.authority(TENANT_MANAGE))
-                .requestMatchers(GET, PATH_TENANT_BY_UUID, PATH_TENANT_BY_NAME).access(requires.authority(TENANT_MANAGE))
-                .requestMatchers(GET, PATH_TENANT_EXISTS_BY_UUID, PATH_TENANT_EXISTS_BY_NAME).access(requires.authority(TENANT_EXISTS));
+                .requestMatchers(GET, PATH_TENANT_BY_UUID, PATH_TENANT_BY_NAME).access(
+                        requires.anyOf(TENANT_MANAGE, TENANT_READ))
+                .requestMatchers(GET, PATH_TENANT_EXISTS_BY_UUID, PATH_TENANT_EXISTS_BY_NAME).access(
+                        requires.anyOf(TENANT_MANAGE, TENANT_READ, TENANT_EXISTS));
         // @formatter:on
     }
 }

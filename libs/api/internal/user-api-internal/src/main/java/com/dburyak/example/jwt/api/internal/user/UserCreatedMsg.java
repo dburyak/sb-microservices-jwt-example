@@ -12,6 +12,5 @@ public class UserCreatedMsg {
     UUID tenantUuid;
     UUID userUuid;
     String username;
-    String password;
     Set<String> roles;
 }

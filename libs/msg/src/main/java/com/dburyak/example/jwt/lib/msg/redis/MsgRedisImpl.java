@@ -36,4 +36,14 @@ public class MsgRedisImpl<T> implements Msg<T> {
     public MsgRedisImpl<T> withAuth(AppAuthentication auth) {
         return new MsgRedisImpl<>(auth, msgId, headers, data);
     }
+
+    @Override
+    public String toString() {
+        return "MsgRedisImpl(" +
+                "msgId=" + msgId +
+                ", data=" + data +
+                ", auth=" + (auth != null ? auth.getAuthorityNames() : null) +
+                ", headers=" + headers +
+                ')';
+    }
 }

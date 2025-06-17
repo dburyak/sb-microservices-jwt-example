@@ -5,6 +5,7 @@ import com.dburyak.example.jwt.api.user.ContactInfo;
 import com.dburyak.example.jwt.api.user.User;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Component
@@ -64,11 +65,12 @@ public class UserConverter {
     }
 
     public com.dburyak.example.jwt.api.internal.auth.User toApiModelAuth(User reqUser,
-            com.dburyak.example.jwt.user.domain.User domainUser) {
+            com.dburyak.example.jwt.user.domain.User domainUser, Set<String> roles) {
         return com.dburyak.example.jwt.api.internal.auth.User.builder()
                 .uuid(domainUser.getUuid())
                 .username(reqUser.getUsername())
                 .password(reqUser.getPassword())
+                .roles(roles)
                 .build();
     }
 }
