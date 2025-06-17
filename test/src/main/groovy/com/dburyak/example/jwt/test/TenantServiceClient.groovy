@@ -1,11 +1,11 @@
 package com.dburyak.example.jwt.test
 
-
 import com.dburyak.example.jwt.api.tenant.Tenant
 
 import static BaseSpec.TENANT_SERVICE_URL
+import static com.dburyak.example.jwt.api.tenant.Paths.PATH_TENANT_BY_NAME
+import static com.dburyak.example.jwt.api.tenant.Paths.PATH_TENANT_BY_UUID
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANTS
-import static org.springframework.http.HttpStatus.OK
 import static org.springframework.http.MediaType.APPLICATION_JSON
 
 class TenantServiceClient extends ServiceClient {
@@ -19,34 +19,6 @@ class TenantServiceClient extends ServiceClient {
         new TenantServiceClient(tenantUuid, jwtToken)
     }
 
-    boolean tenantExists(UUID tenantUuid, String tenantName) {
-        assert tenantUuid || tenantName
-        def resp = rest.get()
-                .uri {
-                    it.path(TENANTS + TENANT_EXISTS)
-                            .tap {
-                                if (tenantUuid) {
-                                    queryParam(QueryParams.TENANT_UUID, tenantUuid)
-                                }
-                                if (tenantName) {
-                                    queryParam(QueryParams.TENANT_NAME, tenantName)
-                                }
-                            }
-                            .build()
-                }
-                .retrieve()
-                .toBodilessEntity()
-        resp.statusCode == OK
-    }
-
-    boolean tenantExistsByName(String tenantName) {
-        tenantExists(null, tenantName)
-    }
-
-    boolean tenantExistsByUuid(UUID uuid) {
-        tenantExists(uuid, null)
-    }
-
     Tenant create(Tenant tenant) {
         rest.post()
                 .uri { it.path(TENANTS).build() }
@@ -56,24 +28,30 @@ class TenantServiceClient extends ServiceClient {
                 .body(Tenant)
     }
 
-    Tenant get(String tenantId) {
+    Tenant getByUuid(String tenantUuid) {
         rest.get()
-                .uri {
-                    it.path(TENANTS)
-                            .queryParam(TENANT_ID_QUERY_PARAM, tenantId)
-                            .build()
-                }
+                .uri { it.path(PATH_TENANT_BY_UUID).build(tenantUuid) }
                 .retrieve()
                 .body(Tenant)
     }
 
-    void delete(String tenantId) {
+    Tenant getByName(String tenantName) {
+        rest.get()
+                .uri { it.path(PATH_TENANT_BY_NAME).build(tenantName) }
+                .retrieve()
+                .body(Tenant)
+    }
+
+    void deleteByUuid(String tenantUuid) {
         rest.delete()
-                .uri {
-                    it.path(TENANTS)
-                            .queryParam(TENANT_ID_QUERY_PARAM, tenantId)
-                            .build()
-                }
+                .uri { it.path(PATH_TENANT_BY_UUID).build(tenantUuid) }
+                .retrieve()
+                .toBodilessEntity()
+    }
+
+    void deleteByName(String tenantName) {
+        rest.delete()
+                .uri { it.path(PATH_TENANT_BY_NAME).build(tenantName) }
                 .retrieve()
                 .toBodilessEntity()
     }

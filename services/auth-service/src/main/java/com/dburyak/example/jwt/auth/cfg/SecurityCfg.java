@@ -10,6 +10,8 @@ import static com.dburyak.example.jwt.api.auth.Paths.PATH_USER_PASSWORD_RESET;
 import static com.dburyak.example.jwt.api.auth.Paths.PATH_USER_PASSWORD_RESET_OTP;
 import static com.dburyak.example.jwt.api.common.Paths.USERS;
 import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_WRITE;
+import static com.dburyak.example.jwt.lib.auth.StandardAuthorities.ADMIN;
+import static com.dburyak.example.jwt.lib.auth.StandardAuthorities.SA;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 
@@ -26,6 +28,6 @@ public class SecurityCfg {
                 .requestMatchers(POST, PATH_USER_PASSWORD_RESET_OTP).permitAll()
                 .requestMatchers(PUT, PATH_USER_PASSWORD_RESET).permitAll()
 
-                .requestMatchers(POST, USERS).hasAuthority(USER_WRITE);
+                .requestMatchers(POST, USERS).hasAnyAuthority(SA, ADMIN, USER_WRITE);
     }
 }

@@ -27,7 +27,9 @@ public class TenantService {
 
     public Tenant create(Tenant req) {
         var tenant = converter.toDomain(req);
-        tenant.setUuid(UUID.randomUUID());
+        var newTenantUuid = UUID.randomUUID();
+        tenant.setUuid(newTenantUuid);
+        tenant.setTenantUuid(newTenantUuid);
         var savedTenant = tenantRepository.save(tenant);
         var tenantCreatedMsg = TenantCreatedMsg.builder()
                 .uuid(savedTenant.getUuid())
@@ -56,12 +58,22 @@ public class TenantService {
         return converter.toApiModel(tenant);
     }
 
-    public boolean delete(UUID tenantUuid) {
+    public boolean deleteByUuid(UUID tenantUuid) {
         var deleted = tenantRepository.deleteByUuid(tenantUuid);
         if (!deleted) {
             throw new NotFoundException(NOT_FOUND_BY_UUID_MSG.formatted(tenantUuid));
         }
         msgQueue.publish(msgProps.getTopics().getTenantDeleted().getTopicName(), new TenantDeletedMsg(tenantUuid));
+        return true;
+    }
+
+    public boolean deleteByName(String tenantName) {
+        var deletedTenantUuid = tenantRepository.deleteByName(tenantName);
+        if (deletedTenantUuid == null) {
+            throw new NotFoundException(NOT_FOUND_BY_NAME_MSG.formatted(tenantName));
+        }
+        msgQueue.publish(msgProps.getTopics().getTenantDeleted().getTopicName(),
+                new TenantDeletedMsg(deletedTenantUuid));
         return true;
     }
 

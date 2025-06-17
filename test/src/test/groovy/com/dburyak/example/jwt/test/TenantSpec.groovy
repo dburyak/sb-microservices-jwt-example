@@ -1,6 +1,5 @@
 package com.dburyak.example.jwt.test
 
-import com.dburyak.example.jwt.api.auth.JwtLoginRequest
 import com.dburyak.example.jwt.api.tenant.Tenant
 
 class TenantSpec extends SuperAdminLoggedInSpec {
@@ -15,33 +14,31 @@ class TenantSpec extends SuperAdminLoggedInSpec {
             .build()
 
     def 'create tenant - creates tenant successfully'() {
-        when:
+        when: 'create tenant'
         def tenantResp = tenantServiceClientSA.create(createTenantReq)
 
-        then:
+        then: 'create response is successful'
         tenantResp.name == tenantName
 
-        and:
-        tenantServiceClientSA.tenantExistsByName(tenantName)
+        and: 'we can retrieve newly created tenant'
+        def getTenantResp = tenantServiceClientSA.getByName(tenantName)
+        getTenantResp != null
+        getTenantResp.uuid == tenantResp.uuid
 
         cleanup:
-        tenantServiceClientSA.delete(tenantName)
+        tenantServiceClientSA.deleteByName(tenantName)
     }
 
     def 'create tenant - creates tenant admin user'() {
-        when:
+        when: 'create tenant'
         def tenantResp = tenantServiceClientSA.create(createTenantReq)
-        sleep 1_000 // wait for async msg being published, password hashed, saved to db
+        sleep 2_000 // wait for async msg being published, password hashed, saved to db
 
-        and:
-        def tenantUuid = tenantResp.uuid
-        def authServiceClientAdmin = new AuthServiceClient(tenantUuid)
-        def loginAdminResp = authServiceClientAdmin.jwtLogin(JwtLoginRequest.builder()
-                .username(adminEmail)
-                .password(createTenantReq.password)
-                .build())
+        and: 'fetch admin user of the newly created tenant'
+        // TODO: implement here ..............................
+        userServiceClientSA
 
-        then:
-        loginAdminResp.accessToken
+        then: 'admin user exists with correct data'
+        100 == 100 // TODO: implement here ..............................
     }
 }

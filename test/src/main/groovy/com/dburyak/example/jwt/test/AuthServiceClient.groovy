@@ -22,7 +22,7 @@ class AuthServiceClient extends ServiceClient {
 
     JwtLoginResponse jwtLogin(JwtLoginRequest req) {
         rest.post()
-                .uri { it.path(PATH_AUTH_JWT_TOKEN) }
+                .uri { it.path(PATH_AUTH_JWT_TOKEN).build() }
                 .contentType(APPLICATION_JSON)
                 .body(req)
                 .retrieve()
@@ -31,7 +31,7 @@ class AuthServiceClient extends ServiceClient {
 
     JwtLoginResponse jwtRefresh(JwtRefreshTokenRequest req) {
         rest.post()
-                .uri { it.path(PATH_AUTH_JWT_REFRESH) }
+                .uri { it.path(PATH_AUTH_JWT_REFRESH).build() }
                 .contentType(APPLICATION_JSON)
                 .body(req)
                 .retrieve()

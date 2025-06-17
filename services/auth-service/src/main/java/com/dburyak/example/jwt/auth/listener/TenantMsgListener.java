@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.function.Predicate;
 
-import static com.dburyak.example.jwt.auth.cfg.Authorities.SA;
+import static com.dburyak.example.jwt.lib.auth.StandardAuthorities.SA;
 import static org.apache.commons.lang3.StringUtils.firstNonBlank;
 
 @Component

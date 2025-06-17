@@ -21,7 +21,7 @@ abstract class ServiceClient<T extends ServiceClient<T>> {
                 .baseUrl(baseUrl)
                 .tap {
                     if (jwtToken) {
-                        defaultHeader(AUTHORIZATION, BEARER.header + jwtToken)
+                        defaultHeader(AUTHORIZATION, BEARER + jwtToken)
                     }
                     if (tenantUuid) {
                         defaultHeader(TENANT_UUID.header, tenantUuid.toString())

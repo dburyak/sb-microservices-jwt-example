@@ -10,12 +10,14 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.Set;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(toBuilder = true)
+@Jacksonized
 public class Tenant extends AuditedApiModel {
 
     @NotBlank(groups = {CREATE.class})

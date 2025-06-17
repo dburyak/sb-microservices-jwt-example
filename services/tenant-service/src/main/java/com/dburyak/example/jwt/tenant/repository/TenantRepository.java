@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.UUID;
 
-public interface TenantRepository extends MongoRepository<Tenant, String> {
+public interface TenantRepository extends MongoRepository<Tenant, String>, TenantRepositoryCustom {
     Tenant findByUuid(UUID uuid);
 
     boolean deleteByUuid(UUID uuid);

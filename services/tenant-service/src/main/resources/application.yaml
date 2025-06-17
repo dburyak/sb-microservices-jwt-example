@@ -10,4 +10,4 @@ mongock:
   migration-scan-package: com.dburyak.example.jwt.tenant.repository.migration
 auth:
   jwt:
-    keys: ${JWT_KNOWN_KEYS:'7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ'}
+    keys: ${JWT_KNOWN_KEYS:7af3950b:HS256:bG9jYWwtbm90LXNlY3VyZS1qd3Qtc2VjcmV0LWtleQ}

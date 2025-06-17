@@ -23,6 +23,7 @@ import java.util.UUID;
 import static com.dburyak.example.jwt.api.internal.tenant.Paths.TENANT_EXISTS;
 import static com.dburyak.example.jwt.api.tenant.PathParams.TENANT_NAME;
 import static com.dburyak.example.jwt.api.tenant.PathParams.TENANT_UUID;
+import static com.dburyak.example.jwt.api.tenant.Paths.BY_NAME;
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANTS;
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANT_BY_NAME;
 import static com.dburyak.example.jwt.api.tenant.Paths.TENANT_BY_UUID;
@@ -42,7 +43,7 @@ public class TenantController {
 
     @DeleteMapping(TENANT_BY_UUID)
     public ResponseEntity<Void> delete(@PathVariable(name = TENANT_UUID) @NotNull UUID tenantUuid) {
-        tenantService.delete(tenantUuid);
+        tenantService.deleteByUuid(tenantUuid);
         return ResponseEntity.noContent().build();
     }
 
@@ -53,11 +54,17 @@ public class TenantController {
         return tenant != null ? ResponseEntity.ok(tenant) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping(TENANT_BY_NAME)
+    @GetMapping(BY_NAME + TENANT_BY_NAME)
     @JsonView(READ.class)
     public ResponseEntity<Tenant> getByName(@PathVariable(name = TENANT_NAME) @NotBlank String tenantName) {
         var tenant = tenantService.get(tenantName);
         return tenant != null ? ResponseEntity.ok(tenant) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping(BY_NAME + TENANT_BY_NAME)
+    public ResponseEntity<Void> deleteByName(@PathVariable(name = TENANT_NAME) @NotBlank String tenantName) {
+        tenantService.deleteByName(tenantName);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(TENANT_BY_UUID + TENANT_EXISTS)
@@ -66,7 +73,7 @@ public class TenantController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(TENANT_BY_NAME + TENANT_EXISTS)
+    @GetMapping(BY_NAME + TENANT_BY_NAME + TENANT_EXISTS)
     public ResponseEntity<Void> existsByName(@PathVariable(name = TENANT_NAME) @NotBlank String tenantName) {
         tenantService.verifyExistsByName(tenantName);
         return ResponseEntity.ok().build();
