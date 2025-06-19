@@ -20,6 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -128,7 +129,7 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
                             log.warn("received msg with bad auth: topic={}, msg={}", topic, unauthenticatedMsg);
                             return;
                         }
-                        var dupKey = DUP_PREFIX + consumerGroup + msg.getMsgId();
+                        var dupKey = DUP_PREFIX + consumerGroup + ":" + msg.getMsgId();
                         var ifNotExistsAndWithTtl = setParams().nx().ex(DUP_LOCK_TTL.toSeconds());
                         var dupKeyBytes = dupKey.getBytes(UTF_8);
                         var isDup = false;
@@ -161,7 +162,18 @@ public class PointToPointMsgQueueRedisImpl implements PointToPointMsgQueue {
                         }
                     }
                 };
-                jedis.subscribe(subscriber, topic.getBytes(UTF_8));
+                try {
+                    jedis.subscribe(subscriber, topic.getBytes(UTF_8));
+                } catch (JedisConnectionException e) {
+                    // Jedis/apache-commons-pool design is not usable for distinguishing between "connection lost" and
+                    // "application is shutting down" situations. At first, I wrote ~50 lines of code to deduce this
+                    // based on secondary side effects, and the code got very ugly. Then I realized that it is not
+                    // worth the effort.
+                    // Proper handling should be the following:
+                    // - if the app is shutting down, just finish the current code flow
+                    // - if the connection is lost, re-subscribe by simply calling this "subscribe" method again with
+                    //   the same parameters
+                }
             }
         });
     }

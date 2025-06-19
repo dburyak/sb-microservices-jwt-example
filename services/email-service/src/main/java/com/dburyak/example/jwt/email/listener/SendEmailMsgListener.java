@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.function.Predicate;
 
 import static com.dburyak.example.jwt.email.cfg.Authorities.SEND_EMAIL;
+import static org.apache.commons.lang3.StringUtils.firstNonBlank;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +29,9 @@ public class SendEmailMsgListener {
 
     private void subscribeToSendEmailMessages() {
         var topic = props.getTopics().getSendEmail().getTopicName();
-        var consumerGroup = props.getConsumerGroup();
+        var consumerGroup = firstNonBlank(
+                props.getTopics().getSendEmail().getConsumerGroup(),
+                props.getConsumerGroup());
         Predicate<Msg<SendEmailMsg>> accessCheck = msg ->
                 msg.getAuth() != null
                         && msg.getAuth().isAuthenticated()

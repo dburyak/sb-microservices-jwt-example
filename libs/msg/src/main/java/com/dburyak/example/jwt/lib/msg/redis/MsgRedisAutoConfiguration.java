@@ -27,7 +27,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Conditional(MessagingAndRedisEnabledCondition.class)
 public class MsgRedisAutoConfiguration {
 
-    @Bean
+    @Bean(destroyMethod = "destroy")
     @ConditionalOnMissingBean
     public JedisPool jedisPool(RedisMessagingProperties redisMsgProps, RedisProperties redisMainProps) {
         var poolCfg = new GenericObjectPoolConfig<Jedis>();
