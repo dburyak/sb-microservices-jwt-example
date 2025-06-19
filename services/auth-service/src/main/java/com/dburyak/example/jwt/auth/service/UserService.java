@@ -3,7 +3,7 @@ package com.dburyak.example.jwt.auth.service;
 import com.dburyak.example.jwt.api.auth.CreatePasswordResetOTPRequest;
 import com.dburyak.example.jwt.api.auth.PasswordChangeRequest;
 import com.dburyak.example.jwt.api.auth.PasswordResetRequest;
-import com.dburyak.example.jwt.api.internal.auth.User;
+import com.dburyak.example.jwt.api.auth.User;
 import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForAnonymousUserMsg;
 import com.dburyak.example.jwt.api.internal.otp.CreateEmailOTPForRegisteredUserMsg;
 import com.dburyak.example.jwt.api.internal.otp.ExternallyIdentifiedOTP;
@@ -16,25 +16,39 @@ import com.dburyak.example.jwt.auth.err.ExternallyIdentifiedUserNotFoundExceptio
 import com.dburyak.example.jwt.auth.err.UserNotFoundException;
 import com.dburyak.example.jwt.auth.repository.UserRepository;
 import com.dburyak.example.jwt.auth.service.converter.UserConverter;
+import com.dburyak.example.jwt.lib.auth.AppAuthentication;
 import com.dburyak.example.jwt.lib.auth.Role;
 import com.dburyak.example.jwt.lib.err.NotFoundException;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
+import com.dburyak.example.jwt.lib.req.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALL_WRITE;
+import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_WRITE;
 import static java.util.stream.Collectors.toSet;
 
 @Service
 @Slf4j
 public class UserService {
+    private static final Set<String> ALLOWED_ROLES_FOR_CREATED_USERS =
+            Stream.of(Role.USER, Role.USER_MANAGER, Role.CONTENT_MANAGER)
+                    .map(Role::getName)
+                    .collect(toSet());
+
     private final UserConverter converter;
     private final UserRepository repository;
     private final PasswordValidator passwordValidator;
     private final PasswordEncoder passwordEncoder;
+    private final RequestUtil requestUtil;
     private final UserServiceClient userServiceClient;
     private final OTPServiceClientInternal otpServiceClient;
     private final PointToPointMsgQueue msgQueue;
@@ -45,6 +59,7 @@ public class UserService {
             UserRepository repository,
             PasswordValidator passwordValidator,
             PasswordEncoder passwordEncoder,
+            RequestUtil requestUtil,
             UserServiceClient userServiceClient,
             OTPServiceClientInternal otpServiceClient,
             PointToPointMsgQueue msgQueue,
@@ -53,6 +68,7 @@ public class UserService {
         this.repository = repository;
         this.passwordValidator = passwordValidator;
         this.passwordEncoder = passwordEncoder;
+        this.requestUtil = requestUtil;
         this.userServiceClient = userServiceClient;
         this.otpServiceClient = otpServiceClient;
         this.msgQueue = msgQueue;
@@ -60,7 +76,8 @@ public class UserService {
         this.registeredUserCreateOtpTopic = otpMsgProperties.getTopics().getCreateOTPForRegisteredUser().getTopicName();
     }
 
-    public User create(UUID tenantUUid, User req, Set<Role> roles) {
+    public User create(UUID tenantUUid, User req) {
+        checkPermissionsToCreateUser(tenantUUid, req);
         if (req.getPassword() != null && !passwordValidator.isValid(req.getPassword())) {
             // in a real app, we would elaborate on the specifics of the password validation failure
             throw new BadPasswordException("password does not meet security requirements");
@@ -69,7 +86,6 @@ public class UserService {
         if (req.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(req.getPassword()));
         }
-        user.setRoles(roles.stream().map(Role::getName).collect(toSet()));
         var savedUser = repository.save(user);
         return converter.toApiModel(savedUser);
     }
@@ -169,5 +185,35 @@ public class UserService {
 
     public void deleteAllByTenantUuid(UUID tenantUuid) {
         repository.deleteAllByTenantUuid(tenantUuid);
+    }
+
+    public User findByUuid(UUID tenantUuid, UUID userUuid) {
+        var user = repository.findByTenantUuidAndUuid(tenantUuid, userUuid);
+        if (user == null) {
+            throw new UserNotFoundException(userUuid);
+        }
+        return converter.toApiModel(user);
+    }
+
+    private void checkPermissionsToCreateUser(UUID tenantUUid, User req) {
+        var authGeneric = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authGeneric instanceof AppAuthentication auth)) {
+            // this should never happen, but just in case
+            throw new BadCredentialsException("not authenticated");
+        }
+        var authorities = auth.getAuthorityNames();
+        if (authorities.contains(USER_ALL_WRITE)) {
+            // caller can create any user in any tenant
+            return;
+        }
+        var callersTenantUuid = requestUtil.getCallersTenantUuid();
+        if (callersTenantUuid.equals(tenantUUid) && authorities.contains(USER_WRITE) &&
+                ALLOWED_ROLES_FOR_CREATED_USERS.containsAll(req.getRoles())) {
+            // caller can create users in their own tenant, and roles are allowed (no privilege escalation)
+            return;
+        }
+        // caller does not have permission to create users within the tenant
+        throw new AccessDeniedException("not allowed to create users: tenantUuid=%s, roles=%s"
+                .formatted(tenantUUid, req.getRoles()));
     }
 }

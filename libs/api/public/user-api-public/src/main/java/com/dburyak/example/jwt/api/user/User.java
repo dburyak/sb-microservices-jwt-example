@@ -23,8 +23,8 @@ public class User extends AuditedApiModel {
     @JsonView({READ.class, CREATE.class, UPDATE.class})
     ExternalId externalId;
 
-    @NotBlank(groups = {CREATE.class})
-    @JsonView({CREATE.class})
+    @NotBlank(groups = {CREATE.class, UPDATE.class})
+    @JsonView({READ.class, CREATE.class, UPDATE.class})
     String username;
 
     @NotBlank(groups = {CREATE.class})

@@ -6,7 +6,8 @@ import com.dburyak.example.jwt.api.auth.PasswordResetRequest;
 import com.dburyak.example.jwt.api.common.ApiView.CREATE;
 import com.dburyak.example.jwt.api.common.ApiView.READ;
 import com.dburyak.example.jwt.api.common.ApiView.UPDATE;
-import com.dburyak.example.jwt.api.internal.auth.User;
+import com.dburyak.example.jwt.api.common.PathParams;
+import com.dburyak.example.jwt.api.auth.User;
 import com.dburyak.example.jwt.auth.service.UserService;
 import com.dburyak.example.jwt.lib.auth.Role;
 import com.dburyak.example.jwt.lib.req.Attributes;
@@ -16,6 +17,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -32,6 +35,7 @@ import static com.dburyak.example.jwt.api.auth.Paths.USER_PASSWORD_CHANGE;
 import static com.dburyak.example.jwt.api.auth.Paths.USER_PASSWORD_RESET;
 import static com.dburyak.example.jwt.api.common.Paths.ANONYMOUS;
 import static com.dburyak.example.jwt.api.common.Paths.USERS;
+import static com.dburyak.example.jwt.api.common.Paths.USER_BY_UUID;
 import static com.dburyak.example.jwt.lib.req.Attributes.TENANT_UUID;
 import static com.dburyak.example.jwt.lib.req.Attributes.USER_UUID;
 
@@ -43,15 +47,26 @@ public class UserController {
 
     /**
      * Internal endpoint, not exposed to the public.
-     * Only regular users can be created via this endpoint.
-     * Part of the user creation flow by {@link Role#USER_MANAGER}.
+     * Supposed to be called by the user-service when creating new users.
+     * Flows:
+     *  - {@link Role#USER_MANAGER} provisions new users for the tenant
+     *  - {@link Role#SUPER_ADMIN} creates default tenant admin user when new tenant is created
      */
     @PostMapping
     @JsonView(READ.class)
     public ResponseEntity<User> create(
             @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
             @Validated(CREATE.class) @RequestBody User req) {
-        var user = userService.create(tenantUuid, req, Set.of(Role.USER));
+        var user = userService.create(tenantUuid, req);
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping(USER_BY_UUID)
+    @JsonView(READ.class)
+    public ResponseEntity<User> findByUuid(
+            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
+            @PathVariable(PathParams.USER_UUID) @NotNull UUID userUuid) {
+        var user = userService.findByUuid(tenantUuid, userUuid);
         return ResponseEntity.ok(user);
     }
 

@@ -13,6 +13,7 @@ import java.util.UUID;
 import static com.dburyak.example.jwt.user.repository.migration.M_0001_CreateUsersCollection.COLLECTION_USERS;
 import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_EXTERNAL_ID_EMAIL;
 import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_TENANT_UUID;
+import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_USERNAME;
 import static com.dburyak.example.jwt.user.repository.migration.M_0002_CreateUserIndexes.FIELD_UUID;
 import static com.dburyak.example.jwt.user.repository.migration.M_0003_InsertSuperAdminUser.FIELD_CONTACT_INFO_EMAIL;
 import static com.dburyak.example.jwt.user.repository.migration.M_0003_InsertSuperAdminUser.FIELD_CREATED_BY;
@@ -23,29 +24,32 @@ import static com.dburyak.example.jwt.user.repository.migration.M_0003_InsertSup
 import static com.dburyak.example.jwt.user.repository.migration.M_0003_InsertSuperAdminUser.FIELD_PROFILE_ICON;
 import static com.dburyak.example.jwt.user.repository.migration.M_0003_InsertSuperAdminUser.USER_SERVICE_USER_UUID;
 import static com.dburyak.example.jwt.user.repository.migration.M_0004_InsertAuthServiceUser.SERVICE_TENANT_UUID;
+import static java.util.Map.entry;
 
 @ChangeUnit(id = "0007-insert-otp-service-user", order = "0007", author = "dmytro.buryak")
 public class M_0007_InsertOtpServiceUser {
     static final UUID OTP_SERVICE_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000004");
     static final String DISPLAY_NAME = "otps-service user";
     static final String EMAIL = "otp.service@jwt.example.dburyak.com";
+    static final String USERNAME = "otp-service";
     static final String PROFILE_ICON = "service";
 
     @Execution
     public void execute(MongoDatabase mongo) {
         var collection = mongo.getCollection(COLLECTION_USERS);
         var now = Instant.now();
-        collection.insertOne(new Document(Map.of(
-                FIELD_TENANT_UUID, SERVICE_TENANT_UUID,
-                FIELD_UUID, OTP_SERVICE_USER_UUID,
-                FIELD_EXTERNAL_ID_EMAIL, EMAIL,
-                FIELD_DISPLAY_NAME, DISPLAY_NAME,
-                FIELD_PROFILE_ICON, PROFILE_ICON,
-                FIELD_CONTACT_INFO_EMAIL, EMAIL,
-                FIELD_CREATED_BY, USER_SERVICE_USER_UUID,
-                FIELD_CREATED_DATE, now,
-                FIELD_LAST_MODIFIED_BY, USER_SERVICE_USER_UUID,
-                FIELD_LAST_MODIFIED_DATE, now
+        collection.insertOne(new Document(Map.ofEntries(
+                entry(FIELD_TENANT_UUID, SERVICE_TENANT_UUID),
+                entry(FIELD_UUID, OTP_SERVICE_USER_UUID),
+                entry(FIELD_EXTERNAL_ID_EMAIL, EMAIL),
+                entry(FIELD_USERNAME, USERNAME),
+                entry(FIELD_DISPLAY_NAME, DISPLAY_NAME),
+                entry(FIELD_PROFILE_ICON, PROFILE_ICON),
+                entry(FIELD_CONTACT_INFO_EMAIL, EMAIL),
+                entry(FIELD_CREATED_BY, USER_SERVICE_USER_UUID),
+                entry(FIELD_CREATED_DATE, now),
+                entry(FIELD_LAST_MODIFIED_BY, USER_SERVICE_USER_UUID),
+                entry(FIELD_LAST_MODIFIED_DATE, now)
         )));
     }
 

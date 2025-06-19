@@ -117,6 +117,14 @@ public class UserService {
         return userConverter.toApiModel(user);
     }
 
+    public User findByUsername(UUID tenantUuid, String username) {
+        var user = userRepository.findByTenantUuidAndUsername(tenantUuid, username);
+        if (user == null) {
+            throw new NotFoundException("User(username=%s)".formatted(username));
+        }
+        return userConverter.toApiModel(user);
+    }
+
     public ContactInfo findContactInfoByUuid(UUID tenantUuid, UUID userUuid) {
         var contactInfo = userRepository.findContactInfoByTenantUuidAndUuid(tenantUuid, userUuid);
         if (contactInfo == null) {

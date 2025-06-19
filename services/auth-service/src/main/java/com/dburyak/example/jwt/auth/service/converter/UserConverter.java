@@ -1,7 +1,7 @@
 package com.dburyak.example.jwt.auth.service.converter;
 
 import com.dburyak.example.jwt.api.common.ExternalId;
-import com.dburyak.example.jwt.api.internal.auth.User;
+import com.dburyak.example.jwt.api.auth.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -16,6 +16,7 @@ public class UserConverter {
                 .tenantUuid(tenantUuid)
                 .uuid(user.getUuid())
                 .externalId(toDomain(user.getExternalId()))
+                .username(user.getUsername())
                 .displayName(user.getDisplayName())
                 .contactInfo(toDomain(user.getContactInfo()))
                 .profileIcon(user.getProfileIcon())
@@ -26,6 +27,7 @@ public class UserConverter {
         return User.builder()
                 .uuid(user.getUuid())
                 .externalId(toApiModel(user.getExternalId()))
+                .username(user.getUsername())
                 .displayName(user.getDisplayName())
                 .contactInfo(toApiModel(user.getContactInfo()))
                 .profileIcon(user.getProfileIcon())
@@ -64,9 +66,9 @@ public class UserConverter {
         return email != null ? email.toLowerCase() : null;
     }
 
-    public com.dburyak.example.jwt.api.internal.auth.User toApiModelAuth(User reqUser,
+    public com.dburyak.example.jwt.api.auth.User toApiModelAuth(User reqUser,
             com.dburyak.example.jwt.user.domain.User domainUser, Set<String> roles) {
-        return com.dburyak.example.jwt.api.internal.auth.User.builder()
+        return com.dburyak.example.jwt.api.auth.User.builder()
                 .uuid(domainUser.getUuid())
                 .username(reqUser.getUsername())
                 .password(reqUser.getPassword())

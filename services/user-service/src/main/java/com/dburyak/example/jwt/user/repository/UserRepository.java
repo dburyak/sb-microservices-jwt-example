@@ -11,6 +11,8 @@ public interface UserRepository extends MongoRepository<User, String>, UserRepos
 
     User findByTenantUuidAndUuid(UUID tenantUuid, UUID uuid);
 
+    User findByTenantUuidAndUsername(UUID tenantUuid, String username);
+
     @Query("{ 'tenantUuid' : ?0, 'externalId.email' : ?1 }")
     boolean existsByExternalIdEmail(UUID tenantUuid, String externalIdEmail);
 }

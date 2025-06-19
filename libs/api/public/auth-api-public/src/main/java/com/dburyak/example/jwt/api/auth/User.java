@@ -1,4 +1,4 @@
-package com.dburyak.example.jwt.api.internal.auth;
+package com.dburyak.example.jwt.api.auth;
 
 import com.dburyak.example.jwt.api.common.ApiView.CREATE;
 import com.dburyak.example.jwt.api.common.ApiView.READ;

@@ -15,8 +15,11 @@ abstract class BaseSpec extends Specification {
         }
     }
 
+    static final String SA_TENANT_NAME = System.getenv('SA_TENANT_NAME') ?: 'system-admin'
     static final String SA_USERNAME = System.getenv('SA_USERNAME') ?: 'sa'
     static final String SA_DEVICE_ID = System.getenv('SA_DEVICE_ID') ?: 'sa-test-device'
+    static final String ADMIN_USERNAME = 'admin'
+    static final String ADMIN_ROLE = 'adm'
 
     static final String AUTH_SERVICE_URL = System.getenv('AUTH_SERVICE_URL') ?: 'http://localhost:8080'
     static final String USER_SERVICE_URL = System.getenv('USER_SERVICE_URL') ?: 'http://localhost:8081'
