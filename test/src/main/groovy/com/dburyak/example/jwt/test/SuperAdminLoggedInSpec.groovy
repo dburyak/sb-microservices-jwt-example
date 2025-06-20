@@ -11,6 +11,12 @@ import static com.dburyak.example.jwt.lib.req.ReservedIdentifiers.SA_TENANT_UUID
 abstract class SuperAdminLoggedInSpec extends BaseSpec {
 
     @Shared
+    String saAuthToken
+
+    @Shared
+    UUID saUserUuid
+
+    @Shared
     AuthServiceClient authServiceClientSA
 
     @Shared
@@ -19,20 +25,14 @@ abstract class SuperAdminLoggedInSpec extends BaseSpec {
     @Shared
     TenantServiceClient tenantServiceClientSA
 
-    @Shared
-    String saJwtToken
-
-    @Shared
-    UUID saUserUuid
-
     def setupSpec() {
         def authServiceClient = new AuthServiceClient(SA_TENANT_UUID)
         def loginSAResp = authServiceClient.jwtLogin(SA_LOGIN_REQUEST)
         assert loginSAResp.accessToken
-        saJwtToken = loginSAResp.accessToken
+        saAuthToken = loginSAResp.accessToken
         saUserUuid = loginSAResp.userUuid
-        authServiceClientSA = new AuthServiceClient(SA_TENANT_UUID, saJwtToken)
-        userServiceClientSA = new UserServiceClient(SA_TENANT_UUID, saJwtToken)
-        tenantServiceClientSA = new TenantServiceClient(SA_TENANT_UUID, saJwtToken)
+        authServiceClientSA = new AuthServiceClient(SA_TENANT_UUID, saAuthToken)
+        userServiceClientSA = new UserServiceClient(SA_TENANT_UUID, saAuthToken)
+        tenantServiceClientSA = new TenantServiceClient(SA_TENANT_UUID, saAuthToken)
     }
 }

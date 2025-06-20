@@ -11,6 +11,7 @@ import static com.dburyak.example.jwt.api.common.QueryParams.DEVICE_ID
 import static com.dburyak.example.jwt.api.common.QueryParams.TENANT_UUID
 import static com.dburyak.example.jwt.api.user.Paths.PATH_USER_MANAGEMENT
 import static com.dburyak.example.jwt.api.user.Paths.PATH_USER_MANAGEMENT_BY_USERNAME
+import static com.dburyak.example.jwt.api.user.Paths.PATH_USER_MANAGEMENT_BY_UUID
 import static com.dburyak.example.jwt.api.user.QueryParams.REGISTRATION_CODE
 import static org.springframework.http.MediaType.APPLICATION_JSON
 
@@ -93,5 +94,35 @@ class UserServiceClient extends ServiceClient {
 
     User createByManager(UserWithRoles req, Tenant tenant) {
         createByManager(req, tenant?.uuid)
+    }
+
+    void deleteByUsernameByManager(String username, UUID tenantUuid = null) {
+        rest.delete()
+                .uri {
+                    def builder = it.path(PATH_USER_MANAGEMENT_BY_USERNAME)
+                    if (tenantUuid) {
+                        builder = builder.queryParam(TENANT_UUID, tenantUuid)
+                    }
+                    builder.build(username)
+                }
+                .retrieve()
+                .body(Void)
+    }
+
+    void deleteByUuidByManager(UUID userUuid, UUID tenantUuid = null) {
+        rest.delete()
+                .uri {
+                    def builder = it.path(PATH_USER_MANAGEMENT_BY_UUID)
+                    if (tenantUuid) {
+                        builder = builder.queryParam(TENANT_UUID, tenantUuid)
+                    }
+                    builder.build(userUuid)
+                }
+                .retrieve()
+                .body(Void)
+    }
+
+    void deleteByUuidByManager(UUID userUuid, Tenant tenant) {
+        deleteByUuidByManager(userUuid, tenant?.uuid)
     }
 }

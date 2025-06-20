@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+import static com.dburyak.example.jwt.api.common.PathParams.USER_UUID;
+import static com.dburyak.example.jwt.api.common.Paths.USER_BY_UUID;
 import static com.dburyak.example.jwt.api.user.PathParams.USERNAME;
 import static com.dburyak.example.jwt.api.user.Paths.BY_USERNAME;
 import static com.dburyak.example.jwt.api.user.Paths.PATH_USER_MANAGEMENT;
@@ -54,5 +57,21 @@ public class UserManagementController {
             @PathVariable(USERNAME) @NotBlank String username) {
         var user = userService.findByUsername(tenantUuid, username);
         return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping(USER_BY_UUID)
+    public ResponseEntity<Void> deleteByUuidByManager(
+            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
+            @PathVariable(USER_UUID) @NotNull UUID userUuid) {
+        userService.deleteByUuidByManager(tenantUuid, userUuid);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(BY_USERNAME + USER_BY_USERNAME)
+    public ResponseEntity<Void> deleteByUsernameByManager(
+            @RequestAttribute(TENANT_UUID) @NotNull UUID tenantUuid,
+            @PathVariable(USERNAME) @NotBlank String username) {
+        userService.deleteByUsernameByManager(tenantUuid, username);
+        return ResponseEntity.noContent().build();
     }
 }

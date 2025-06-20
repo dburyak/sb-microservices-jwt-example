@@ -1,6 +1,8 @@
 package com.dburyak.example.jwt.test
 
 import com.dburyak.example.jwt.api.auth.JwtLoginRequest
+import org.apache.commons.lang3.RandomStringUtils
+import spock.lang.Shared
 import spock.lang.Specification
 
 /**
@@ -19,15 +21,21 @@ abstract class BaseSpec extends Specification {
     static final String SA_USERNAME = System.getenv('SA_USERNAME') ?: 'sa'
     static final String SA_DEVICE_ID = System.getenv('SA_DEVICE_ID') ?: 'sa-test-device'
     static final String ADMIN_USERNAME = 'admin'
+    static final String ADMIN_DEVICE_ID = System.getenv('ADMIN_DEVICE_ID') ?: 'admin-test-device'
+
     static final String ADMIN_ROLE = 'adm'
 
     static final String AUTH_SERVICE_URL = System.getenv('AUTH_SERVICE_URL') ?: 'http://localhost:8080'
     static final String USER_SERVICE_URL = System.getenv('USER_SERVICE_URL') ?: 'http://localhost:8081'
     static final String TENANT_SERVICE_URL = System.getenv('TENANT_SERVICE_URL') ?: 'http://localhost:8082'
+    static final String OTP_SERVICE_URL = System.getenv('OTP_SERVICE_URL') ?: 'http://localhost:8084'
 
     static final JwtLoginRequest SA_LOGIN_REQUEST = JwtLoginRequest.builder()
             .username(SA_USERNAME)
             .password(SA_PASSWORD)
             .deviceId(SA_DEVICE_ID)
             .build()
+
+    @Shared
+    RandomStringUtils rndString = RandomStringUtils.secure()
 }

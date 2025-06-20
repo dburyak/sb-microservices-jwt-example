@@ -59,8 +59,8 @@ public class TenantService {
     }
 
     public boolean deleteByUuid(UUID tenantUuid) {
-        var deleted = tenantRepository.deleteByUuid(tenantUuid);
-        if (!deleted) {
+        var numDeleted = tenantRepository.deleteByUuid(tenantUuid);
+        if (numDeleted == 0) {
             throw new NotFoundException(NOT_FOUND_BY_UUID_MSG.formatted(tenantUuid));
         }
         msgQueue.publish(msgProps.getTopics().getTenantDeleted().getTopicName(), new TenantDeletedMsg(tenantUuid));

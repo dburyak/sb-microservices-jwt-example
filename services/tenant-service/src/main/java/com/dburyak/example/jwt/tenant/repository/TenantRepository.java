@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface TenantRepository extends MongoRepository<Tenant, String>, TenantRepositoryCustom {
     Tenant findByUuid(UUID uuid);
 
-    boolean deleteByUuid(UUID uuid);
+    long deleteByUuid(UUID uuid);
 
     boolean existsByUuid(UUID uuid);
 

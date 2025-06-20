@@ -42,7 +42,7 @@ class TenantServiceClient extends ServiceClient {
                 .body(Tenant)
     }
 
-    void deleteByUuid(String tenantUuid) {
+    void deleteByUuid(UUID tenantUuid) {
         rest.delete()
                 .uri { it.path(PATH_TENANT_BY_UUID).build(tenantUuid) }
                 .retrieve()

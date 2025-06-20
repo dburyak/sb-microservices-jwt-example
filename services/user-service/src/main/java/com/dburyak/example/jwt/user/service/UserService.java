@@ -95,6 +95,20 @@ public class UserService {
         return savedUser;
     }
 
+    public void deleteByUsernameByManager(UUID tenantUuid, String username) {
+        var numDeleted = userRepository.deleteByTenantUuidAndUsername(tenantUuid, username);
+        if (numDeleted == 0) {
+            throw new NotFoundException("User(username=%s)".formatted(username));
+        }
+    }
+
+    public void deleteByUuidByManager(UUID tenantUuid, UUID userUuid) {
+        var numDeleted = userRepository.deleteByTenantUuidAndUuid(tenantUuid, userUuid);
+        if (numDeleted == 0) {
+            throw new NotFoundException("User(uuid=%s)".formatted(userUuid));
+        }
+    }
+
     public void deleteAllByTenantUuidWithoutNotification(UUID tenantUuid) {
         userRepository.deleteAllByTenantUuid(tenantUuid);
     }
