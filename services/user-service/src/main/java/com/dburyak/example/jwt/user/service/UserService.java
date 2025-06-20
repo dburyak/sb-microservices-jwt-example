@@ -11,6 +11,7 @@ import com.dburyak.example.jwt.api.internal.user.cfg.UserMsgProperties;
 import com.dburyak.example.jwt.api.user.ContactInfo;
 import com.dburyak.example.jwt.api.user.CreateRegistrationOtpViaEmail;
 import com.dburyak.example.jwt.api.user.User;
+import com.dburyak.example.jwt.api.user.UserWithRoles;
 import com.dburyak.example.jwt.lib.auth.Role;
 import com.dburyak.example.jwt.lib.err.NotFoundException;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
@@ -69,8 +70,8 @@ public class UserService {
         return userConverter.toApiModel(savedUser);
     }
 
-    public User createByManager(UUID tenantUuid, Set<String> roles, User req) {
-        var savedUser = createUser(tenantUuid, roles, req);
+    public User createByManager(UUID tenantUuid, UserWithRoles req) {
+        var savedUser = createUser(tenantUuid, req.getRoles(), req);
         return userConverter.toApiModel(savedUser);
     }
 
@@ -94,7 +95,7 @@ public class UserService {
         return savedUser;
     }
 
-    public void deleteAllByTenantUuid(UUID tenantUuid) {
+    public void deleteAllByTenantUuidWithoutNotification(UUID tenantUuid) {
         userRepository.deleteAllByTenantUuid(tenantUuid);
     }
 

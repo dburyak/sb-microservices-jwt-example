@@ -47,6 +47,9 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Endpoint for self-registration of a user via a registration code.
+     */
     @PostMapping
     @JsonView(READ.class)
     public ResponseEntity<User> create(

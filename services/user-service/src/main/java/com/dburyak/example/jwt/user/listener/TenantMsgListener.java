@@ -4,12 +4,12 @@ import com.dburyak.example.jwt.api.common.ExternalId;
 import com.dburyak.example.jwt.api.internal.tenant.TenantCreatedMsg;
 import com.dburyak.example.jwt.api.internal.tenant.TenantDeletedMsg;
 import com.dburyak.example.jwt.api.internal.tenant.cfg.TenantMsgProperties;
-import com.dburyak.example.jwt.api.internal.user.cfg.UserMsgProperties;
 import com.dburyak.example.jwt.api.user.ContactInfo;
 import com.dburyak.example.jwt.api.user.User;
 import com.dburyak.example.jwt.lib.msg.Msg;
 import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.user.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -23,18 +23,18 @@ import static org.apache.commons.lang3.StringUtils.firstNonBlank;
 
 @Component
 public class TenantMsgListener {
+    private final String serviceName;
     private final TenantMsgProperties tenantMsgProps;
-    private final UserMsgProperties userMsgProps;
     private final PointToPointMsgQueue msgQueue;
     private final UserService userService;
 
     public TenantMsgListener(
+            @Value("${spring.application.name}") String serviceName,
             TenantMsgProperties tenantMsgProps,
-            UserMsgProperties userMsgProps,
             PointToPointMsgQueue msgQueue,
             UserService userService) {
+        this.serviceName = serviceName;
         this.tenantMsgProps = tenantMsgProps;
-        this.userMsgProps = userMsgProps;
         this.msgQueue = msgQueue;
         this.userService = userService;
     }
@@ -46,10 +46,13 @@ public class TenantMsgListener {
     }
 
     private void subscribeToTenantCreatedEvents() {
-        var topic = tenantMsgProps.getTopics().getTenantCreated().getTopicName();
+        var topic = firstNonBlank(
+                tenantMsgProps.getTopics().getTenantCreated().getSubscriptionName(),
+                tenantMsgProps.getTopics().getTenantCreated().getTopicName());
         var consumerGroup = firstNonBlank(
                 tenantMsgProps.getTopics().getTenantCreated().getConsumerGroup(),
-                tenantMsgProps.getConsumerGroup());
+                tenantMsgProps.getConsumerGroup(),
+                serviceName);
         Predicate<Msg<TenantCreatedMsg>> accessCheck = msg -> {
             var auth = msg.getAuth();
             return auth.isAuthenticated() && auth.getAuthorityNames().contains(SA);
@@ -69,17 +72,22 @@ public class TenantMsgListener {
     }
 
     private void subscribeToTenantDeletedEvents() {
-        var topic = tenantMsgProps.getTopics().getTenantDeleted().getTopicName();
+        var topic = firstNonBlank(
+                tenantMsgProps.getTopics().getTenantDeleted().getSubscriptionName(),
+                tenantMsgProps.getTopics().getTenantDeleted().getTopicName());
         var consumerGroup = firstNonBlank(
                 tenantMsgProps.getTopics().getTenantCreated().getConsumerGroup(),
-                tenantMsgProps.getConsumerGroup());
+                tenantMsgProps.getConsumerGroup(),
+                serviceName);
         Predicate<Msg<TenantDeletedMsg>> accessCheck = msg -> {
             var auth = msg.getAuth();
             return auth.isAuthenticated() && auth.getAuthorityNames().contains(SA);
         };
         msgQueue.subscribe(topic, consumerGroup, accessCheck, msg -> {
             var deletedTenantUuid = msg.getData().getUuid();
-            userService.deleteAllByTenantUuid(deletedTenantUuid);
+            // deleting all the users of the tenant does not require a separate notification, other services will handle
+            // the original tenant deletion event themselves
+            userService.deleteAllByTenantUuidWithoutNotification(deletedTenantUuid);
         });
     }
 }
