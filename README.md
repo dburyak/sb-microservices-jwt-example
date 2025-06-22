@@ -185,12 +185,14 @@ In regard to authentication, see `PointToPointMsgQueueRedisImpl` and
 before it is actually processed by the consumer. And how the metadata is
 populated when the message is sent.
 
-# running
+# Running
 
-## How to run
+## Pre-requisites
+
+I tried to make it as easy to run as possible.
 
 - install:
-    - java-24 (I highly recommend https://sdkman.io for unix systems)
+    - java-21 (I highly recommend https://sdkman.io for unix systems)
     - mongodb (you can either install it directly or use docker, doesn't matter,
       no any setup is required, just make sure that you run it on default
       port 27017)
@@ -198,10 +200,10 @@ populated when the message is sent.
       port 6379)
     - latest python 3 (old 3+ versions might work, I didn't test) for running
       password reset script
-- open your IDE and register installed java-24
+- open your IDE and register installed java-21
 - clone the repository
 - import the project into your IDE as gradle project, and configure it to use
-  java-24 as both the project SDK and the JVM for gradle
+  java-21 as both the project SDK and the JVM for gradle
 - put breakpoints in the key places to examine the code execution (see below)
 - start all the implemented services in debug mode (`auth-service`, `user-service`,
   `tenant-service`, `otp-service`, `email-service`)
@@ -213,14 +215,23 @@ populated when the message is sent.
   For mongo, you can use `mongodb compass` GUI tool, or `mongosh` for CLI.
   For redis, you can use `redis-cli` for terminal or `redisinsight` for GUI.
 
-### Initial setup
+## Initial setup
+
+Tests always create all the data from scratch - tenants, users, etc. In order to
+do so, tests use SA user (that's the only standard built-in user that can
+create new tenants). Hence, to run tests, you need to reset password for SA
+and export it as an environment variable `JWT_EXAMPLE_SA_PASSWORD` for
+the test process.
 
 All the initial data is set up either by the functional tests or by data
-migration code **automatically**. The only setup step required is to reset
-the password for the super-admin (SA) user. This is done by running
-the `scripts/sa-reset-password.py` script, which makes API calls to reset the
-password by the way. It's a legit scenario, not a backdoor, so feel free to
-examine it too.
+migration code **automatically**. Tests always create all the data from 
+scratch - tenants, users, etc. In order to do so, tests use SA user
+(that's the only standard built-in user that can create new tenants). Hence, 
+to run tests, you need to reset password for SA and export it as an 
+environment variable `JWT_EXAMPLE_SA_PASSWORD` for the test process.
+This can be done by running the `scripts/sa-reset-password.py` script, which 
+makes API calls to reset the password by the way. It's a legit scenario, not 
+a backdoor, so feel free to examine it too.
 
 Remember the SA password you set. Functional tests require
 `JWT_EXAMPLE_SA_PASSWORD` environment variable to be set with the SA password.
@@ -243,52 +254,12 @@ JWT_EXAMPLE_SA_PASSWORD=QX1p!@Tri01w@ABxMRw^&*2f%
 
 Now run this same configuration again, and now everything should work fine.
 
-I could of course hardcode some initial SA password, but I couldn't stand such
+I could of course hardcoded some initial SA password, but I couldn't stand such
 a bad security practice even in a sample project. I wanted to
 demonstrate how the password reset works, and how the initial data is set up
 in a real-world scenario.
-
-## requirements
-
-I tried to make it as easy to run as possible. You'll need
-
-- java-21 (for unix systems I recommend https://sdkman.io)
-- mongodb
-- redis
-
-If you run mongodb and redis with default settings (i.e. without custom
-configuration), everything should work out of the box.
-
-## build system
-
-## IDE
-
-## running from CLI
-
-## running from IDE
-
-## building and running jars
-
-## initial setup
-
-Initial data is set up only for SA (super-admin) tenant and user. SA user does
-not have initial password set up, so as the first step you need to reset
-password for SA user.
 
 # tests
 
 Functional tests are located in `test` folder. They are supposed to be executed
 against a fully running system.
-
-## pre-requisites
-
-Tests always create all the data from scratch - tenants, users, etc. In order to
-do so, tests use SA user (that's the only standard built-in user that can
-create new tenants). Hence, to run tests, you need to reset password for SA
-and export it as an environment variable `SA_PASSWORD` for test process.
-
-For resetting password use:
-
-```shell
-
-```
