@@ -8,8 +8,8 @@ import com.dburyak.example.jwt.api.user.UserWithRoles
 class TenantSpec extends SuperAdminLoggedInSpec {
     static final String TENANT_DESCRIPTION = 'test tenant created by tests'
 
-    def tenantName = "test-tenant-${System.currentTimeMillis()}-${UUID.randomUUID()}"
-    def adminEmail = "admin-$tenantName@test.jwt.example.dburyak.com"
+    def tenantName = "test-tenant-${rndString.next(5, RND_NAME_CHARS)}"
+    def adminEmail = "test.admin.${rndString.next(5, RND_NAME_CHARS)}@$TEST_DOMAIN"
     def createTenantReq = Tenant.builder()
             .name(tenantName)
             .description(TENANT_DESCRIPTION)
@@ -94,10 +94,10 @@ class TenantSpec extends SuperAdminLoggedInSpec {
 
     def 'delete tenant - deletes all users of the tenant'() {
         given: 'tenant created with several users'
-        def user1Name = "user1-$tenantName"
-        def user1Email = "$user1Name@test.jwt.example.dburyak.com"
+        def user1Name = "test.user1.${rndString.next(5, RND_NAME_CHARS)}"
+        def user1Email = "$user1Name@$TEST_DOMAIN"
         def user1 = userServiceClientSA.createByManager(UserWithRoles.builder()
-                .roles(Set.of('user'))
+                .roles(Set.of(USER_ROLE))
                 .externalId(new ExternalId(user1Email))
                 .username(user1Name)
                 .password('test-user1-password123')
@@ -105,10 +105,10 @@ class TenantSpec extends SuperAdminLoggedInSpec {
                 .profileIcon('user')
                 .contactInfo(new ContactInfo(user1Email))
                 .build(), tenant)
-        def user2Name = "user2-$tenantName"
-        def user2Email = "$user2Name@test.jwt.example.dburyak.com"
+        def user2Name = "test.user2.${rndString.next(5, RND_NAME_CHARS)}"
+        def user2Email = "$user2Name@$TEST_DOMAIN"
         def user2 = userServiceClientSA.createByManager(UserWithRoles.builder()
-                .roles(Set.of('user'))
+                .roles(Set.of(USER_ROLE))
                 .externalId(new ExternalId(user2Email))
                 .username(user2Name)
                 .password('test-user2-password123')

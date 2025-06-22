@@ -23,7 +23,14 @@ abstract class BaseSpec extends Specification {
     static final String ADMIN_USERNAME = 'admin'
     static final String ADMIN_DEVICE_ID = System.getenv('ADMIN_DEVICE_ID') ?: 'admin-test-device'
 
+    static final String TEST_DOMAIN = System.getenv('TEST_DOMAIN') ?: 'test.jwt.example.dburyak.com'
+    static final String SA_ROLE = 'sa'
     static final String ADMIN_ROLE = 'adm'
+    static final String CONTENT_MANAGER_ROLE = 'cmg'
+    static final String USER_MANAGER_ROLE = 'umg'
+    static final String USER_ROLE = 'usr'
+    static final String SERVICE_ROLE = 'srv'
+    static final String RND_NAME_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789'
 
     static final String AUTH_SERVICE_URL = System.getenv('AUTH_SERVICE_URL') ?: 'http://localhost:8080'
     static final String USER_SERVICE_URL = System.getenv('USER_SERVICE_URL') ?: 'http://localhost:8081'

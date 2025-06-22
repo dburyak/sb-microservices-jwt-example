@@ -18,7 +18,10 @@ import com.dburyak.example.jwt.lib.msg.PointToPointMsgQueue;
 import com.dburyak.example.jwt.user.err.UserAlreadyExistsException;
 import com.dburyak.example.jwt.user.repository.UserRepository;
 import com.dburyak.example.jwt.user.service.converter.UserConverter;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Set;
 import java.util.UUID;
@@ -89,7 +92,16 @@ public class UserService {
         // It is dangerous from a security perspective to publish password in plain text. Firstly, because every
         // subscriber will receive the password, even though they don't need it. Secondly, realistically message
         // queue will be durable and the password may be stored in plain text for a long time.
-        authServiceClientInternal.createUser(tenantUuid, userConverter.toApiModelAuth(req, savedUser, roles));
+        try {
+            authServiceClientInternal.createUser(tenantUuid, userConverter.toApiModelAuth(req, savedUser, roles));
+        } catch (HttpClientErrorException e) {
+            // If auth-service fails to create the user, we delete the user from the repository.
+            userRepository.delete(savedUser);
+            if (e.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+                throw new AccessDeniedException("not enough privileges to create user with roles: %s".formatted(roles));
+            }
+            throw e; // ideally, we should translate the exception and not expose internal details
+        }
 
         publishUserCreatedEvent(req, savedUser, roles);
         return savedUser;

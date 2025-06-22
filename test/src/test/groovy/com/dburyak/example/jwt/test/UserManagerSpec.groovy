@@ -7,8 +7,8 @@ import com.dburyak.example.jwt.api.user.UserWithRoles
 
 class UserManagerSpec extends UserManagerLoggedInSpec {
 
-    String username = "test-user-$tenantName"
-    String email = "$username@test.jwt.example.dburyak.com"
+    String username = "test.user.${rndString.next(5, RND_NAME_CHARS)}"
+    String email = "$username@$TEST_DOMAIN"
     String password = rndString.nextGraph(25)
 
     def 'create regular user'() {
@@ -22,7 +22,7 @@ class UserManagerSpec extends UserManagerLoggedInSpec {
                 .displayName(username)
                 .profileIcon('user')
                 .contactInfo(new ContactInfo(email))
-                .roles(Set.of('usr'))
+                .roles(Set.of(USER_ROLE))
                 .build())
 
         then: 'the user is created successfully'
@@ -45,5 +45,33 @@ class UserManagerSpec extends UserManagerLoggedInSpec {
 
         cleanup: 'delete the user'
         userServiceClientUM.deleteByUsernameByManager(username)
+    }
+
+    def 'fails to create users with high privileges'() {
+        given: 'a user-manager user is logged in'
+
+        when: 'create an admin user'
+        userServiceClientUM.createByManager(UserWithRoles.builder()
+                .externalId(new ExternalId(email))
+                .username(username)
+                .password(password)
+                .displayName(username)
+                .profileIcon('user')
+                .contactInfo(new ContactInfo(email))
+                .roles(Set.of(USER_ROLE, highPrivilege)) // trying to assign high role
+                .build())
+
+        then: 'the user creation fails with 403 Forbidden error'
+        def e = thrown(Exception)
+        e.message.contains('403')
+
+        where:
+        highPrivilege << [
+                SA_ROLE,
+                ADMIN_ROLE,
+                CONTENT_MANAGER_ROLE,
+                USER_MANAGER_ROLE,
+                SERVICE_ROLE
+        ]
     }
 }

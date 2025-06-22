@@ -32,17 +32,20 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALL_WRITE;
+import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ADM_WRITE;
+import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALLT_WRITE;
 import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_WRITE;
 import static java.util.stream.Collectors.toSet;
 
 @Service
 @Slf4j
 public class UserService {
-    private static final Set<String> ALLOWED_ROLES_FOR_CREATED_USERS =
-            Stream.of(Role.USER, Role.USER_MANAGER, Role.CONTENT_MANAGER)
+    private static final Set<String> ALLOWED_ROLES_FOR_CREATED_USERS_BY_ADMIN =
+            Stream.of(Role.ADMIN, Role.CONTENT_MANAGER, Role.USER_MANAGER, Role.USER)
                     .map(Role::getName)
                     .collect(toSet());
+    private static final Set<String> ALLOWED_ROLES_FOR_CREATED_USERS_BY_UMG =
+            Set.of(Role.USER.getName());
 
     private final UserConverter converter;
     private final UserRepository repository;
@@ -202,15 +205,22 @@ public class UserService {
             throw new BadCredentialsException("not authenticated");
         }
         var authorities = auth.getAuthorityNames();
-        if (authorities.contains(USER_ALL_WRITE)) {
+        if (authorities.contains(USER_ALLT_WRITE)) {
             // caller can create any user in any tenant
             return;
         }
         var callersTenantUuid = requestUtil.getCallersTenantUuid();
-        if (callersTenantUuid.equals(tenantUUid) && authorities.contains(USER_WRITE) &&
-                ALLOWED_ROLES_FOR_CREATED_USERS.containsAll(req.getRoles())) {
-            // caller can create users in their own tenant, and roles are allowed (no privilege escalation)
-            return;
+        if (callersTenantUuid.equals(tenantUUid)) {
+            if (authorities.contains(USER_ADM_WRITE) &&
+                    ALLOWED_ROLES_FOR_CREATED_USERS_BY_ADMIN.containsAll(req.getRoles())) {
+                // caller can create users with given roles in their tenant as an admin
+                return;
+            }
+            if (authorities.contains(USER_WRITE) &&
+                    ALLOWED_ROLES_FOR_CREATED_USERS_BY_UMG.containsAll(req.getRoles())) {
+                // caller can create users in their own tenant as a user-manager
+                return;
+            }
         }
         // caller does not have permission to create users within the tenant
         throw new AccessDeniedException("not allowed to create users: tenantUuid=%s, roles=%s"

@@ -10,10 +10,10 @@ abstract class TenantAutoCreatingSpec extends SuperAdminLoggedInSpec {
     static final String TENANT_DESCRIPTION = 'test tenant created by tests'
 
     @Shared
-    String tenantName = "test-tenant-${System.currentTimeMillis()}-${UUID.randomUUID()}"
+    String tenantName = "test-tenant-${rndString.next(5, RND_NAME_CHARS)}"
 
     @Shared
-    String adminEmail = "admin.${System.currentTimeMillis()}@test.jwt.example.dburyak.com"
+    String adminEmail = "admin.${rndString.next(5, RND_NAME_CHARS)}@$TEST_DOMAIN"
 
     @Shared
     UUID tenantUuid

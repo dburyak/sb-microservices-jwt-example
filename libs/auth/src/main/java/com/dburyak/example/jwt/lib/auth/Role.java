@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toMap;
 public enum Role {
     SUPER_ADMIN("sa"),
     ADMIN("adm"),
-    CONTENT_MANAGER("cm"),
+    CONTENT_MANAGER("cmg"),
     USER_MANAGER("umg"),
     USER("usr"),
     SERVICE("srv"); // special role for services, not exposed to users

@@ -12,10 +12,10 @@ import spock.lang.Shared
 abstract class UserManagerAutoCreatingSpec extends TenantAutoCreatingSpec {
 
     @Shared
-    String umEmail = "um.${System.currentTimeMillis()}@test.jwt.example.dburyak.com"
+    String umUsername = "test.um.${rndString.next(5, RND_NAME_CHARS)}"
 
     @Shared
-    String umUsername = "um-$tenantName"
+    String umEmail = "$umUsername@$TEST_DOMAIN"
 
     @Shared
     String umPassword = rndString.nextGraph(25)
@@ -24,7 +24,7 @@ abstract class UserManagerAutoCreatingSpec extends TenantAutoCreatingSpec {
     UUID umUserUuid
 
     @Shared
-    String umDeviceId = 'um-test-device-' + System.currentTimeMillis()
+    String umDeviceId = "um-test-device-${rndString.next(5, RND_NAME_CHARS)}"
 
     def setupSpec() {
         def umUser = userServiceClientSA.createByManager(UserWithRoles.builder()
@@ -34,7 +34,7 @@ abstract class UserManagerAutoCreatingSpec extends TenantAutoCreatingSpec {
                 .displayName(umUsername)
                 .profileIcon('user-manager')
                 .contactInfo(new ContactInfo(umEmail))
-                .roles(Set.of('umg'))
+                .roles(Set.of(USER_MANAGER_ROLE))
                 .build(), tenant)
         umUserUuid = umUser.uuid
     }

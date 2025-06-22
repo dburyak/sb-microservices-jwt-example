@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Set;
 
-import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALL_READ;
-import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALL_WRITE;
+import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALLT_READ;
+import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALLT_WRITE;
 import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_READ;
 import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_WRITE;
 import static com.dburyak.example.jwt.lib.auth.Role.ADMIN;
@@ -23,10 +23,10 @@ import static java.util.stream.Collectors.toSet;
 @Component
 public class AuthRolesMapper implements AuthoritiesMapper {
     private final Map<Role, Set<String>> mapping = Map.of(
-            SUPER_ADMIN, Set.of(SA, USER_ALL_WRITE, USER_ALL_READ),
+            SUPER_ADMIN, Set.of(SA, USER_ALLT_WRITE, USER_ALLT_READ),
             ADMIN, Set.of(StandardAuthorities.ADMIN, USER_WRITE, USER_READ),
             USER_MANAGER, Set.of(USER_WRITE, USER_READ),
-            SERVICE, Set.of(USER_ALL_WRITE, USER_ALL_READ)
+            SERVICE, Set.of(USER_ALLT_WRITE, USER_ALLT_READ)
     );
 
     @Override

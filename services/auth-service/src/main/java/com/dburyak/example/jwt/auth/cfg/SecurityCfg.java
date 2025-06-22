@@ -11,8 +11,10 @@ import static com.dburyak.example.jwt.api.auth.Paths.PATH_USER_PASSWORD_RESET;
 import static com.dburyak.example.jwt.api.auth.Paths.PATH_USER_PASSWORD_RESET_OTP;
 import static com.dburyak.example.jwt.api.common.Paths.PATH_USER_BY_UUID;
 import static com.dburyak.example.jwt.api.common.Paths.USERS;
-import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALL_READ;
-import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALL_WRITE;
+import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ADM_READ;
+import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ADM_WRITE;
+import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALLT_READ;
+import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_ALLT_WRITE;
 import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_READ;
 import static com.dburyak.example.jwt.auth.cfg.Authorities.USER_WRITE;
 import static org.springframework.http.HttpMethod.GET;
@@ -32,8 +34,8 @@ public class SecurityCfg {
                 .requestMatchers(POST, PATH_USER_PASSWORD_RESET_OTP).permitAll()
                 .requestMatchers(PUT, PATH_USER_PASSWORD_RESET).permitAll()
 
-                .requestMatchers(POST, USERS).access(requires.anyOf(USER_WRITE, USER_ALL_WRITE))
-                .requestMatchers(GET, PATH_USER_BY_UUID).access(requires.anyOf(USER_READ, USER_ALL_READ))
+                .requestMatchers(POST, USERS).access(requires.anyOf(USER_WRITE, USER_ADM_WRITE, USER_ALLT_WRITE))
+                .requestMatchers(GET, PATH_USER_BY_UUID).access(requires.anyOf(USER_READ, USER_ADM_READ, USER_ALLT_READ))
                 ;
     }
 }
